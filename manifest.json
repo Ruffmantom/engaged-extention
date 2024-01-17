@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Stay Engaged",
+  "version": "1.0.0",
+  "description": "This extension keeps you focused and engaged at work. No need to keep switching web pages. Keep all your tasks in one place.",
+  "action": {
+    "default_title": "Stay Engaged",
+    "default_popup": "index.html"
+  },
+  "icons": {
+    "16": "./images/Logo/logo-16px.png",
+    "48": "./images/Logo/logo-48px.png",
+    "128": "./images/Logo/logo-128px.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost/*"],
+      "css": [
+        "./styles/style.css",
+        "./styles/theme.css"
+      ],
+      "js": [
+        "./js/libraries/jquery.js",
+        "./app.js",
+        "./js/settings.js",
+        "./js/script.js",
+        "./js/theme.js",
+        "./js/notes.js",
+        "./js/createHtml.js",
+        "./js/todos.js"
+      ]
+    }
+  ]
+}
