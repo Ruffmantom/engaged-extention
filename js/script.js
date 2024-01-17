@@ -2,8 +2,6 @@ const textInput = $("#text_input");
 const textOutput = $("#text_output");
 const prefixText = $("#prefix_input");
 const suffixText = $("#suffix_input");
-const generatePassBtn = $("#generate_password");
-const passwordLength = $("#char-num");
 const clearOutPutBtn = $("#clear_output");
 const separatorSelector = $("#separator_selector");
 const caseSelector = $("#case_selector");
@@ -23,17 +21,6 @@ const closeBtn = $('#close_settings_btn')
 const settingsModalCont = $('#settings_modal_cont')
 const menuBtnElm = $('.menu_btn')
 let menuIsOpen = false;
-
-
-var chars =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";
-const makePassword = (len) => {
-    let pass = "";
-    for (var i = 0; i < len; i++) {
-        pass += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return pass;
-};
 
 
 function findAndReplaceLinks(text) {
@@ -513,19 +500,7 @@ $(function () {
             saveToLocalStorage(DATA_NAME, globalValues)
         }
     };
-    // generate password function
-    const generatePasswordOutput = () => {
-
-        let currPass = makePassword(passLength)
-        $(textOutput).val(currPass);
-        // save to local storage to access later
-        globalValues.outputValuePassword = currPass
-        saveToLocalStorage(DATA_NAME, globalValues)
-    };
-    // copy function
-    // $(".textarea_cont").on("click", (e) => {
-    //     copyFunction(e, ".textarea_cont", "#text_output")
-    // });
+    
 
 
     // **** Actions ****
@@ -588,18 +563,7 @@ $(function () {
         // generate output
         generateTextOutput();
     });
-    // password length input
-    passwordLength.on("keyup change", (e) => {
-        let a = e.target.value;
-        passLength = a;
-        // save to local storage to access later
-        globalValues.passLength = a
-        saveToLocalStorage(DATA_NAME, globalValues)
-    });
-    // generate on click
-    generatePassBtn.on("click", (e) => {
-        generatePasswordOutput();
-    });
+    
     // copy function
     const copyFunction = (e, element, copyElm) => {
         // console.log("Clicked " + element + " and about to copy: " + copyElm)

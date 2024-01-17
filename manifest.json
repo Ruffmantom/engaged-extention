@@ -27,6 +27,7 @@
         "./js/theme.js",
         "./js/notes.js",
         "./js/createHtml.js",
+        "./js/passwordGen.js",
         "./js/todos.js"
       ]
     }
