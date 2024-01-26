@@ -16,14 +16,14 @@ $(function () {
         // loop though buttons and activate one that matches local data
         try {
             tabBtnArr.forEach((btn) => {
-                $(btn).data('tab') === globalValues.currentTab ? $(btn).addClass('nav_tab_active') : ''
+                $(btn).data('tab') === global_app_data.e_tab ? $(btn).addClass('nav_tab_active') : ''
             })
             // loop through the tab elements and display
             // the one that matches local data
             tabElmArr.forEach(tab => {
                 // remove active from tab
                 // add class to clicked id
-                $(tab).data('tab') !== globalValues.currentTab ? $(tab).removeClass('tab_active') : $(tab).addClass('tab_active')
+                $(tab).data('tab') !== global_app_data.e_tab ? $(tab).removeClass('tab_active') : $(tab).addClass('tab_active')
             })
         } catch (error) {
             // set the first tab
@@ -40,8 +40,8 @@ $(function () {
         $(btn).click((e) => {
             let tabId = $(e.target).data('tab')
             // save current tab to local storage
-            globalValues.currentTab = tabId
-            saveToLocalStorage(DATA_NAME, globalValues)
+            global_app_data.e_tab = tabId
+            saveToLocalStorage(DATA_NAME, global_app_data)
             // remove class from all btns
             removeClass(tabBtnArr, 'nav_tab_active')
             // add active from nav Btn

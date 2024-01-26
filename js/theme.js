@@ -5,8 +5,8 @@ const setItemsToDark = () => {
     $(moonIcon).addClass('theme_set')
     $(darkRadio).attr({ "checked": true })
     // false = dark theme
-    localStorage.setItem('labcloudTheme', false)
-
+    global_app_data.engage_theme = false
+    saveToLocalStorage()
     // reset Light mode
     $(sunIcon).removeClass('theme_set')
     $(lightRadio).attr({ "checked": false })
@@ -18,28 +18,24 @@ const setItemsToLight = () => {
     $(sunIcon).addClass('theme_set')
     $(lightRadio).attr({ "checked": true })
     // true = light theme
-    localStorage.setItem('labcloudTheme', true)
+    global_app_data.engage_theme = true
+    saveToLocalStorage()
     // remove moon
     $(moonIcon).removeClass('theme_set')
     $(darkRadio).attr({ "checked": false })
 }
 
-
 // load theme
 const loadTheme = () => {
     // set local Storage
-    let gotTheme = JSON.parse(localStorage.getItem('labcloudTheme'))
-
-    if (gotTheme) {
+    if (global_app_data.engage_theme) {
         setItemsToLight()
     } else {
         setItemsToDark()
     }
 }
 
-
 $(function () {
-
     // this file is specifically for controlling the theme
     themeBtn.on('click', (e) => {
         // check to see if is already active
@@ -49,10 +45,7 @@ $(function () {
             setItemsToLight()
         }
     })
-
-
     // load theme on load
     loadTheme()
-
     // end of doc ready
 })

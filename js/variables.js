@@ -1,25 +1,27 @@
 // *************** APP VARIABLES **************************
 // Define global variable
-let globalValues;
-let usersNotes = [];
-let usersTodos = [];
-let globalStaging;
-let stagingDefault = {
-    editing: false,
-    text: ''
+let global_app_data = null
+
+let global_app_default_data = {
+    engage_theme: "false",
+    engage_user_id: "",
+    e_tab: 'one',
+    e_password: "",
+    e_notes: [],
+    e_todos: [],
+    e_note_stage: "",
+    stagingDefault: {
+        editing: false,
+        text: ''
+    }
 }
-let defaultValues = {
-    currentTab: 'one',
-}
+
 const DATA_NAME = 'TF_DATA';
 const TF_SETTINGS = 'TF_SETTINGS';
 const TF_NOTES = 'TF_NOTES';
 const TF_N_S = 'TF_N_S';
 const TF_TODOS = 'TF_TODOS';
 const TF_PO_DATA = 'TF_PO_DATA';
-// loading function for notes
-let isLoading = false;
-
 // create ID
 var idChars = "3QKXV0F8IYCA7S5T4ZGJDWB9L1N26UHOMRPVE";
 // *************** NAVIGATION VARIABLES **************************
@@ -45,7 +47,6 @@ const themeBtn = $(".theme_button")
 // radio buttons
 const lightRadio = $("#light_mode")
 const darkRadio = $("#dark_mode")
-
 // *************** TODO VARIABLES **************************
 // elements
 const todoMenu = $(".todo_list_menu");
@@ -64,7 +65,6 @@ const addNewTodoListForm = $(".create_new_todo_list_form")
 const todoListItemCompletionTextElm = $(".todo_list_item_completion")
 const todoListNumberTextElm = $(".todo_list_number")
 const dueDateInputElm = $('#todo_due_date_input')
-
 // btns
 const todoListMenuBtn = $(".todo_list_nav_button")
 const addNewTodoBtn = $("#add_new_todo_btn")
@@ -87,7 +87,12 @@ const noteListContainer = $('.note_container')
 // BTNS
 const addNoteBtn = $('#add_note_btn')
 const deleteNoteBtn = $('.delete_btn')
+// other
+// loading function for notes
+let isLoading = false;
 // *************** PASSWORD GENERATOR VARIABLES **************************
 const generatePassBtn = $("#generate_password_btn");
 const passwordLength = $("#pass_char_num");
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";
+// *************** OTHER VARIABLES **************************
+const loader = $(".loader_container");

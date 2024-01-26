@@ -45,13 +45,13 @@ const sendNotification = (slideSpeed, time, text) => {
         clearTimeout(timer)
     }, time);
 }
-// Save values to local storage
-const saveToLocalStorage = (name, values) => {
-    // console.log(values);
-    localStorage.setItem(name, JSON.stringify(values));
+// Save to local storage
+const saveToLocalStorage = () => {
+    localStorage.setItem('engage_app_data', JSON.stringify(global_app_data));
 };
-
-const loader = $(".loader_container");
+const loadFromLocalStorage = () => {
+    global_app_data = localStorage.getItem('engage_app_data', JSON.parse(global_app_data));
+};
 
 const loadNotesFromLocalStorage = async () => {
     isLoading = true;
