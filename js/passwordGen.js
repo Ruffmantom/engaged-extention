@@ -1,8 +1,3 @@
-const generatePassBtn = $("#generate_password_btn");
-const passwordLength = $("#pass_char_num");
-
-var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";
-
 const makePassword = (len) => {
     let pass = "";
     for (var i = 0; i < len; i++) {

@@ -1,25 +1,9 @@
-// Elements
-const noteInputElm = $("#add_note_textarea")
-const noteListContainer = $('.note_container')
-// BTNS
-const addNoteBtn = $('#add_note_btn')
-const deleteNoteBtn = $('.delete_btn')
-// goal of this file
-// Allow the user to create, delete and tag notes
-
-// all using local storage
-// notes local storage id TF_NOTES
-// when user is typing it gets saved on change in the staging key
-// when user clicks add, staging key is cleared and note is saved in the array
-
-// function for creating notes
 const addNoteToDom = (noteData) => {
     noteListContainer.prepend(createNote(noteData));
 }
 
 function createNewNote() {
     let noteDataObj = {}
-
     noteDataObj.id = createId()
     noteDataObj.note = globalStaging.text
     noteDataObj.label = ""
@@ -75,8 +59,6 @@ const deleteNote = (noteId) => {
 $(function () {
     // loading and appending notes
     loadNoteData()
-
-
     // actions
     // save note progress
     $(noteInputElm).on('keyup change', (e) => {

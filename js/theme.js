@@ -1,17 +1,3 @@
-// icons
-const sunIcon = $("#sun_icon")
-const moonIcon = $("#moon_icon")
-// button
-const themeBtn = $(".theme_button")
-// radio buttons
-const lightRadio = $("#light_mode")
-const darkRadio = $("#dark_mode")
-
-
-// set local storage the theme
-// true = light
-// false = dark
-
 // set items for dark mode
 const setItemsToDark = () => {
     // if checked then turn to dark mode

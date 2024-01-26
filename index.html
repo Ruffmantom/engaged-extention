@@ -140,7 +140,7 @@
 
 
 
-    <div class="input_cont">
+    <div class="engage_app_container">
 
         <!-- new navigation sidebar -->
         <div class="menu_sidebar">
@@ -163,7 +163,7 @@
                     </svg>
 
                     <p class="hover_helper">Todo's</p>
-                    <div class="tab_nav_button" data-tab="four">
+                    <div class="tab_nav_button" data-tab="one">
 
                     </div>
                 </div>
@@ -184,7 +184,7 @@
                     </svg>
 
                     <p class="hover_helper">Notes</p>
-                    <div class="tab_nav_button" data-tab="five">
+                    <div class="tab_nav_button" data-tab="two">
 
                     </div>
                 </div>
@@ -201,7 +201,7 @@
                     </svg>
 
                     <p class="hover_helper">Password Generator</p>
-                    <div class="tab_nav_button" data-tab="one">
+                    <div class="tab_nav_button" data-tab="three">
 
                     </div>
                 </div>
@@ -264,25 +264,9 @@
             <input type="radio" checked name="light" id="light_mode" hidden>
             <input type="radio" name="dark" id="dark_mode" hidden>
         </div>
-
         <!-- Tab: one -->
         <!-- TODO -->
-        <div class="tab tf_control_group" data-tab="one">
-            <h1>Password Generator</h1>
-            <div class="tf_control_group bottom_input_group">
-                <input class="tf_input" name="input" type="text" id="pass_char_num" placeholder='Password Length...'>
-            </div>
-            <div id="color_copy_rgb" class="textarea_cont tf_control_group bottom_input_group">
-                <textarea class="tf_input textarea_cont" readonly name="input" cols="30" rows="3"
-                    id="password_output" placeholder='Password Output...'></textarea>
-                <div class="helper">Click To Copy</div>
-            </div>
-        
-            <button type="button" class="tf_btn main_btn" id="generate_password_btn">Generate Password</button>
-        </div>
-        <!-- Tab: Four -->
-        <!-- TODO -->
-        <div class="tab" data-tab="four">
+        <div class="tab" data-tab="one">
             <h1>Todo's</h1>
             <div class="tf_todo_tab_cont">
                 <!-- this is the start when a user has no list -->
@@ -422,8 +406,8 @@
         </div>
 
 
-        <!-- Tab: Five -->
-        <div class="tab" data-tab="five">
+        <!-- Tab: two -->
+        <div class="tab" data-tab="two">
             <h1>Notes</h1>
             <div class="tf_control_group bottom_input_group">
                 <div class="note_upper_form">
@@ -440,12 +424,34 @@
             </div>
 
         </div>
+
+        <!-- Tab: three -->
+        <!-- TODO -->
+        <div class="tab tf_control_group" data-tab="three">
+            <h1>Password Generator</h1>
+            <div class="tf_control_group bottom_input_group">
+                <input class="tf_input" name="input" type="text" id="pass_char_num" placeholder='Password Length...'>
+            </div>
+            <div id="color_copy_rgb" class="textarea_cont tf_control_group bottom_input_group">
+                <textarea class="tf_input textarea_cont" readonly name="input" cols="30" rows="3" id="password_output"
+                    placeholder='Password Output...'></textarea>
+                <div class="helper">Click To Copy</div>
+            </div>
+
+            <button type="button" class="tf_btn main_btn" id="generate_password_btn">Generate Password</button>
+        </div>
+
+
+
+        <!-- end of  -->
     </div>
+    <!-- Scripts -->
+    <script type="text/javascript" src="./js/variables.js"></script>
+    <script type="text/javascript" src="./js/helpers.js"></script>
     <script type="text/javascript" src="./app.js"></script>
     <script type="text/javascript" src="./js/settings.js"></script>
     <script type="text/javascript" src="./js/script.js"></script>
     <script type="text/javascript" src="./js/createHtml.js"></script>
-    <script type="text/javascript" src="./js/pageOptions.js"></script>
     <script type="text/javascript" src="./js/notes.js"></script>
     <script type="text/javascript" src="./js/todos.js"></script>
     <script type="text/javascript" src="./js/passwordGen.js"></script>
