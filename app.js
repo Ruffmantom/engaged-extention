@@ -14,12 +14,7 @@ const initApp = () => {
 
 // Ensure global_app_data and global_app_default_data are defined outside this function
 const startApp = async () => {
-    initApp()
-
-    await loadNotesFromLocalStorage()
-    await loadTodosFromLocalStorage()
-    await loadPageOptionDataFromLocalStorage()
-
+    await initApp()
 }
 
 $(function () {

@@ -6,6 +6,7 @@ let global_app_default_data = {
     engage_theme: "false",
     engage_user_id: "",
     e_tab: 'one',
+    e_pass_length: 5,
     e_password: "",
     e_notes: [],
     e_todos: [],
@@ -93,6 +94,7 @@ let isLoading = false;
 // *************** PASSWORD GENERATOR VARIABLES **************************
 const generatePassBtn = $("#generate_password_btn");
 const passwordLength = $("#pass_char_num");
+const passwordOutput = $("#password_output");
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";
 // *************** OTHER VARIABLES **************************
 const loader = $(".loader_container");

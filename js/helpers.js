@@ -49,61 +49,7 @@ const sendNotification = (slideSpeed, time, text) => {
 const saveToLocalStorage = () => {
     localStorage.setItem('engage_app_data', JSON.stringify(global_app_data));
 };
-const loadFromLocalStorage = () => {
-    global_app_data = localStorage.getItem('engage_app_data', JSON.parse(global_app_data));
-};
 
-const loadNotesFromLocalStorage = async () => {
-    isLoading = true;
-    $(loader).addClass('loader_active'); // Show the loader
-    // console.log('about to load from local storage')
-    try {
-        let localStaging = await localStorage.getItem(TF_N_S);
-        let localObj = await localStorage.getItem(TF_NOTES);
-        // console.log('notes? ', JSON.parse(localObj))
-
-        if (localObj) {
-            usersNotes = JSON.parse(localObj);
-        } else {
-            usersNotes = [];
-        }
-        if (localStaging) {
-            globalStaging = JSON.parse(localStaging);
-        } else {
-            globalStaging = {};
-        }
-    } catch (error) {
-        // Handle errors, e.g., by showing an error message
-        console.error('Error loading data:', error);
-    } finally {
-        // Regardless of success or failure, hide the loader
-        isLoading = false;
-        $(loader).removeClass('loader_active');
-    }
-};
-
-
-const loadTodosFromLocalStorage = async () => {
-    isLoading = true;
-    $(loader).addClass('loader_active'); // Show the loader
-    try {
-        let localObj = await localStorage.getItem(TF_TODOS);
-
-        if (localObj) {
-            usersTodos = JSON.parse(localObj);
-        } else {
-            usersTodos = [];
-        }
-
-    } catch (error) {
-        // Handle errors, e.g., by showing an error message
-        console.error('Error loading data:', error);
-    } finally {
-        // Regardless of success or failure, hide the loader
-        isLoading = false;
-        $(loader).removeClass('loader_active');
-    }
-};
 
 function findAndReplaceLinks(text) {
     // Regular expression to find URLs

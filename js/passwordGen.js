@@ -7,25 +7,20 @@ const makePassword = (len) => {
 };
 // generate password function
 const generatePasswordOutput = () => {
-
-    let currPass = makePassword(passLength)
-    $(textOutput).val(currPass);
+    let currPass = makePassword(global_app_data.e_pass_length)
+    $(passwordOutput).val(currPass);
     // save to local storage to access later
-    globalValues.outputValuePassword = currPass
-    saveToLocalStorage(DATA_NAME, globalValues)
+    global_app_data.e_password = currPass
+    saveToLocalStorage()
 };
 
-
-
-$(() => {
-
+$(() => { 
     // password length input
     passwordLength.on("keyup change", (e) => {
         let a = e.target.value;
-        passLength = a;
         // save to local storage to access later
-        globalValues.passLength = a
-        saveToLocalStorage(DATA_NAME, globalValues)
+        global_app_data.e_pass_length = a
+        saveToLocalStorage()
     });
     // generate on click
     generatePassBtn.on("click", (e) => {
@@ -33,7 +28,7 @@ $(() => {
     });
 
     // copy function
-    $("#password_output").on("click", (e) => {
+    $(passwordOutput).on("click", (e) => {
         copyFunction(e, "#password_output", "#text_output")
     });
 })

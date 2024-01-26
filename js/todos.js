@@ -8,7 +8,7 @@ const closeTodoMenu = () => {
 
 // returns the current list helper
 const returnCurrentList = () => {
-    return usersTodos.find(l => l.active === true)
+    return global_app_data.e_todos.find(l => l.active === true)
 }
 
 // get the completion percentage
