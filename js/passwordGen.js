@@ -14,7 +14,17 @@ const generatePasswordOutput = () => {
     saveToLocalStorage()
 };
 
-$(() => { 
+$(() => {
+    //load in default password length
+    $(passwordLength).val(global_app_data.e_pass_length)
+    // when clicked on have value ready to be changed
+    $(pass_char_num).on("click", (e) => {
+        $(pass_char_num).select();
+    })
+    // load current password from global
+    if (global_app_data.e_password !== "") {
+        $(passwordOutput).val(global_app_data.e_password)
+    }
     // password length input
     passwordLength.on("keyup change", (e) => {
         let a = e.target.value;
@@ -29,6 +39,6 @@ $(() => {
 
     // copy function
     $(passwordOutput).on("click", (e) => {
-        copyFunction(e, "#password_output", "#text_output")
+        copyFunction("#password_output")
     });
 })

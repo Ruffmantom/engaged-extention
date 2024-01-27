@@ -14,15 +14,12 @@ let global_app_default_data = {
     stagingDefault: {
         editing: false,
         text: ''
+    },
+    e_settings:{
+        // put settings here
     }
 }
 
-const DATA_NAME = 'TF_DATA';
-const TF_SETTINGS = 'TF_SETTINGS';
-const TF_NOTES = 'TF_NOTES';
-const TF_N_S = 'TF_N_S';
-const TF_TODOS = 'TF_TODOS';
-const TF_PO_DATA = 'TF_PO_DATA';
 // create ID
 var idChars = "3QKXV0F8IYCA7S5T4ZGJDWB9L1N26UHOMRPVE";
 // *************** NAVIGATION VARIABLES **************************

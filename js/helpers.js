@@ -36,7 +36,6 @@ const createDate = () => {
 
 //notification
 const sendNotification = (slideSpeed, time, text) => {
-    // console.log("Clicked " + element + " and about to copy: " + copyElm)
     $(".notification").text('');
     $(".notification").text(text);
     $(".notification").slideDown(slideSpeed);
@@ -66,4 +65,30 @@ function findAndReplaceLinks(text) {
     });
 
     return textWithLinks;
+}
+
+
+// copy function
+const copyFunction = ( element) => {
+    if ($(element).val() !== "") {
+        console.log('copy value: '+ $(element).val())
+        $(element).select();
+        document.execCommand("copy");
+        sendNotification('', 5000, 'Copied!')
+    }
+}
+// closes navigation menu
+const closeMenu = () => {
+    if (menuIsOpen) {
+        $(".menu_sidebar").removeClass("menu_open")
+        // remove class to menu button
+        $(menuBtnElm).parent().removeClass('menu_btn_active')
+        menuIsOpen = false
+    }
+}
+// remove a class from an array of similar elements
+const removeClass = (elmArr, className) => {
+    elmArr.forEach(elm => {
+        $(elm).removeClass(className)
+    })
 }
