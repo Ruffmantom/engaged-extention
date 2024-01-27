@@ -7,15 +7,15 @@ const closeTodoMenu = () => {
 }
 
 // returns the current list helper
-const returnCurrentList = () => {
+const returncurrList = () => {
     return global_app_data.e_todos.find(l => l.active === true)
 }
 
 // get the completion percentage
-const getCompletionPercentage = (currentList) => {
-    if (currentList.todos.length >= 1) {
-        let numberOfTodos = currentList.todos.length;
-        let completeTodos = currentList.todos.filter(t => t.checked);
+const getCompletionPercentage = (currList) => {
+    if (currList.todos.length >= 1) {
+        let numberOfTodos = currList.todos.length;
+        let completeTodos = currList.todos.filter(t => t.checked);
         let numberOfCompleteTodos = completeTodos.length;
         return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}%`;
     } else {
@@ -23,13 +23,13 @@ const getCompletionPercentage = (currentList) => {
     }
 };
 
-// update the usersTodos global value
-const updateGlobalusersTodos = (updatedList) => {
-    const index = usersTodos.findIndex(item => item.id === updatedList.id);
-    // Update the corresponding item in usersTodos
-    usersTodos[index] = updatedList;
+// update the global_app_data.e_todos global value
+const updateGlobalUsersTodos = (updatedList) => {
+    const index = global_app_data.e_todos.findIndex(item => item.id === updatedList.id);
+    // Update the corresponding item in global_app_data.e_todos
+    global_app_data.e_todos[index] = updatedList;
 
-    saveToLocalStorage(TF_TODOS, usersTodos)
+    saveToLocalStorage()
 }
 // create a new todo list
 // create list
@@ -44,8 +44,8 @@ const createTodoListAction = (first, listName) => {
     if (first) {
         list.active = true
     }
-    // push new list into usersTodos
-    usersTodos.unshift(list)
+    // push new list into global_app_data.e_todos
+    global_app_data.e_todos.unshift(list)
     // add list to list menu
     $(todoMenuListItemCont).prepend(createTodoList(list))
     // clear first input
@@ -65,11 +65,11 @@ const createTodoAction = (todoVal) => {
         todo.createdDate = createDate()
         todo.dueDate = ''
         todo.checked = false
-        // save to usersTodos
-        let updateList = returnCurrentList()
+        // save to global_app_data.e_todos
+        let updateList = returncurrList()
         updateList.todos.unshift(todo)
-        // update usersTodos
-        updateGlobalusersTodos(updateList)
+        // update global_app_data.e_todos
+        updateGlobalUsersTodos(updateList)
         $(todoItemCont).prepend(createTodo(todo))
         // reset
         $(addTodoInputElm).val("")
@@ -109,18 +109,18 @@ const showTodoListArea = (show) => {
 
 // update the 
 const updateUsersTodos = (updatedList) => {
-    const index = usersTodos.findIndex(item => item.id === updatedList.id);
+    const index = global_app_data.e_todos.findIndex(item => item.id === updatedList.id);
 
     let updatedUI = false;
 
     if (index !== -1) {
-        // Update the corresponding item in usersTodos
-        usersTodos[index] = updatedList;
-        // update local storage with usersTodos
-        saveToLocalStorage(TF_TODOS, usersTodos);
+        // Update the corresponding item in global_app_data.e_todos
+        global_app_data.e_todos[index] = updatedList;
+        // update local storage with global_app_data.e_todos
+        saveToLocalStorage();
         updatedUI = true
     } else {
-        console.error(`Item with id ${updatedList.id} not found in usersTodos.`);
+        console.error(`Item with id ${updatedList.id} not found in global_app_data.e_todos.`);
         updatedUI = false
     }
     // console.log("Updated updateUsersTodos: " + updated)
@@ -151,17 +151,17 @@ const updateTodoCheckedStateUI = (todoId, checked) => {
 const handleDisplayCompletedTasks = (showHideButtonClicked) => {
     const todoItemArr = Array.from($(".todo_item"));
     // hide completed tasks from dom
-    let currentList = returnCurrentList()
+    let currList = returncurrList()
     // toggle the hideComplete
     if (showHideButtonClicked) {
-        if (currentList.hideComplete) {
-            currentList.hideComplete = false;
+        if (currList.hideComplete) {
+            currList.hideComplete = false;
         } else {
-            currentList.hideComplete = true;
+            currList.hideComplete = true;
         }
     }
 
-    if (currentList.hideComplete) {
+    if (currList.hideComplete) {
         $("#show_complete_todos").show()
         $("#hide_complete_todos").hide()
         // render all todos that are complete
@@ -181,7 +181,7 @@ const handleDisplayCompletedTasks = (showHideButtonClicked) => {
         })
     }
 
-    updateUsersTodos(currentList);
+    updateUsersTodos(currList);
 }
 
 // update the list ui with every action
@@ -189,28 +189,28 @@ const updateFullTodoUi = () => {
     // check and hide todos if needed
     handleDisplayCompletedTasks(false)
     // update the list complete status
-    let currentList = returnCurrentList()
-    let completePercentage = getCompletionPercentage(currentList)
+    let currList = returncurrList()
+    let completePercentage = getCompletionPercentage(currList)
     let listItemsArr = Array.from($(".todo_list_item_completion"))
     // update the list percentage in menu
     listItemsArr.forEach(l => {
-        if ($(l).data("listid") === currentList.id) {
+        if ($(l).data("listid") === currList.id) {
             $(l).text(`${completePercentage} complete`)
         }
     })
     // empty menu first
     $(todoMenuListItemCont).empty()
     // Render todo menu lists in the menu
-    usersTodos.forEach(l => {
+    global_app_data.e_todos.forEach(l => {
         $(todoMenuListItemCont).prepend(createTodoList(l));
     });
     // set UI
     // set list title
-    $(todoListTitle).text(currentList.name)
+    $(todoListTitle).text(currList.name)
     // add attribute
-    $(changeListTitleInput).attr('data-listid', currentList.id);
+    $(changeListTitleInput).attr('data-listid', currList.id);
     // se the number of todos
-    $(todoListNumberTextElm).text(currentList.todos.length + " Todo's")
+    $(todoListNumberTextElm).text(currList.todos.length + " Todo's")
     // set width of progress bar
     $(progressBarElm).css({
         "width": completePercentage,
@@ -226,14 +226,14 @@ const updateFullTodoUi = () => {
         $(progressBarElm).removeClass('todo_progress_bar_complete')
 
     }
-    // update local storage with usersTodos
-    saveToLocalStorage(TF_TODOS, usersTodos)
+    // update local storage with global_app_data.e_todos
+    saveToLocalStorage()
 }
 
 // when a todo gets checked or unchecked
 const todoCheckHandler = (todoId) => {
-    let currentList = returnCurrentList();
-    let todoToUpdate = currentList.todos.find(t => t.id === todoId);
+    let currList = returncurrList();
+    let todoToUpdate = currList.todos.find(t => t.id === todoId);
 
     if (todoToUpdate) {
         // Toggle the checked status
@@ -243,21 +243,20 @@ const todoCheckHandler = (todoId) => {
         updateTodoCheckedStateUI(todoId, todoToUpdate.checked);
         //update the list as well if the hide complete is active
         updateFullTodoUi()
-        // Save updated current list to usersTodos
-        updateUsersTodos(currentList);
+        // Save updated current list to global_app_data.e_todos
+        updateUsersTodos(currList);
     }
 };
 
-// load in the usersTodos
+// load in the global_app_data.e_todos
 const loadUsersTodos = () => {
-
-    if (usersTodos.length >= 1) {
+    if (global_app_data.e_todos.length >= 1) {
         // hide the start of todo list if none
         showTodoListArea(true)
 
         // Load the current list todos and sort them
-        let currentList = returnCurrentList();
-        let sortedList = currentList.todos.sort((a, b) => {
+        let currList = returncurrList();
+        let sortedList = currList.todos.sort((a, b) => {
             // First, sort by checked state (unchecked first)
             if (a.checked !== b.checked) {
                 return a.checked ? -1 : 1;
@@ -281,13 +280,13 @@ const loadUsersTodos = () => {
 };
 
 const deleteTodo = (todoId) => {
-    // delete from usersTodos
-    let currentList = returnCurrentList();
-    let updatedList = currentList.todos.filter(t => t.id !== todoId);
+    // delete from global_app_data.e_todos
+    let currList = returncurrList();
+    let updatedList = currList.todos.filter(t => t.id !== todoId);
 
-    currentList.todos = updatedList
+    currList.todos = updatedList
     // update data
-    updateUsersTodos(currentList);
+    updateUsersTodos(currList);
     // console.log(updatedList)
     // transition out from UI
     const todoItemToDelete = $(`.todo_item[data-todoid="${todoId}"]`);
@@ -300,11 +299,12 @@ const deleteTodo = (todoId) => {
     });
     updateFullTodoUi()
 };
+
 // update active list styles
 const setActiveStylesToList = () => {
     let listItemArr = Array.from($('.todo_list_item'))
     listItemArr.forEach(i => {
-        let c = returnCurrentList()
+        let c = returncurrList()
         // console.log('List item id: ', $(i).data("listid"))
         // console.log('Current List Item: ', c)
         if (c.id !== $(i).data("listid")) {
@@ -315,23 +315,27 @@ const setActiveStylesToList = () => {
         }
     })
 }
+// need to readjust this function
 const saveLastActiveList = () => {
     let lastActiveList = ''
-    let currentList = returnCurrentList()
-    lastActiveList = currentList.id
+    let currList = returncurrList()
+    lastActiveList = currList.id
     // save that to local storage
-    saveToLocalStorage("TF_TODOS_LAL", lastActiveList)
+    global_app_data.e_todos_lal = lastActiveList
+    saveToLocalStorage()
 }
+
 const getLastActiveList = () => {
-    return JSON.parse(localStorage.getItem("TF_TODOS_LAL"))
+    // get the saved id
+    global_app_data.e_todos_lal
 }
 
 // change active list
 const changeList = (listId) => {
-    // usersTodos data change the current active list to false
+    // global_app_data.e_todos data change the current active list to false
     saveLastActiveList()
     // assign new todo list active to true
-    usersTodos.forEach(l => {
+    global_app_data.e_todos.forEach(l => {
         if (l.id === listId) {
             // set active
             l.active = true
@@ -340,8 +344,8 @@ const changeList = (listId) => {
         }
     })
     // save to local storage
-    saveToLocalStorage(TF_TODOS, usersTodos)
-    // usersTodos.
+    saveToLocalStorage()
+    // global_app_data.e_todos.
     setActiveStylesToList()
     // update UI
     updateFullTodoUi()
@@ -351,26 +355,25 @@ const changeList = (listId) => {
 
 // save list name
 const saveListName = (listName, listId) => {
-    // update usersTodos
-    usersTodos.forEach(l => {
+    // update global_app_data.e_todos
+    global_app_data.e_todos.forEach(l => {
         if (l.id === listId) {
             l.name = listName
         }
 
     })
     // save to db
-    saveToLocalStorage(TF_TODOS, usersTodos)
+    saveToLocalStorage()
     // update UI
     updateFullTodoUi()
 }
 
 // delete todo lists
 const deleteTodoList = (listId) => {
-    // remove list from usersTodos
+    // remove list from global_app_data.e_todos
     // set new active list if deleting current active one
-    console.log("Before delete: ", usersTodos)
     let deletingActiveList = false;
-    usersTodos.forEach(l => {
+    global_app_data.e_todos.forEach(l => {
         // console.log(l)
         if (l.id === listId && l.active) {
             l.active = false
@@ -381,13 +384,13 @@ const deleteTodoList = (listId) => {
 
 
 
-    let updatedUserTodos = usersTodos.filter(l => l.id !== listId);
-    usersTodos = updatedUserTodos
+    let updatedUserTodos = global_app_data.e_todos.filter(l => l.id !== listId);
+    global_app_data.e_todos = updatedUserTodos
 
     if (deletingActiveList) {
         let lastActiveList = getLastActiveList()
         console.log("Deleting currently active so we need to set list to last active: " + lastActiveList)
-        usersTodos.forEach(l => {
+        global_app_data.e_todos.forEach(l => {
             if (l.id === lastActiveList) {
                 console.log("Yes found last active list")
                 l.active = true
@@ -395,13 +398,13 @@ const deleteTodoList = (listId) => {
         })
     }
 
-    console.log("After delete: ", usersTodos)
+    console.log("After delete: ", global_app_data.e_todos)
     // save to local storage
-    saveToLocalStorage(TF_TODOS, updatedUserTodos)
-    if (usersTodos.length >= 1) {
+    saveToLocalStorage()
+    if (global_app_data.e_todos.length >= 1) {
 
         // // update UI
-        // // usersTodos.
+        // // global_app_data.e_todos.
         setActiveStylesToList()
         // // update UI
         updateFullTodoUi()
@@ -444,7 +447,7 @@ const importJsonListData = (data) => {
     // take file contents
     // add json object to todolist array
     console.log(data)
-    let foundList = usersTodos.some(l => {
+    let foundList = global_app_data.e_todos.some(l => {
         return l.id === data.id
     })
 
@@ -454,12 +457,13 @@ const importJsonListData = (data) => {
         return
     } else {
         data.active = false
-        usersTodos.unshift(data)
+        global_app_data.e_todos.push(data)
+        // add scroll function to top of list
         sendNotification('fast', 3000, `${data.name} list has been added!`)
     }
-    console.log(usersTodos)
+    console.log(global_app_data.e_todos)
     // save to local
-    saveToLocalStorage(TF_TODOS, usersTodos)
+    saveToLocalStorage()
     // rerender list
     updateFullTodoUi()
     // clear file input
@@ -473,8 +477,8 @@ const importJsonListData = (data) => {
 // document on load
 $(function () {
     // on load see if current list is hiding or showing completed
-    let currentList = returnCurrentList()
-    if (currentList) {
+    let currList = returncurrList()
+    if (currList) {
         // load in the todos on load
         loadUsersTodos()
         updateFullTodoUi()
@@ -488,7 +492,7 @@ $(function () {
             // eventually add a load function that hides this if theres already a list item
             showTodoListArea(true)
             // save list data
-            saveToLocalStorage(TF_TODOS, usersTodos)
+            saveToLocalStorage()
         } else {
             sendNotification('fast', 3000, 'Please enter a list name')
         }
@@ -530,7 +534,6 @@ $(function () {
         if (keycode == 13 && !event.shiftKey) {
             // Prevent default behavior if Enter is pressed without Shift
             event.preventDefault();
-            console.log($(this).val())
             createTodoAction($(this).val())
         }
     });
@@ -559,7 +562,7 @@ $(function () {
             $(addNewListInputElm).val('')
             showOrHideAddNewTodoListForm(false)
             // setActiveStylesToList()
-            // console.log(usersTodos)
+            // console.log(global_app_data.e_todos)
         } else {
             sendNotification('fast', 3000, 'Please enter a list name')
         }
@@ -586,15 +589,15 @@ $(function () {
                 console.log($(this).val());
 
                 // Now save the value to the current todo
-                let currentList = returnCurrentList();
+                let currList = returncurrList();
 
-                currentList.todos.forEach(t => {
+                currList.todos.forEach(t => {
                     if (t.id === clickedTodoTextId) {
                         t.todo = $(this).val();
                     }
                 });
 
-                updateUsersTodos(currentList);
+                updateUsersTodos(currList);
                 loadUsersTodos()
                 // Perform any other action you need with the entered value
 
@@ -645,8 +648,8 @@ $(function () {
         // set state
         dueDateConfig.currentlySelectedTodo = todoId
         // load in current date if has one
-        let currentList = returnCurrentList()
-        let currentTodo = currentList.todos.filter(t => t.id === todoId)
+        let currList = returncurrList()
+        let currentTodo = currList.todos.filter(t => t.id === todoId)
         if (currentTodo[0].dueDate !== "") {
             $('.chosen_due_date').text(`Current Due date: ${formatDate(currentTodo[0].dueDate)}`)
             // set value of input
@@ -670,16 +673,15 @@ $(function () {
 
     $(saveDueDateBtn).on("click", e => {
         e.preventDefault()
-        let currentList = returnCurrentList()
+        let currList = returncurrList()
         console.log(dueDateConfig)
-        currentList.todos.forEach(t => {
+        currList.todos.forEach(t => {
             if (t.id === dueDateConfig.currentlySelectedTodo) {
                 t.dueDate = dueDateConfig.newDueDate
             }
         })
         // update the users todos
-        updateUsersTodos(currentList);
-        console.log(usersTodos)
+        updateUsersTodos(currList);
         // close modal
         openDueDateModal(false)
         // update UI
@@ -714,12 +716,12 @@ $(function () {
     // handle hide completed tasks button
     $(hideCompleteTodosBtn).on('click', (e) => {
         // console.log('hide complete!')
-        let currentList = returnCurrentList()
-        if (currentList.todos.length === 0) {
+        let currList = returncurrList()
+        if (currList.todos.length === 0) {
             sendNotification("fast", 3000, "There are no completed todo's")
         } else {
             let completedTodos = false
-            currentList.todos.filter(t => {
+            currList.todos.filter(t => {
                 if (t.checked) {
                     completedTodos = true
                 }
@@ -754,8 +756,8 @@ $(function () {
     // when list title gets clicked
     $(todoListTitle).on('click', e => {
         // set input value
-        let currentList = returnCurrentList()
-        $(changeListTitleInput).val(currentList.name)
+        let currList = returncurrList()
+        $(changeListTitleInput).val(currList.name)
         // hide the title and show the input
         $(todoListTitle).hide()
         $(changeListTitleInput).show();
@@ -783,7 +785,7 @@ $(function () {
     $(".download_todo_list_btn").on('click', e => {
         console.log($(e.target))
         let listId = $(e.target).data('listid')
-        let foundList = usersTodos.find(l => l.id === listId)
+        let foundList = global_app_data.e_todos.find(l => l.id === listId)
         createJsonExport(foundList)
 
     })
@@ -818,11 +820,6 @@ $(function () {
             // Read the file as text
             reader.readAsText(file);
         }
-
     });
-
-
-
-
     // end of doc ready
 })

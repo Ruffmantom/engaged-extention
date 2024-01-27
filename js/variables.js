@@ -10,6 +10,7 @@ let global_app_default_data = {
     e_password: "",
     e_notes: [],
     e_todos: [],
+    e_todos_lal:"",
     e_note_stage: "",
     stagingDefault: {
         editing: false,
@@ -90,6 +91,7 @@ const deleteNoteBtn = $('.delete_btn')
 let isLoading = false;
 // *************** PASSWORD GENERATOR VARIABLES **************************
 const generatePassBtn = $("#generate_password_btn");
+const clearPassOutputBtn = $("#clear_output_btn");
 const passwordLength = $("#pass_char_num");
 const passwordOutput = $("#password_output");
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";

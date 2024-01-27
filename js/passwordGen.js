@@ -39,6 +39,15 @@ $(() => {
 
     // copy function
     $(passwordOutput).on("click", (e) => {
+        e.preventDefault()
         copyFunction("#password_output")
     });
+    // clear output
+    $(clearPassOutputBtn).on("click",(e)=>{
+        e.preventDefault()
+        $(passwordOutput).val('')
+        // clear local
+        global_app_data.e_password = ""
+        saveToLocalStorage()
+    })
 })
