@@ -353,7 +353,7 @@ const changeList = (listId) => {
     loadUsersTodos()
 }
 
-// save list name
+// update list name
 const saveListName = (listName, listId) => {
     // update global_app_data.e_todos
     global_app_data.e_todos.forEach(l => {
@@ -389,26 +389,36 @@ const deleteTodoList = (listId) => {
 
     if (deletingActiveList) {
         let lastActiveList = getLastActiveList()
-        console.log("Deleting currently active so we need to set list to last active: " + lastActiveList)
-        global_app_data.e_todos.forEach(l => {
-            if (l.id === lastActiveList) {
-                console.log("Yes found last active list")
-                l.active = true
+        if(lastActiveList !== ""){
+            global_app_data.e_todos.forEach(l => {
+                if (l.id === lastActiveList) {
+                    console.log("Yes found last active list")
+                    l.active = true
+                }
+            })
+        }else{
+            // default to first list in array
+            if(global_app_data.e_todos.length >= 1){
+                
+                // set all to false if more than one list
+                global_app_data.e_todos.forEach(l=>{
+                    l.active = false
+                })
+                // set the first to true
+                global_app_data.e_todos[0].active = true
             }
-        })
+        }
     }
 
     console.log("After delete: ", global_app_data.e_todos)
     // save to local storage
     saveToLocalStorage()
     if (global_app_data.e_todos.length >= 1) {
-
-        // // update UI
-        // // global_app_data.e_todos.
+        // update UI
         setActiveStylesToList()
-        // // update UI
+        // update UI
         updateFullTodoUi()
-        // // load todos
+        // load todos
         loadUsersTodos()
     } else {
         // hide container and show start of new list

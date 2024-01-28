@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Stay Engaged",
   "version": "1.0.0",
-  "description": "This extension keeps you focused and engaged at work. No need to keep switching web pages. Keep all your tasks in one place.",
+  "description": "This extension keeps you focused and engaged at work. No need to keep switching tabs. Keep all your tools in one place.",
   "action": {
     "default_title": "Stay Engaged",
     "default_popup": "index.html"
@@ -30,6 +30,14 @@
         "./js/passwordGen.js",
         "./js/todos.js"
       ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "./assets/fonts/*"
+      ],
+      "matches": ["http://localhost/*"]
     }
   ]
 }

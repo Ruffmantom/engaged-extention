@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engage</title>
+    <title>Stay Engaged</title>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/theme.css">
     <script src="./js/libraries/jquery.js"></script>
@@ -138,8 +138,6 @@
         </div>
     </div>
 
-
-
     <div class="engage_app_container">
 
         <!-- new navigation sidebar -->
@@ -205,6 +203,17 @@
 
                     </div>
                 </div>
+                <!-- Nav Button: Color Pallet -->
+                <div class="setting_btn menu_item_cont">
+                    
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <svg id="color_pallet_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.04 164.84"><defs></defs><g id="Layer_1-2"><path class="cls-1" d="M121.71,142.67c-5.59,0-11.04-.65-16.26-1.87-9.59,6.95-21.38,11.04-34.11,11.04-32.17,0-58.34-26.17-58.34-58.34,0-28.13,20.02-51.67,46.55-57.13,2.91-5.16,6.45-9.93,10.51-14.19C31.32,22.87,0,54.6,0,93.5s32.01,71.34,71.34,71.34c20.3,0,38.65-8.52,51.65-22.18-.43.01-.85.01-1.28.01Z"/><path class="cls-1" d="M129.67,93.5c0,19.44-9.56,36.7-24.22,47.3-31.53-7.38-55.08-35.72-55.08-69.46,0-12.7,3.33-24.63,9.18-34.97,3.81-.79,7.75-1.2,11.79-1.2,32.17,0,58.33,26.17,58.33,58.33Z"/><path class="cls-1" d="M193.04,71.34c0,38.9-31.31,70.63-70.05,71.32,12.19-12.8,19.68-30.12,19.68-49.16,0-39.33-32-71.33-71.33-71.33-.43,0-.85,0-1.28.01C83.07,8.52,101.41,0,121.71,0c39.33,0,71.33,32.01,71.33,71.34Z"/></g></svg>
+
+                    <p class="hover_helper">Color Pallet</p>
+                    <div class="tab_nav_button" data-tab="four">
+
+                    </div>
+                </div>
             </div>
 
             <div class="lower_menu">
@@ -267,7 +276,7 @@
         <!-- Tab: one -->
         <!-- TODO -->
         <div class="tab" data-tab="one">
-            <h1>Todo's</h1>
+            <h1 class="eng_tab_heading">Todo's</h1>
             <div class="tf_todo_tab_cont">
                 <!-- this is the start when a user has no list -->
                 <div class="todo_start_cont">
@@ -300,7 +309,7 @@
                                     </g>
                                 </svg>
 
-                                <p class="hover_helper">Todo Lists</p>
+                                <p class="hover_helper">My Lists</p>
                                 <div class="todo_list_nav_button">
 
                                 </div>
@@ -408,7 +417,7 @@
 
         <!-- Tab: two -->
         <div class="tab" data-tab="two">
-            <h1>Notes</h1>
+            <h1 class="eng_tab_heading">Notes</h1>
             <div class="tf_control_group bottom_input_group">
                 <div class="note_upper_form">
                     <div class="note_container">
@@ -426,9 +435,9 @@
         </div>
 
         <!-- Tab: three -->
-        <!-- TODO -->
+        <!-- password generator -->
         <div class="tab tf_control_group" data-tab="three">
-            <h1>Password Generator</h1>
+            <h1 class="eng_tab_heading">Password Generator</h1>
             <p>Password Length</p>
             <div class="tf_control_group bottom_input_group">
                 <input class="tf_input" name="input" type="number" id="pass_char_num" placeholder='Password Length...'>
@@ -441,6 +450,14 @@
 
             <button type="button" class="tf_btn main_btn" id="generate_password_btn">Generate Password</button>
             <button type="button" class="tf_btn main_btn" id="clear_output_btn">Clear Output</button>
+        </div>
+
+
+        <!-- Tab: four -->
+        <!-- password generator -->
+        <div class="tab tf_control_group" data-tab="four">
+            <h1 class="eng_tab_heading">Color Pallet</h1>
+            <p>Coming Soon...</p>
         </div>
 
 
