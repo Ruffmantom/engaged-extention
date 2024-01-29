@@ -8,15 +8,21 @@ let global_app_default_data = {
     e_tab: 'one',
     e_pass_length: 5,
     e_password: "",
+    e_pass_settings: {
+        inc_readable: false,
+        inc_numbers: true,
+        inc_uppercase: true,
+        inc_special: true,
+    },
     e_notes: [],
     e_todos: [],
-    e_todos_lal:"",
+    e_todos_lal: "",
     e_note_stage: "",
     stagingDefault: {
         editing: false,
         text: ''
     },
-    e_settings:{
+    e_settings: {
         // put settings here
     }
 }
@@ -94,6 +100,13 @@ const generatePassBtn = $("#generate_password_btn");
 const clearPassOutputBtn = $("#clear_output_btn");
 const passwordLength = $("#pass_char_num");
 const passwordOutput = $("#password_output");
-var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$)(-_";
+const pass_gen_setting_readable = $("#pass_gen_setting_readable")
+const pass_gen_setting_specials = $("#pass_gen_setting_specials")
+const pass_gen_setting_upper = $("#pass_gen_setting_upper")
+const pass_gen_setting_nums = $("#pass_gen_setting_nums")
+var chars = "abcdefghijklmnopqrstuvwxyz";
+var upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var numChars = "1234567890"
+var specialChars = "!$)(-_@*"
 // *************** OTHER VARIABLES **************************
 const loader = $(".loader_container");

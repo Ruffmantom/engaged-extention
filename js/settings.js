@@ -31,13 +31,7 @@ $(() => {
 
     $(clearAllSettingsBtn).on('click', (e) => {
         e.preventDefault()
-        localStorage.removeItem("DATA_NAME")
-        localStorage.removeItem("TF_SETTINGS")
-        localStorage.removeItem("TF_NOTES")
-        localStorage.removeItem("TF_N_S")
-        localStorage.removeItem("TF_TODOS")
-        localStorage.removeItem("TF_DATA")
-        localStorage.removeItem("TF_PO_DATA")
+        localStorage.removeItem("engage_app_data")
         location.reload();
     })
 

@@ -67,7 +67,9 @@ input[type=number]::-webkit-outer-spin-button {
 .width_inherit {
     width: 100% !important;
 }
-
+.e_cursor_p{
+    cursor: pointer;
+}
 .text_formatter {
     background-color: var(--eng-bg-color);
     position: relative;
