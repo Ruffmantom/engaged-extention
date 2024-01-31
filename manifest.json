@@ -21,9 +21,11 @@
       ],
       "js": [
         "./js/libraries/jquery.js",
+        "./js/libraries/wordList.js",
         "./app.js",
+        "./js/variables.js",
         "./js/settings.js",
-        "./js/script.js",
+        "./js/menu.js",
         "./js/theme.js",
         "./js/notes.js",
         "./js/createHtml.js",
