@@ -239,6 +239,7 @@ const loadPasswordSettings = () => {
     global_app_data.e_pass_settings.inc_uppercase ? $(pass_gen_setting_upper).attr({ "checked": true }) : $(pass_gen_setting_upper).attr({ "checked": false })
     global_app_data.e_pass_settings.inc_special ? $(pass_gen_setting_specials).attr({ "checked": true }) : $(pass_gen_setting_specials).attr({ "checked": false })
 }
+
 // load password generator function
 const loadPasswordGenerator = () => {
     //load in default password length

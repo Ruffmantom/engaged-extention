@@ -123,7 +123,6 @@ const updateUsersTodos = (updatedList) => {
         console.error(`Item with id ${updatedList.id} not found in global_app_data.e_todos.`);
         updatedUI = false
     }
-    // console.log("Updated updateUsersTodos: " + updated)
 }
 
 // handle checking the todo on the UI
@@ -327,7 +326,7 @@ const saveLastActiveList = () => {
 
 const getLastActiveList = () => {
     // get the saved id
-    global_app_data.e_todos_lal
+    return global_app_data.e_todos_lal
 }
 
 // change active list
@@ -380,50 +379,52 @@ const deleteTodoList = (listId) => {
             deletingActiveList = true
         }
     })
-    console.log('Deleting active list? ' + deletingActiveList)
-
-
-
+    
+    
+    
     let updatedUserTodos = global_app_data.e_todos.filter(l => l.id !== listId);
     global_app_data.e_todos = updatedUserTodos
-
+    
     if (deletingActiveList) {
+        console.log('Deleting active list? ' + deletingActiveList)
         let lastActiveList = getLastActiveList()
-        if(lastActiveList !== ""){
+        if (lastActiveList === "") {
+            // default to first list in array
+            if (global_app_data.e_todos.length >= 1) {
+                // set all to false if more than one list
+                // global_app_data.e_todos.forEach(l => {
+                //     l.active = false
+                // })
+                // set the first to true
+                console.log("about to set the first index to active!")
+                global_app_data.e_todos[0].active = true
+            }
+        } else {
+
             global_app_data.e_todos.forEach(l => {
                 if (l.id === lastActiveList) {
                     console.log("Yes found last active list")
                     l.active = true
                 }
             })
-        }else{
-            // default to first list in array
-            if(global_app_data.e_todos.length >= 1){
-                
-                // set all to false if more than one list
-                global_app_data.e_todos.forEach(l=>{
-                    l.active = false
-                })
-                // set the first to true
-                global_app_data.e_todos[0].active = true
-            }
         }
     }
 
     console.log("After delete: ", global_app_data.e_todos)
     // save to local storage
     saveToLocalStorage()
-    if (global_app_data.e_todos.length >= 1) {
+
+    if (global_app_data.e_todos.length <= 0) {
+        // hide container and show start of new list
+        // hide the start of todo list if none
+        showTodoListArea(false)
+    } else {
         // update UI
         setActiveStylesToList()
         // update UI
         updateFullTodoUi()
         // load todos
         loadUsersTodos()
-    } else {
-        // hide container and show start of new list
-        // hide the start of todo list if none
-        showTodoListArea(false)
     }
 }
 
@@ -467,7 +468,7 @@ const importJsonListData = (data) => {
         return
     } else {
         data.active = false
-        global_app_data.e_todos.push(data)
+        global_app_data.e_todos.unshift(data)
         // add scroll function to top of list
         sendNotification('fast', 3000, `${data.name} list has been added!`)
     }
@@ -476,6 +477,8 @@ const importJsonListData = (data) => {
     saveToLocalStorage()
     // rerender list
     updateFullTodoUi()
+    // scroll to top of list container
+    $(".todo_list_item_cont").animate({ scrollTop: 0 }, 'slow');
     // clear file input
     $("#todo_list_import").val('');
 
@@ -791,14 +794,14 @@ $(function () {
 
 
     // export todo list
+    // todo_list_menu parent elm
     // on click export btn
-    $(".download_todo_list_btn").on('click', e => {
-        console.log($(e.target))
-        let listId = $(e.target).data('listid')
-        let foundList = global_app_data.e_todos.find(l => l.id === listId)
-        createJsonExport(foundList)
 
-    })
+    $(".todo_list_menu").on('click', '.download_todo_list_btn', function (e) {
+        let listId = $(e.target).data('listid');
+        let foundList = global_app_data.e_todos.find(l => l.id === listId);
+        createJsonExport(foundList);
+    });
     // import functionality
     $("#import_todo_list_btn").click(function () {
         // Trigger a click on the hidden file input
