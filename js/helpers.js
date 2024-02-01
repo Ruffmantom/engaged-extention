@@ -69,9 +69,9 @@ function findAndReplaceLinks(text) {
 
 
 // copy function
-const copyFunction = ( element) => {
+const copyFunction = (element) => {
     if ($(element).val() !== "") {
-        console.log('copy value: '+ $(element).val())
+        console.log('copy value: ' + $(element).val())
         $(element).select();
         document.execCommand("copy");
         sendNotification('', 5000, 'Copied!')
@@ -91,4 +91,29 @@ const removeClass = (elmArr, className) => {
     elmArr.forEach(elm => {
         $(elm).removeClass(className)
     })
+}
+
+// see if a color is light or dark
+function isColorLight(hex) {
+    // Convert hex to RGB
+    const red = parseInt(hex.slice(1, 3), 16);
+    const green = parseInt(hex.slice(3, 5), 16);
+    const blue = parseInt(hex.slice(5, 7), 16);
+
+    // Calculate luminance
+    const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+
+    // Normalized against 255
+    const normalizedLuminance = luminance / 255;
+
+    // Determine if the color is light or dark
+    return normalizedLuminance > 0.5;
+}
+
+// return name without hash
+const returnColorName = (hex)=>{
+    if(hex !== "" || hex !== null){
+        let a = hex.split('#')
+        return a[1]
+    }
 }
