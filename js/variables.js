@@ -24,7 +24,10 @@ let global_app_default_data = {
     },
     e_settings: {
         // put settings here
-    }
+    },
+    e_color_pallet:[],
+    e_color_pallet_history:[],
+    e_color_pallet_limit: 7
 }
 
 // create ID
@@ -110,3 +113,17 @@ var numChars = "1234567890"
 var specialChars = "!$)(-_@*"
 // *************** OTHER VARIABLES **************************
 const loader = $(".loader_container");
+// *************** Color Pallet VARIABLES **************************
+const color_pallet_item_setting_btn = $(".color_pallet_item_setting_btn")
+const e_color_pallet_cont = $(".e_color_pallet_cont")
+const generate_colors_btn = $("#generate_colors_btn")
+const e_color_pallet_css_output = $("#e_color_pallet_css_output")
+const e_color_pallet_hex_output = $("#e_color_pallet_hex_output")
+const copy_color_hidden_input = $("#copy_color_hidden_input")
+const color_pallet_download_btn = $(".color_pallet_download_btn")
+const e_pallet_download_drop_down_cont = $(".e_pallet_download_drop_down_cont")
+const e_pallet_download_svg_btn = $("#e_pallet_download_svg_btn")
+const e_pallet_download_png_btn = $("#e_pallet_download_png_btn")
+// const e_pallet_download_pdf_btn = $("#e_pallet_download_pdf_btn")
+// global values
+let downloadPalletMenuOpen = false;

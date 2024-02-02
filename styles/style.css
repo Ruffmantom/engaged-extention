@@ -26,7 +26,7 @@
     --eng-text-color: #303030;
     --eng-input-bkg: #f7f7f7;
     --eng-form-block-bkg: #d4d4d4;
-    --eng-add-color-btn-bkg:#ffffff97;
+    --eng-add-color-btn-bkg: #ffffff97;
 }
 
 :root:has(#dark_mode:checked) {
@@ -38,7 +38,7 @@
     --eng-text-color: #e4e4e4;
     --eng-input-bkg: #444444;
     --eng-form-block-bkg: #272727;
-    --eng-add-color-btn-bkg:#414141b4;
+    --eng-add-color-btn-bkg: #414141b4;
 }
 
 a,
@@ -1635,10 +1635,16 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 5px;
+    position: relative;
+}
+
+.e_color_pallet_heading>p {
+    margin: 0;
 }
 
 .e_color_pallet_cont {
-    height: 270px;
+    height: 250px;
     width: 100%;
     border-radius: 7px;
     overflow: hidden;
@@ -1718,7 +1724,8 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: var(--eng-modal-bg-color);
     cursor: pointer;
 }
-.color_pallet_item_add_btn_cont{
+
+.color_pallet_item_add_btn_cont {
     background-color: var(--eng-add-color-btn-bkg);
     cursor: pointer;
 }
@@ -1773,6 +1780,7 @@ svg.dark {
 .add_color_item_cont.left {
     left: -20px;
 }
+
 .add_color_item_cont.right {
     left: initial;
     right: -20px;
@@ -1786,4 +1794,77 @@ svg.dark {
 .add_color_item_cont:hover>.color_pallet_item_add_btn_cont {
     opacity: 1;
     transition: all 100ms ease-in;
+}
+
+.color_pallet_item_add_btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.e_color_pallet_settings_cont {
+    padding-top: 15px;
+}
+
+.e_color_pallet_output_text {
+    margin: 0 0 5px 0;
+}
+
+#copy_color_hidden_input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+}
+
+.e_pallet_download_drop_down_cont {
+    position: absolute;
+    z-index: 9;
+    right: 0px;
+    bottom: -125px;
+    padding: 7px;
+    border-radius: 7px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--eng-modal-bg-color);
+    backdrop-filter: var(--eng-blur);
+}
+
+.e_pallet_download_drop_down_cont {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 100ms ease-out;
+}
+
+.e_pallet_download_drop_down_cont.active {
+    z-index: 90;
+    opacity: 1;
+    transition: opacity 100ms ease-in;
+}
+
+
+.e_pallet_downlad_drop_down_text {
+    margin: 0 0 5px 0;
+}
+
+.e_pallet_download_button {
+    padding: 5px 0;
+    background-color: var(--eng-primary);
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    color: white;
+}
+
+.e_pallet_download_button:hover {
+    background-color: var(--eng-secondary);
+}
+
+.e_pallet_download_button:not(:last-child) {
+    margin-bottom: 5px;
 }

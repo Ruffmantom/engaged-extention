@@ -83,6 +83,7 @@ const createTodoAction = (todoVal) => {
         sendNotification('fast', 3000, 'Please enter a todo')
     }
 }
+
 // show or hide create list form
 const showOrHideAddNewTodoListForm = (show) => {
     if (show) {

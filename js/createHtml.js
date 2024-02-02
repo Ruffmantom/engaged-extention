@@ -198,20 +198,20 @@ const createPageOptionRow = (po) => {
 }
 
 
-const createColorPalletItem = (colorData, index, colorArrLength) => {
-    console.log("color index: " + index + " Data length: " + colorArrLength)
+const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
+    console.log("color index: " + index + " Data length: " + colorArrLength + " Data limit: " + limit)
     let isLight = isColorLight(colorData.color)
-let colorName = returnColorName(colorData.color)
+    let colorName = returnColorName(colorData.color)
 
     return `
     
     <div class="e_color_pallet_item" style="background-color: ${colorData.color};">
                     <div class="e_color_pallet_item_overlay">
-                        <p class="e_color_pallet_item_text ${isLight ? "dark":"light"}">${colorName}</p>
+                        <p class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorName}</p>
                         <div class="e_color_pallet_item_settings_cont">
                             <!-- copy button -->
                             <div class="color_pallet_item_setting_btn_cont">
-                                <svg class="${isLight ? "dark":"light"}" xmlns="http://www.w3.org/2000/svg"
+                                <svg class="${isLight ? "dark" : "light"}" xmlns="http://www.w3.org/2000/svg"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" width="15" height="15"
                                     viewBox="0 0 15 15">
                                     <defs>
@@ -230,47 +230,47 @@ let colorName = returnColorName(colorData.color)
                                     </g>
                                 </svg>
 
-                                <div class="color_pallet_item_setting_btn" data-btntype="copy"></div>
+                                <div class="color_pallet_item_setting_btn" data-btntype="copy" data-colorid="${colorData.id}"></div>
                             </div>
                             <!-- lock button -->
                             <div class="color_pallet_item_setting_btn_cont">
                                 <!-- locked icon -->
-                                <svg class="lock_icon ${isLight ? "dark":"light"}" xmlns="http://www.w3.org/2000/svg" width="12.25"
+                                <svg class="lock_icon ${colorData.isLocked ? "active" : ""} ${isLight ? "dark" : "light"}" xmlns="http://www.w3.org/2000/svg" width="12.25"
                                     height="14" viewBox="0 0 12.25 14">
                                     <path id="Icon_awesome-lock" data-name="Icon awesome-lock"
                                         d="M10.938,6.125h-.656V4.156a4.156,4.156,0,1,0-8.312,0V6.125H1.313A1.313,1.313,0,0,0,0,7.438v5.25A1.313,1.313,0,0,0,1.313,14h9.625a1.313,1.313,0,0,0,1.312-1.312V7.438A1.313,1.313,0,0,0,10.938,6.125Zm-2.844,0H4.156V4.156a1.969,1.969,0,1,1,3.937,0Z" />
                                 </svg>
                                 <!-- unlocked icon -->
-                                <svg class="unlocked_lock_icon active ${isLight ? "dark":"light"}" xmlns="http://www.w3.org/2000/svg"
+                                <svg class="unlocked_lock_icon ${colorData.isLocked ? "" : "active"} ${isLight ? "dark" : "light"}" xmlns="http://www.w3.org/2000/svg"
                                     width="14" height="12.444" viewBox="0 0 14 12.444">
                                     <path id="Icon_awesome-lock-open" data-name="Icon awesome-lock-open"
                                         d="M10.293,0A3.718,3.718,0,0,0,6.611,3.731V5.444H1.167A1.167,1.167,0,0,0,0,6.611v4.667a1.167,1.167,0,0,0,1.167,1.167H9.722a1.167,1.167,0,0,0,1.167-1.167V6.611A1.167,1.167,0,0,0,9.722,5.444H8.556V3.716a1.75,1.75,0,1,1,3.5-.022V5.639a.582.582,0,0,0,.583.583h.778A.582.582,0,0,0,14,5.639V3.694A3.7,3.7,0,0,0,10.293,0Z" />
                                 </svg>
 
-                                <div class="color_pallet_item_setting_btn" data-btntype="lock"></div>
+                                <div class="color_pallet_item_setting_btn" data-btntype="lock" data-colorid="${colorData.id}"></div>
                             </div>
                             <!-- remove color button -->
-                            <div class="color_pallet_item_setting_btn_cont">
-                                <svg class="remove_color_icon ${isLight ? "dark":"light"}" data-name="Group 129"
-                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    width="11.915" height="14" viewBox="0 0 11.915 14">
-                                    <defs>
-                                        <clipPath id="clip-path">
-                                            <rect id="Rectangle_23" data-name="Rectangle 23" width="11.915"
-                                                height="14" />
-                                        </clipPath>
-                                    </defs>
-                                    <g id="Group_23" data-name="Group 23" clip-path="url(#clip-path)">
-                                        <path id="Path_16" data-name="Path 16"
-                                            d="M.6,12.66A1.508,1.508,0,0,0,2.2,14H9.711a1.508,1.508,0,0,0,1.609-1.34v-7.6H.6ZM2.621,6.553h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H2.621a.538.538,0,0,1-.536-.536V7.089a.538.538,0,0,1,.536-.536m2.979,0h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H5.6a.538.538,0,0,1-.536-.536V7.089A.538.538,0,0,1,5.6,6.553m2.979,0h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H8.579a.538.538,0,0,1-.536-.536V7.089a.538.538,0,0,1,.536-.536M1.191,2.383A1.191,1.191,0,0,0,0,3.574v.894H11.915V3.574a1.191,1.191,0,0,0-1.191-1.191H8.936V1.072A1.071,1.071,0,0,0,7.864,0H4.051A1.071,1.071,0,0,0,2.979,1.072V2.383Zm6.553,0H4.17V1.728a.538.538,0,0,1,.536-.536h2.5a.538.538,0,0,1,.536.536Z"
-                                            fill-rule="evenodd" />
-                                    </g>
-                                </svg>
-                                <div class="color_pallet_item_setting_btn" data-btntype="remove"></div>
-                            </div>
+                            ${colorArrLength <= 3 ? "" : `<div class="color_pallet_item_setting_btn_cont">
+                            <svg class="remove_color_icon ${isLight ? "dark" : "light"}" data-name="Group 129"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                width="11.915" height="14" viewBox="0 0 11.915 14">
+                                <defs>
+                                    <clipPath id="clip-path">
+                                        <rect id="Rectangle_23" data-name="Rectangle 23" width="11.915"
+                                            height="14" />
+                                    </clipPath>
+                                </defs>
+                                <g id="Group_23" data-name="Group 23" clip-path="url(#clip-path)">
+                                    <path id="Path_16" data-name="Path 16"
+                                        d="M.6,12.66A1.508,1.508,0,0,0,2.2,14H9.711a1.508,1.508,0,0,0,1.609-1.34v-7.6H.6ZM2.621,6.553h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H2.621a.538.538,0,0,1-.536-.536V7.089a.538.538,0,0,1,.536-.536m2.979,0h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H5.6a.538.538,0,0,1-.536-.536V7.089A.538.538,0,0,1,5.6,6.553m2.979,0h.715a.538.538,0,0,1,.536.536v4.885a.538.538,0,0,1-.536.536H8.579a.538.538,0,0,1-.536-.536V7.089a.538.538,0,0,1,.536-.536M1.191,2.383A1.191,1.191,0,0,0,0,3.574v.894H11.915V3.574a1.191,1.191,0,0,0-1.191-1.191H8.936V1.072A1.071,1.071,0,0,0,7.864,0H4.051A1.071,1.071,0,0,0,2.979,1.072V2.383Zm6.553,0H4.17V1.728a.538.538,0,0,1,.536-.536h2.5a.538.538,0,0,1,.536.536Z"
+                                        fill-rule="evenodd" />
+                                </g>
+                            </svg>
+                            <div class="color_pallet_item_setting_btn" data-btntype="remove" data-colorid="${colorData.id}"></div>
+                        </div>`}
                         </div>
                     </div>
-                    ${(index === 0) ? "" : `<div class="add_color_item_cont left">
+                    ${(index === 0 || colorArrLength === limit) ? "" : `<div class="add_color_item_cont left">
                     <div class="color_pallet_item_add_btn_cont">
                             <svg class="add_color_icon" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" width="8" height="8" viewBox="0 0 8 8">
@@ -286,12 +286,12 @@ let colorName = returnColorName(colorData.color)
                                 </g>
                             </svg>
 
-                            <div class="color_pallet_item_add_btn" data-btntype="add" data-addcolorindex="${index -1}"></div>
+                            <div class="color_pallet_item_add_btn" data-addcolorindex="${index - 1}"></div>
                         </div>
                     </div>`}
 
                     <!-- add color item button right -->
-                    ${(index + 1) === colorArrLength ? "" : `<div class="add_color_item_cont right">
+                    ${(index + 1) === colorArrLength || colorArrLength === limit ? "" : `<div class="add_color_item_cont right">
                     <div class="color_pallet_item_add_btn_cont">
                         <svg class="add_color_icon" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" width="8" height="8" viewBox="0 0 8 8">
@@ -307,7 +307,7 @@ let colorName = returnColorName(colorData.color)
                             </g>
                         </svg>
 
-                        <div class="color_pallet_item_add_btn" data-btntype="add" data-addcolorindex="${index}"></div>
+                        <div class="color_pallet_item_add_btn" data-addcolorindex="${index}"></div>
                     </div>
                 </div> `}
                     

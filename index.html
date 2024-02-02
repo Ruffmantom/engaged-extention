@@ -517,35 +517,51 @@
                     </svg>
 
                     <p class=" helper_left_side">Download Pallet</p>
-                    <div class="todo_list_nav_button color_pallet_download_btn_cont">
+                    <div class="todo_list_nav_button color_pallet_download_btn">
 
                     </div>
                 </div>
+                <div class="e_pallet_download_drop_down_cont">
+                    <p class="e_pallet_downlad_drop_down_text">Download</p>
+                    <button id="e_pallet_download_svg_btn" class="e_pallet_download_button">SVG</button>
+                    <button id="e_pallet_download_png_btn" class="e_pallet_download_button">PNG</button>
+                    <!-- <button id="e_pallet_download_pdf_btn" class="e_pallet_download_button">PDF</button> need to add jsPDF lib -->
+                </div>
 
 
+                <input type="text" id="copy_color_hidden_input">
             </div>
             <!-- color pallet container -->
             <div class="e_color_pallet_cont">
-                
             </div>
-            <!-- outputs -->
-            <div class="setting_form_row">
-                <div class="setting_form_col">
-                    <p>CSS Output</p>
-                    <div class="textarea_cont tf_control_group bottom_input_group">
-                        <textarea class="tf_input textarea_cont e_cursor_p" readonly name="input" cols="30" rows="3"
-                            id="e_color_pallet_css_output" placeholder='CSS Output...'></textarea>
-                        <div class="helper">Click To Copy</div>
+            <!-- outputs / settings -->
+            <div class="e_color_pallet_settings_cont">
+
+
+                <div class="setting_form_row ">
+                    <div class="setting_form_col">
+                        <button type="button" class="tf_btn main_btn" id="generate_colors_btn">Generate Colors</button>
                     </div>
                 </div>
-                <div class="setting_form_col">
-                    <p>HEX Output</p>
-                    <div class="textarea_cont tf_control_group bottom_input_group">
-                        <textarea class="tf_input textarea_cont e_cursor_p" readonly name="input" cols="30" rows="3"
-                            id="e_color_pallet_hex_output" placeholder='HEX Output...'></textarea>
-                        <div class="helper">Click To Copy</div>
+                <div class="setting_form_row">
+                    <div class="setting_form_col">
+                        <p class="e_color_pallet_output_text">CSS Output</p>
+                        <div class="textarea_cont tf_control_group bottom_input_group">
+                            <textarea class="tf_input textarea_cont e_cursor_p" readonly name="input" cols="30" rows="2"
+                                id="e_color_pallet_css_output" placeholder='CSS Output...'></textarea>
+                            <div class="helper">Click To Copy</div>
+                        </div>
+                    </div>
+                    <div class="setting_form_col">
+                        <p class="e_color_pallet_output_text">HEX Output</p>
+                        <div class="textarea_cont tf_control_group bottom_input_group">
+                            <textarea class="tf_input textarea_cont e_cursor_p" readonly name="input" cols="30" rows="2"
+                                id="e_color_pallet_hex_output" placeholder='HEX Output...'></textarea>
+                            <div class="helper">Click To Copy</div>
+                        </div>
                     </div>
                 </div>
+                <!-- end of color settings -->
             </div>
 
 
