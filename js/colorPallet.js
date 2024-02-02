@@ -100,7 +100,6 @@ const generateSingleColorAtIndex = (addIndex) => {
         // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
         newPallet.addColorAtIndex(newIndex, newColor)
     } else {
-        // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
         newPallet.addColorAtIndex(addIndex, newColor)
     }
     // set active to false

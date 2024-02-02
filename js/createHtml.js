@@ -199,7 +199,7 @@ const createPageOptionRow = (po) => {
 
 
 const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
-    
+
     let isLight = isColorLight(colorData.color)
     let colorName = returnColorName(colorData.color)
 
@@ -270,6 +270,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                         </div>`}
                         </div>
                     </div>
+                    <!-- add color item button left -->
                     ${(index === 0 || colorArrLength === limit) ? "" : `<div class="add_color_item_cont left">
                     <div class="color_pallet_item_add_btn_cont">
                             <svg class="add_color_icon" xmlns="http://www.w3.org/2000/svg"
@@ -286,7 +287,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                                 </g>
                             </svg>
 
-                            <div class="color_pallet_item_add_btn" data-addcolorindex="${index - 1}"></div>
+                            <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index - 1}"></div>
                         </div>
                     </div>`}
 
@@ -307,7 +308,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                             </g>
                         </svg>
 
-                        <div class="color_pallet_item_add_btn" data-addcolorindex="${index}"></div>
+                        <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index + 1}"></div>
                     </div>
                 </div> `}
                     

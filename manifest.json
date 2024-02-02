@@ -24,12 +24,13 @@
         "./js/libraries/wordList.js",
         "./app.js",
         "./js/variables.js",
-        "./js/settings.js",
-        "./js/menu.js",
         "./js/theme.js",
-        "./js/notes.js",
+        "./js/settings.js",
         "./js/createHtml.js",
+        "./js/menu.js",
+        "./js/notes.js",
         "./js/passwordGen.js",
+        "./js/colorPallet.js",
         "./js/todos.js"
       ]
     }
