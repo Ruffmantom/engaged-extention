@@ -1,61 +1,89 @@
-let colorData = []
-var c = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F"
-];
+class ColorPallet {
+    constructor() {
+        this.id = this.makeId();
+        this.colors = [];
+        this.active = true;
+    }
+
+    makeId() {
+        return createId()
+    }
+
+    addColor(color) {
+        this.colors.push(color);
+    }
+
+    addColorAtIndex(colorIndex, newColor) {
+        this.colors.splice(colorIndex, 0, newColor)
+    }
+
+    removeColor(colorId) {
+        this.colors = this.colors.filter(c => c.id !== colorId);
+    }
+
+    replaceColor(colorIndex, newColor) {
+        this.colors.splice(colorIndex, 1, newColor)
+    }
+
+    toggleActive() {
+        this.active = !this.active;
+    }
+
+    replacePallet(pallet) {
+        this.colors = pallet
+    }
+}
+
+const setActivePalletsToFalse = () => {
+    console.log("Setting all active lists to false: ", global_app_data.e_color_pallet)
+    global_app_data.e_color_pallet.forEach(c => {
+        c.active = false
+    })
+}
+
+// return random hex code index
 function returnRandomCodeIndex() {
     var ranIndex = Math.floor(Math.random() * 15) + 1;
     return c[ranIndex];
 }
 
+// return current color pallet
+const returnCurrentPallet = () => {
+    return global_app_data.e_color_pallet.find(l => l.active === true)
+}
+
+// creates one hex color
 function generateRandomColor() {
     let colorBuild = "";
     for (let i = 0; i <= 5; i++) {
         colorBuild += returnRandomCodeIndex(colorBuild);
     }
-    // console.log(colorBuild);
     //at the end of building the color then push into color array
     return colorBuild
 }
-// beginning of app
+
+// when user first loads app, generate 5 colors
 const generateFirstFiveColors = () => {
-    let genColors = []
+    let newPallet = new ColorPallet()
     for (let index = 0; index < 5; index++) {
         let newColor = {
             id: createId(),
             color: `#${generateRandomColor()}`,
             isLocked: false,
         }
-        genColors.push(newColor)
+        newPallet.addColor(newColor)
 
     }
-
-    global_app_data.e_color_pallet = genColors
-
-}
-const renderColorPallet = () => {
-    $(".e_color_pallet_cont").empty()
-    global_app_data.e_color_pallet.map((color, index) => {
-        $(".e_color_pallet_cont").append(createColorPalletItem(color, index, global_app_data.e_color_pallet.length, global_app_data.e_color_pallet_limit))
-    })
+    global_app_data.e_color_pallet.push(newPallet)
+    // save to local
+    saveToLocalStorage()
 }
 
 
+// add / generate a new color at specified index
 const generateSingleColorAtIndex = (addIndex) => {
+    // need to create a new pallet
+    let newPallet = new ColorPallet
     console.log("about to create new color at index: " + addIndex)
     // create color
     let newColor = {
@@ -65,20 +93,31 @@ const generateSingleColorAtIndex = (addIndex) => {
     }
     // add new color at index
     if (addIndex === 0) {
-        global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
+        // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
+        newPallet.addColorAtIndex(addIndex + 1, newColor)
     } else {
-        global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
+        // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
+        newPallet.addColorAtIndex(addIndex, newColor)
     }
+    // set active to false
+    setActivePalletsToFalse()
+    // add pallet to global
+    global_app_data.e_color_pallet.push(newPallet)
     // save to local
     saveToLocalStorage()
     // render new color
     renderColorPallet()
 }
 
+// generate new colors for unlocked items
 const generateUnlockedColors = () => {
-    let currentPallet = global_app_data.e_color_pallet
+    // need to create a new pallet
+    let newPallet = new ColorPallet
+    let currentPallet = returnCurrentPallet()
+    newPallet.replacePallet(currentPallet.colors)
+    console.log("New Pallet in generateUnlockedColors: ", newPallet)
     // foreach color, check if locked, if locked skip
-    currentPallet.forEach((c, index) => {
+    newPallet.colors.forEach((c, index) => {
         if (!c.isLocked) {
             // create color
             let newColor = {
@@ -87,15 +126,29 @@ const generateUnlockedColors = () => {
                 isLocked: false,
             }
             // replace this color
-            currentPallet.splice(index, 1, newColor)
+            newPallet.replaceColor(index, newColor)
         }
     })
-    // save current pallet to global
-    global_app_data.e_color_pallet = currentPallet
+
+    // set active to false
+    setActivePalletsToFalse()
+    // add pallet to global
+    global_app_data.e_color_pallet.push(newPallet)
     // save
     saveToLocalStorage()
     // render pallet
     renderColorPallet()
+}
+
+// render and load UI
+const renderColorPallet = () => {
+    // get current pallet
+    let currentPallet = returnCurrentPallet()
+    console.log("about to render pallet: ", currentPallet)
+    $(".e_color_pallet_cont").empty()
+    currentPallet.colors.map((colorPallet, index) => {
+        $(".e_color_pallet_cont").append(createColorPalletItem(colorPallet, index, currentPallet.colors.length, global_app_data.e_color_pallet_limit))
+    })
 }
 
 // close menu
@@ -106,6 +159,40 @@ const closeDownloadMenu = () => {
     }
 }
 
+// beginning of color pallet
+const loadColorPallet = () => {
+    // only render a new set of colors if there is none that have been generated previously.
+    if (global_app_data.e_color_pallet.length === 0) {
+        // loadColorPallet
+        generateFirstFiveColors()
+    }
+    // render on load
+    renderColorPallet()
+    // load output for css
+    e_color_pallet_css_output.val(generateCSSOutput(global_app_data.e_color_pallet))
+    e_color_pallet_hex_output.val(generateHEXOutput(global_app_data.e_color_pallet))
+}
+
+const handleLockColor = (lockId) => {
+    let currentPallet = returnCurrentPallet()
+    let newPallet = new ColorPallet
+    newPallet.replacePallet(currentPallet.colors)
+    newPallet.colors.forEach(color => {
+        color.id === lockId ? color.isLocked = !color.isLocked : ""
+    });
+
+     // set active to false
+     setActivePalletsToFalse()
+     // add pallet to global
+     global_app_data.e_color_pallet.push(newPallet)
+     // save
+     saveToLocalStorage()
+     // render pallet
+     renderColorPallet()
+}
+
+// **************************************************
+// GENERATION
 //generate SVG with data
 const generateSVG = (data) => {
     console.log("about to create svg: ", data)
@@ -138,18 +225,7 @@ const downloadSVG = (svgElement) => {
     downloadLink.click();
     document.body.removeChild(downloadLink); // Clean up
 }
-// create svg blob
-const downloadPDF = (svgElement) => {
-    const serializer = new XMLSerializer();
-    const svgBlob = new Blob([serializer.serializeToString(svgElement)], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(svgBlob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = `pallet-${createId()}.pdf`; // Name of the file to be downloaded
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink); // Clean up
-}
+
 // download PNG type
 function downloadPNG(svgElement) {
     // Serialize SVG to string
@@ -181,28 +257,32 @@ function downloadPNG(svgElement) {
     image.src = blobURL;
 }
 
-// color pallet history
-// const saveCurrentPalletToPrevious = () => {
-//     let colorPallet = {
-//         id: createId(),
-//         pallet: global_app_data.e_color_pallet,
-//         updatedAt: createDate()
-//     }
-//     global_app_data.e_color_pallet_history.push(colorPallet)
-// }
-// const returnPreviousColorPallet = () => {
+// generate css output
+const generateCSSOutput = (colorData) => {
+    let output = []
+    output.push(":root{")
+    colorData.forEach(c => {
+        let colorVar = `--project_name-color_type: ${c.color};`
+        output.push(colorVar)
+    })
+    output.push("}")
+    return output.join("\r\n")
+}
+// generate hex output
+const generateHEXOutput = (colorData) => {
+    let output = []
+    let i = 1
+    colorData.forEach(c => {
 
-// }
+        let colorVar = `Color-${i}: ${c.color}`
+        output.push(colorVar)
+        i++
+    })
+    return output.join("\r\n")
+}
 
 $(() => {
-    // only render a new set of colors if there is none that have been generated previously.
-    if (global_app_data.e_color_pallet.length === 0) {
-        // loadColorPallet
-        generateFirstFiveColors()
-    }
-    // render on load
-    renderColorPallet()
-
+    loadColorPallet()
     // handle color item setting buttons
     $(".e_color_pallet_cont").on("click", ".color_pallet_item_setting_btn", function () {
         let buttonType = $(this).data("btntype");
@@ -210,18 +290,11 @@ $(() => {
         console.log(buttonId + " : " + buttonType)
         // handle locking a color
         if (buttonType === "lock") {
-            global_app_data.e_color_pallet.forEach(color => {
-                color.id === buttonId ? color.isLocked = !color.isLocked : ""
-            });
-            // console.log(global_app_data.e_color_pallet)
-            saveToLocalStorage()
-            // set icon to the locked icon
-            // this is a temporary re render, I will need to make this more seamless, but for now, it works
-            renderColorPallet()
+            handleLockColor(buttonId)
         }
         // handle copying a color
         if (buttonType === "copy") {
-            let copyColorData = global_app_data.e_color_pallet.find(color => color.id === buttonId)
+            let copyColorData = currentPallet.find(color => color.id === buttonId)
             // set value of hidden input
             $(copy_color_hidden_input).val(copyColorData.color)
             // copy
@@ -230,7 +303,7 @@ $(() => {
         // handle removing a color
         if (buttonType === "remove") {
             // remove from global
-            let updatedColorPallet = global_app_data.e_color_pallet.filter(c => {
+            let updatedColorPallet = currentPallet.filter(c => {
                 return c.id !== buttonId
             })
             global_app_data.e_color_pallet = updatedColorPallet
@@ -257,7 +330,7 @@ $(() => {
         generateUnlockedColors()
     })
 
-    // open the todo list menu
+    // open the download menu
     color_pallet_download_btn.on('click', () => {
         if (downloadPalletMenuOpen) {
             // close menu
@@ -269,7 +342,7 @@ $(() => {
             downloadPalletMenuOpen = true
         }
 
-        // close todo list menu
+        // close download menu
         $(document).on("click", function (event) {
             // Check if the click event target is not within the menu
             if (!e_pallet_download_drop_down_cont.is(event.target) && downloadPalletMenuOpen && !color_pallet_download_btn.is(event.target) && e_pallet_download_drop_down_cont.has(event.target).length === 0) {
@@ -278,23 +351,6 @@ $(() => {
             }
         });
     })
-
-
-    // action on space bar press
-    // $(document).on('keydown', function (event) {
-    //     if (event.key === " ") {
-    //         // event.preventDefault();
-    //         // need to make a way where the key down only is recognized on the color pallet tab
-    //         // clear array
-    //         colorData = []
-    //         console.log(colorData)
-    //         let newColors = generateFirstFiveColors()
-    //         console.log(newColors)
-    //         colorData = newColors
-    //         // re render ui
-    //         renderColorPallet()
-    //     }
-    // });
 
 
     // download Actions
@@ -316,15 +372,25 @@ $(() => {
 
         downloadPNG(svgElement)
     })
-    // download PDF
-    // *************** Would need to add jsPDF library to make this work
-    // e_pallet_download_pdf_btn.on("click", (e) => {
-    //     e.preventDefault()
-    //     console.log("Clicked download PDF Button")
-    //     // svg element
-    //     const svgElement = generateSVG(global_app_data.e_color_pallet);
 
-    //     downloadPDF(svgElement)
-    // })
+    // copy css
+    e_pallet_copy_css_btn.on("click", e => {
+        if (e_color_pallet_css_output.val() === "") {
+            sendNotification("fast", 3000, "Please Generate colors before copying.")
+            return
+        } else {
+            copyFunction(e_color_pallet_css_output)
+        }
+    })
+    // copy hex codes
+    e_pallet_copy_hex_btn.on("click", e => {
+        if (e_color_pallet_hex_output.val() === "") {
+            sendNotification("fast", 3000, "Please Generate colors before copying.")
+            return
+        } else {
+            copyFunction(e_color_pallet_hex_output)
+        }
+
+    })
 
 })

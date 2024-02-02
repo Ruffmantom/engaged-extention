@@ -73,9 +73,6 @@ input[type=number]::-webkit-outer-spin-button {
     width: 100% !important;
 }
 
-.e_cursor_p {
-    cursor: pointer;
-}
 
 .text_formatter {
     background-color: var(--eng-bg-color);
@@ -1812,7 +1809,9 @@ svg.dark {
     margin: 0 0 5px 0;
 }
 
-#copy_color_hidden_input {
+#copy_color_hidden_input,
+#e_color_pallet_css_output,
+#e_color_pallet_hex_output {
     position: absolute;
     top: 0;
     left: 0;
@@ -1824,7 +1823,7 @@ svg.dark {
     position: absolute;
     z-index: 9;
     right: 0px;
-    bottom: -90px;
+    bottom: -150px;
     padding: 7px;
     border-radius: 7px;
     width: 150px;
@@ -1867,4 +1866,7 @@ svg.dark {
 
 .e_pallet_download_button:not(:last-child) {
     margin-bottom: 5px;
+}
+#generate_colors_btn{
+    width: 100%;
 }
