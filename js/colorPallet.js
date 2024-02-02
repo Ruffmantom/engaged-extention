@@ -60,7 +60,8 @@ $(() => {
 
     $(document).on('keydown', function (event) {
         if (event.key === " ") {
-            event.preventDefault();
+            // event.preventDefault();
+            // need to make a way where the key down only is recognized on the color pallet tab
             // clear array
             colorData = []
             console.log(colorData)
