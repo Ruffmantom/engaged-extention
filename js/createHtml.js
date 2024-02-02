@@ -199,6 +199,7 @@ const createPageOptionRow = (po) => {
 
 
 const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
+    
     let isLight = isColorLight(colorData.color)
     let colorName = returnColorName(colorData.color)
 

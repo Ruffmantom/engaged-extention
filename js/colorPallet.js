@@ -34,6 +34,11 @@ class ColorPallet {
     }
 }
 
+// return current color pallet
+const returnCurrentPallet = () => {
+    return global_app_data.e_color_pallet.find(l => l.active === true)
+}
+
 const setActivePalletsToFalse = () => {
     console.log("Setting all active lists to false: ", global_app_data.e_color_pallet)
     global_app_data.e_color_pallet.forEach(c => {
@@ -47,10 +52,6 @@ function returnRandomCodeIndex() {
     return c[ranIndex];
 }
 
-// return current color pallet
-const returnCurrentPallet = () => {
-    return global_app_data.e_color_pallet.find(l => l.active === true)
-}
 
 // creates one hex color
 function generateRandomColor() {
@@ -84,7 +85,9 @@ const generateFirstFiveColors = () => {
 const generateSingleColorAtIndex = (addIndex) => {
     // need to create a new pallet
     let newPallet = new ColorPallet
+    let currentPallet = returnCurrentPallet()
     console.log("about to create new color at index: " + addIndex)
+    newPallet.replacePallet(currentPallet.colors)
     // create color
     let newColor = {
         id: createId(),
@@ -93,8 +96,9 @@ const generateSingleColorAtIndex = (addIndex) => {
     }
     // add new color at index
     if (addIndex === 0) {
+        let newIndex = addIndex + 1
         // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
-        newPallet.addColorAtIndex(addIndex + 1, newColor)
+        newPallet.addColorAtIndex(newIndex, newColor)
     } else {
         // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
         newPallet.addColorAtIndex(addIndex, newColor)
@@ -169,8 +173,8 @@ const loadColorPallet = () => {
     // render on load
     renderColorPallet()
     // load output for css
-    e_color_pallet_css_output.val(generateCSSOutput(global_app_data.e_color_pallet))
-    e_color_pallet_hex_output.val(generateHEXOutput(global_app_data.e_color_pallet))
+    e_color_pallet_css_output.val(generateCSSOutput())
+    e_color_pallet_hex_output.val(generateHEXOutput())
 }
 
 const handleLockColor = (lockId) => {
@@ -181,27 +185,52 @@ const handleLockColor = (lockId) => {
         color.id === lockId ? color.isLocked = !color.isLocked : ""
     });
 
-     // set active to false
-     setActivePalletsToFalse()
-     // add pallet to global
-     global_app_data.e_color_pallet.push(newPallet)
-     // save
-     saveToLocalStorage()
-     // render pallet
-     renderColorPallet()
+    // set active to false
+    setActivePalletsToFalse()
+    // add pallet to global
+    global_app_data.e_color_pallet.push(newPallet)
+    // save
+    saveToLocalStorage()
+    // render pallet
+    renderColorPallet()
 }
 
+const handleCopyColor = (copyId) => {
+    let currentPallet = returnCurrentPallet()
+    let copyColorData = currentPallet.colors.find(color => color.id === copyId)
+    // set value of hidden input
+    $(copy_color_hidden_input).val(copyColorData.color)
+    // copy
+    copyFunction(copy_color_hidden_input)
+}
+
+const handleRemoveColor = (colorId) => {
+    let currentPallet = returnCurrentPallet()
+    let newPallet = new ColorPallet
+    newPallet.replacePallet(currentPallet.colors)
+    // remove color
+    newPallet.removeColor(colorId)
+    // set active to false
+    setActivePalletsToFalse()
+    // add pallet to global
+    global_app_data.e_color_pallet.push(newPallet)
+    // save
+    saveToLocalStorage()
+    // render pallet
+    renderColorPallet()
+}
 // **************************************************
 // GENERATION
 //generate SVG with data
-const generateSVG = (data) => {
+const generateSVG = () => {
+    let data = returnCurrentPallet()
     console.log("about to create svg: ", data)
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("width", data.length * 150);
+    svg.setAttribute("width", data.colors.length * 150);
     svg.setAttribute("height", "350");
 
-    data.forEach((item, index) => {
+    data.colors.forEach((item, index) => {
         const rect = document.createElementNS(svgNS, "rect");
         rect.setAttribute("x", index * 150);
         rect.setAttribute("y", 0);
@@ -258,10 +287,11 @@ function downloadPNG(svgElement) {
 }
 
 // generate css output
-const generateCSSOutput = (colorData) => {
+const generateCSSOutput = () => {
+    let currentPallet = returnCurrentPallet()
     let output = []
     output.push(":root{")
-    colorData.forEach(c => {
+    currentPallet.colors.forEach(c => {
         let colorVar = `--project_name-color_type: ${c.color};`
         output.push(colorVar)
     })
@@ -269,10 +299,11 @@ const generateCSSOutput = (colorData) => {
     return output.join("\r\n")
 }
 // generate hex output
-const generateHEXOutput = (colorData) => {
+const generateHEXOutput = () => {
+    let currentPallet = returnCurrentPallet()
     let output = []
     let i = 1
-    colorData.forEach(c => {
+    currentPallet.colors.forEach(c => {
 
         let colorVar = `Color-${i}: ${c.color}`
         output.push(colorVar)
@@ -294,23 +325,11 @@ $(() => {
         }
         // handle copying a color
         if (buttonType === "copy") {
-            let copyColorData = currentPallet.find(color => color.id === buttonId)
-            // set value of hidden input
-            $(copy_color_hidden_input).val(copyColorData.color)
-            // copy
-            copyFunction(copy_color_hidden_input)
+            handleCopyColor(buttonId)
         }
         // handle removing a color
         if (buttonType === "remove") {
-            // remove from global
-            let updatedColorPallet = currentPallet.filter(c => {
-                return c.id !== buttonId
-            })
-            global_app_data.e_color_pallet = updatedColorPallet
-            // save to local
-            saveToLocalStorage()
-            // update ui
-            renderColorPallet()
+            handleRemoveColor(buttonId)
         }
 
     })
@@ -368,7 +387,7 @@ $(() => {
         e.preventDefault()
         console.log("Clicked download PNG Button")
         // svg element
-        const svgElement = generateSVG(global_app_data.e_color_pallet);
+        const svgElement = generateSVG();
 
         downloadPNG(svgElement)
     })
