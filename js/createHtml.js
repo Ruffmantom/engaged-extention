@@ -287,7 +287,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                                 </g>
                             </svg>
 
-                            <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index - 1}"></div>
+                            <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index - 1  === 0 ? index + 1 : index - 1}"></div>
                         </div>
                     </div>`}
 
@@ -308,7 +308,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                             </g>
                         </svg>
 
-                        <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index + 1}"></div>
+                        <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index === 0 ? index + 1 : index}"></div>
                     </div>
                 </div> `}
                     
