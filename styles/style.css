@@ -755,6 +755,9 @@ input[type=number]::-webkit-outer-spin-button {
     overflow: visible;
     transition: opacity 150ms ease-in;
 }
+.color_pallet_download_btn_cont{
+    margin-bottom: 0 !important;
+}
 
 
 /* Loader */

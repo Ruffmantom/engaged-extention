@@ -34,6 +34,120 @@ class ColorPallet {
     }
 }
 
+// color helpers
+function hexToRgb(hex) {
+    let r = 0, g = 0, b = 0;
+    // 3 digits
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+    }
+    // 6 digits
+    else if (hex.length === 7) {
+        r = parseInt(hex[1] + hex[2], 16);
+        g = parseInt(hex[3] + hex[4], 16);
+        b = parseInt(hex[5] + hex[6], 16);
+    }
+    return [r, g, b];
+}
+function interpolateColors(color1, color2) {
+    // Helper function to convert RGB to hex
+    function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    // Convert both colors to RGB
+    const rgb1 = hexToRgb(color1);
+    const rgb2 = hexToRgb(color2);
+
+    // Calculate the midpoint for each component
+    const midpointRgb = rgb1.map((component, index) => Math.round((component + rgb2[index]) / 2));
+
+    // Convert the midpoint RGB back to hex
+    return rgbToHex(...midpointRgb);
+}
+
+
+function rgbToHsl(r, g, b) {
+    r /= 255, g /= 255, b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max === min) {
+        h = s = 0;
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return [h * 360, s * 100, l * 100];
+}
+
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    h /= 360, s /= 100, l /= 100;
+
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function rotateHue(hex, angle) {
+    const [r, g, b] = hexToRgb(hex);
+    let [h, s, l] = rgbToHsl(r, g, b);
+
+    h = (h + angle) % 360; // Rotate the hue
+    if (h < 0) h += 360; // Ensure hue stays in the 0-360 range
+
+    const [newR, newG, newB] = hslToRgb(h, s, l);
+    return rgbToHex(newR, newG, newB);
+}
+
+
+// get Complimentary Colors
+function getComplementaryColor(hex) {
+    const color = parseInt(hex.slice(1), 16); // Remove # and convert to integer
+    const complementary = 0xFFFFFF ^ color; // Invert the color
+    return "#" + complementary.toString(16).padStart(6, '0');
+}
+// get Two Complimentary Colors
+function getSplitComplementaryColors(hex) {
+    const complementary = getComplementaryColor(hex);
+    const split1 = rotateHue(complementary, -150);
+    const split2 = rotateHue(complementary, 150);
+    return [hex, split1, split2];
+}
+
+
+
 // return current color pallet
 const returnCurrentPallet = () => {
     return global_app_data.e_color_pallet.find(l => l.active === true)
@@ -88,10 +202,17 @@ const generateSingleColorAtIndex = (addIndex) => {
     let currentPallet = returnCurrentPallet()
     console.log("about to create new color at index: " + addIndex)
     newPallet.replacePallet(currentPallet.colors)
+    // Get the colors at index and before
+    let colorA = currentPallet.colors[addIndex].color
+    let colorB = currentPallet.colors[addIndex >= currentPallet.colors.length ? addIndex + 1 : addIndex - 1].color
+    let analogousColor = interpolateColors(colorA, colorB)
+    console.log("Color A: ", colorA)
+    console.log("Color B: ", colorB)
+    console.log("Analogous Color: ", analogousColor)
     // create color
     let newColor = {
         id: createId(),
-        color: `#${generateRandomColor()}`,
+        color: analogousColor,
         isLocked: false,
     }
     // add new color at index
@@ -172,8 +293,9 @@ const loadColorPallet = () => {
     // render on load
     renderColorPallet()
     // load output for css
-    e_color_pallet_css_output.val(generateCSSOutput())
-    e_color_pallet_hex_output.val(generateHEXOutput())
+    generateCSSOutput()
+    generateHEXOutput()
+
 }
 
 const handleLockColor = (lockId) => {
@@ -218,6 +340,17 @@ const handleRemoveColor = (colorId) => {
     // render pallet
     renderColorPallet()
 }
+
+// delete old entries
+const palletCleanUp = (limit = 30) => {
+    // remove all history up to the latest 30
+    let cleanedArr = global_app_data.e_color_pallet.slice(-limit);
+    global_app_data.e_color_pallet = cleanedArr
+    // save to local
+    saveToLocalStorage()
+}
+
+
 // **************************************************
 // GENERATION
 //generate SVG with data
@@ -287,29 +420,36 @@ function downloadPNG(svgElement) {
 
 // generate css output
 const generateCSSOutput = () => {
-    let currentPallet = returnCurrentPallet()
+    let currPallet = returnCurrentPallet()
+    console.log("Getting current pallet: ", currPallet, " Setting CSS Output")
     let output = []
     output.push(":root{")
-    currentPallet.colors.forEach(c => {
+    currPallet.colors.forEach(c => {
         let colorVar = `--project_name-color_type: ${c.color};`
         output.push(colorVar)
     })
     output.push("}")
-    return output.join("\r\n")
+
+    // set elements val
+    e_color_pallet_css_output.val(output.join("\r\n"))
 }
 // generate hex output
 const generateHEXOutput = () => {
-    let currentPallet = returnCurrentPallet()
+    let currPallet = returnCurrentPallet()
+    console.log("Getting current pallet: ", currPallet, " Setting HEX Output")
     let output = []
     let i = 1
-    currentPallet.colors.forEach(c => {
+    currPallet.colors.forEach(c => {
 
         let colorVar = `Color-${i}: ${c.color}`
         output.push(colorVar)
         i++
     })
-    return output.join("\r\n")
+    // set elements val
+    e_color_pallet_hex_output.val(output.join("\r\n"))
 }
+
+
 
 $(() => {
     loadColorPallet()
@@ -330,22 +470,27 @@ $(() => {
         if (buttonType === "remove") {
             handleRemoveColor(buttonId)
         }
+        // clean up
+        palletCleanUp()
 
     })
 
     // handle adding a new color at index
-
     $(".e_color_pallet_cont").on("click", ".color_pallet_item_add_btn", function () {
         let buttonIndex = $(this).data("addcolorindex");
         console.log("Add button clicked!")
         // create color
         generateSingleColorAtIndex(buttonIndex)
+        // clean up
+        palletCleanUp()
     })
 
     // generate colors button
     $(generate_colors_btn).on("click", (e) => {
         // generate amount of colors
         generateUnlockedColors()
+        // clean up
+        palletCleanUp()
     })
 
     // open the download menu
@@ -358,6 +503,9 @@ $(() => {
             console.log("Opening download menu")
             $(".e_pallet_download_drop_down_cont").addClass("active")
             downloadPalletMenuOpen = true
+            // generate outputs
+            generateCSSOutput()
+            generateHEXOutput()
         }
 
         // close download menu
