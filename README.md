@@ -47,13 +47,10 @@
 
 
 ## Screenshots
-![Text Formatter](./images/Previews/6.0/text-formatter.png)
-![Page Options - Page Parts](./images/Previews/6.0/po-page-parts.png)
-![Page Options - Product Options](./images/Previews/6.0/po-product-options.png)
-![Color](./images/Previews/6.0/color.png)
-![Conversions](./images/Previews/6.0/conversions.png)
-![Todo's](./images/Previews/6.0/tasks.png)
-![Notes](./images/Previews/6.0/notes.png)
+![Todo list](./assets/images/Previews/text-formatter.png)
+![Notes](./assets/images/Previews/po-page-parts.png)
+![Password Generator](./assets/images/Previews/po-product-options.png)
+![Color Pallet Generator](./assets/images/Previews/color.png)
 
 
 ## Setup
@@ -63,7 +60,7 @@
 
 
 ## Usage
-Use this app for formatting text to create SKU's, and codes, add prefixes, generate passwords, and do conversions. Since 6.0 Just recently added the ability to add to-do lists, and notes and now in 6.1 added a tool to help with page options. Sorting them and renaming them.
+This Chrome extension, along with any ongoing updates, is provided free of charge. By choosing to use this application, users agree to abide by the following conditions: The code and functionality of this extension are intended solely for personal use. Users are expressly prohibited from selling, disclosing, or utilizing the code for any purposes beyond personal use. Should you have any inquiries or wish to engage further, please do not hesitate to contact me via email or reach out through GitHub.
 
 
 ## Project Status
@@ -72,12 +69,11 @@ The project is: _in progress_
 
 ## Room for Improvement
 Room for improvement:
-- Add CSV functionality, copy cells from CSV or Excel and return formatted values
-- Continue to add tools that will help speed up the process of creating products, codes, names, and more.
+- Continued updates on bugs
 
 
 ## Acknowledgments
-- This project was inspired by my Job and by my CodePen project [@Underscore It](https://codepen.io/ruffmantom/pen/ExpNZEx)
+- This project draws inspiration from applications such as Trello and Coolors, with the aim of simplifying both my life and the lives of others. Its development was guided by the desire to incorporate the efficiency and creativity these platforms offer, thereby enhancing everyday productivity and organizational tasks.
 
 
 ## Contact
