@@ -47,10 +47,10 @@
 
 
 ## Screenshots
-![Todo list](./assets/images/Previews/todos.png)
-![Notes](./assets/images/Previews/notes.png)
-![Password Generator](./assets/images/Previews/password-gen.png)
-![Color Pallet Generator](./assets/images/Previews/color-pallet.png)
+![Todo list](./assets/images/previews/todos.png)
+![Notes](./assets/images/previews/notes.png)
+![Password Generator](./assets/images/previews/password-gen.png)
+![Color Pallet Generator](./assets/images/previews/color-pallet.png)
 
 
 ## Setup

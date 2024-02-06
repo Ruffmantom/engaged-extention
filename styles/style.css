@@ -755,7 +755,8 @@ input[type=number]::-webkit-outer-spin-button {
     overflow: visible;
     transition: opacity 150ms ease-in;
 }
-.color_pallet_download_btn_cont{
+
+.color_pallet_download_btn_cont {
     margin-bottom: 0 !important;
 }
 
@@ -1870,6 +1871,7 @@ svg.dark {
 .e_pallet_download_button:not(:last-child) {
     margin-bottom: 5px;
 }
-#generate_colors_btn{
+
+#generate_colors_btn {
     width: 100%;
 }
