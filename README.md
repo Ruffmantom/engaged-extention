@@ -47,10 +47,10 @@
 
 
 ## Screenshots
-![Todo list](./assets/images/Previews/text-formatter.png)
-![Notes](./assets/images/Previews/po-page-parts.png)
-![Password Generator](./assets/images/Previews/po-product-options.png)
-![Color Pallet Generator](./assets/images/Previews/color.png)
+![Todo list](./assets/images/Previews/todos.png)
+![Notes](./assets/images/Previews/notes.png)
+![Password Generator](./assets/images/Previews/password-gen.png)
+![Color Pallet Generator](./assets/images/Previews/color-pallet.png)
 
 
 ## Setup
