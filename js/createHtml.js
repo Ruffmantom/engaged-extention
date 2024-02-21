@@ -156,7 +156,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
 
     return `
     
-    <div class="e_color_pallet_item" style="background-color: ${colorData.color};">
+    <div class="e_color_pallet_item" style="background-color: ${colorData.color};" id="${colorData.id}">
                     <div class="e_color_pallet_item_overlay">
                         <p class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorHex}</p>
                         ${colorData.colorName != undefined ? `<p class="e_color_pallet_item_name ${isLight ? "dark" : "light"}">${colorData.colorName}</p>`:""}
@@ -201,6 +201,14 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
 
                                 <div class="color_pallet_item_setting_btn" data-btntype="lock" data-colorid="${colorData.id}"></div>
                             </div>
+
+                            <!-- Draggable button -->
+                            <div class="color_pallet_item_setting_btn_cont">
+                                <svg class="drag_color_icon ${isLight ? "dark" : "light"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>
+
+                                <div class="color_pallet_item_setting_btn color_drag_handle" data-btntype="drag" data-colorid="${colorData.id}"></div>
+                            </div>
+
                             <!-- remove color button -->
                             ${colorArrLength <= 2 ? "" : `<div class="color_pallet_item_setting_btn_cont">
                             <svg class="remove_color_icon ${isLight ? "dark" : "light"}" data-name="Group 129"

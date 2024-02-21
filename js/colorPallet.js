@@ -32,6 +32,10 @@ class ColorPallet {
     replacePallet(pallet) {
         this.colors = pallet
     }
+
+    newSortedColors(pallet) {
+        this.colors = pallet
+    }
 }
 
 // color helpers
@@ -198,6 +202,18 @@ const generateFirstFiveColors = () => {
     // save to local
     saveToLocalStorage()
 }
+const findAnalogousColorName = (hex) => {
+    let name = ""
+    // run through color list and find name if any
+    colorLib.filter(c => {
+        if (c.hex === hex) {
+            name = c.colorName
+        } else {
+            name = undefined
+        }
+    })
+    return name
+}
 
 
 // add / generate a new color at specified index
@@ -214,11 +230,13 @@ const generateSingleColorAtIndex = (addIndex) => {
     // console.log("Color A: ", colorA)
     // console.log("Color B: ", colorB)
     // console.log("Analogous Color: ", analogousColor)
+    let foundColorName = findAnalogousColorName(analogousColor)
+    console.log("Found analogousColor color: ", foundColorName)
     // create color
     let newColor = {
         id: createId(),
         color: analogousColor,
-        colorName: undefined,
+        colorName: foundColorName ? foundColorName : undefined,
         isLocked: false,
     }
     // add new color at index
@@ -457,6 +475,40 @@ const generateHEXOutput = () => {
     e_color_pallet_hex_output.val(output.join("\r\n"))
 }
 
+// sorting based off user click and drag
+const sortColorsMovedByUser = (sortedColors) => {
+    console.log(sortedColors)
+    // need to create a new pallet
+    let newPallet = new ColorPallet
+    let currentPallet = returnCurrentPallet()
+
+    // add logic here
+    // sort currentPallet pallet based on ids of sortedColors
+    let sortedArr = currentPallet.colors.sort((a, b) => {
+        return sortedColors.indexOf(a.id) - sortedColors.indexOf(b.id);
+    });
+
+    newPallet.newSortedColors(sortedArr)
+    // set active to false
+    setActivePalletsToFalse()
+    // add pallet to global
+    global_app_data.e_color_pallet.push(newPallet)
+    // save to local
+    saveToLocalStorage()
+
+
+}
+
+// undo recent pallet
+const undoAction = () => {
+    // go back to last pallet
+    console.log("undo last action")
+}
+// redo recent pallet
+const redoAction = () => {
+    // go back to last pallet
+    console.log("redo last action")
+}
 
 
 $(() => {
@@ -565,6 +617,43 @@ $(() => {
             copyFunction(e_color_pallet_hex_output)
         }
 
+    })
+
+    // movable list
+    $(".e_color_pallet_cont").sortable({
+        handle: ".color_drag_handle",
+        helper: "clone",
+        cursorAt: { top: 150, left: 45 },
+        tolerance: "pointer",
+        update: function (event, ui) {
+            var sortedIDs = $(this).sortable("toArray", { attribute: "id" });
+            // console.log(sortedIDs);
+            sortColorsMovedByUser(sortedIDs)
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        $(".e_color_pallet_cont").disableSelection();
+
+        // handle ctrl + z
+        if (event.ctrlKey && event.key === 'z') {
+            // Prevent the default action to avoid conflicting with browser/OS shortcuts
+            event.preventDefault();
+
+            // Call your function here
+            undoAction();
+        }
+    })
+
+    // Check if 'Ctrl', 'Shift', and 'Z' are pressed together
+    document.addEventListener('keydown', function (event) {
+        if (event.ctrlKey && event.shiftKey && event.key === 'Z') {
+            // Prevent the default action to avoid conflicting with browser/OS shortcuts
+            event.preventDefault();
+
+            // Call your function here
+            redoAction();
+        }
     })
 
 })
