@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Stay Engaged",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This extension was designed to keep you focused and engaged, no need to keep opening new tabs. Keep all your tools in one place.",
   "action": {
     "default_title": "Stay Engaged",
@@ -21,6 +21,7 @@
       "js": [
         "./js/libraries/jquery.js",
         "./js/libraries/wordList.js",
+        "./js/libraries/colors.js",
         "./app.js",
         "./js/variables.js",
         "./js/helpers.js",

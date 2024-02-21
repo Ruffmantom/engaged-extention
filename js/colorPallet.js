@@ -154,7 +154,7 @@ const returnCurrentPallet = () => {
 }
 
 const setActivePalletsToFalse = () => {
-    console.log("Setting all active lists to false: ", global_app_data.e_color_pallet)
+    // console.log("Setting all active lists to false: ", global_app_data.e_color_pallet)
     global_app_data.e_color_pallet.forEach(c => {
         c.active = false
     })
@@ -205,7 +205,7 @@ const generateSingleColorAtIndex = (addIndex) => {
     // need to create a new pallet
     let newPallet = new ColorPallet
     let currentPallet = returnCurrentPallet()
-    console.log("about to create new color at index: " + addIndex)
+    // console.log("about to create new color at index: " + addIndex)
     newPallet.replacePallet(currentPallet.colors)
     // Get the colors at index and before
     let colorA = currentPallet.colors[addIndex].color
@@ -245,7 +245,7 @@ const generateUnlockedColors = () => {
     let newPallet = new ColorPallet
     let currentPallet = returnCurrentPallet()
     newPallet.replacePallet(currentPallet.colors)
-    console.log("New Pallet in generateUnlockedColors: ", newPallet)
+    // console.log("New Pallet in generateUnlockedColors: ", newPallet)
     // foreach color, check if locked, if locked skip
     newPallet.colors.forEach((c, index) => {
         let returnedRandomColor = returnRandomColorFromLib()
@@ -276,7 +276,7 @@ const generateUnlockedColors = () => {
 const renderColorPallet = () => {
     // get current pallet
     let currentPallet = returnCurrentPallet()
-    console.log("about to render pallet: ", currentPallet)
+    // console.log("about to render pallet: ", currentPallet)
     $(".e_color_pallet_cont").empty()
     currentPallet.colors.map((colorPallet, index) => {
         $(".e_color_pallet_cont").append(createColorPalletItem(colorPallet, index, currentPallet.colors.length, global_app_data.e_color_pallet_limit))
@@ -364,7 +364,7 @@ const palletCleanUp = (limit = 30) => {
 //generate SVG with data
 const generateSVG = () => {
     let data = returnCurrentPallet()
-    console.log("about to create svg: ", data)
+    // console.log("about to create svg: ", data)
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("width", data.colors.length * 150);
@@ -429,7 +429,7 @@ function downloadPNG(svgElement) {
 // generate css output
 const generateCSSOutput = () => {
     let currPallet = returnCurrentPallet()
-    console.log("Getting current pallet: ", currPallet, " Setting CSS Output")
+    // console.log("Getting current pallet: ", currPallet, " Setting CSS Output")
     let output = []
     output.push(":root{")
     currPallet.colors.forEach(c => {
@@ -444,7 +444,7 @@ const generateCSSOutput = () => {
 // generate hex output
 const generateHEXOutput = () => {
     let currPallet = returnCurrentPallet()
-    console.log("Getting current pallet: ", currPallet, " Setting HEX Output")
+    // console.log("Getting current pallet: ", currPallet, " Setting HEX Output")
     let output = []
     let i = 1
     currPallet.colors.forEach(c => {
@@ -465,7 +465,7 @@ $(() => {
     $(".e_color_pallet_cont").on("click", ".color_pallet_item_setting_btn", function () {
         let buttonType = $(this).data("btntype");
         let buttonId = $(this).data("colorid");
-        console.log(buttonId + " : " + buttonType)
+        // console.log(buttonId + " : " + buttonType)
         // handle locking a color
         if (buttonType === "lock") {
             handleLockColor(buttonId)
@@ -486,7 +486,7 @@ $(() => {
     // handle adding a new color at index
     $(".e_color_pallet_cont").on("click", ".color_pallet_item_add_btn", function () {
         let buttonIndex = $(this).data("addcolorindex");
-        console.log("Add button clicked!")
+        // console.log("Add button clicked!")
         // create color
         generateSingleColorAtIndex(buttonIndex)
         // clean up
@@ -508,7 +508,7 @@ $(() => {
             closeDownloadMenu()
         } else {
             // open menu
-            console.log("Opening download menu")
+            // console.log("Opening download menu")
             $(".e_pallet_download_drop_down_cont").addClass("active")
             downloadPalletMenuOpen = true
             // generate outputs
@@ -531,7 +531,7 @@ $(() => {
     // download SVG
     e_pallet_download_svg_btn.on("click", (e) => {
         e.preventDefault()
-        console.log("Clicked download SVG Button")
+        // console.log("Clicked download SVG Button")
         // svg element
         const svgElement = generateSVG(global_app_data.e_color_pallet);
 
@@ -540,7 +540,7 @@ $(() => {
     // download SVG
     e_pallet_download_png_btn.on("click", (e) => {
         e.preventDefault()
-        console.log("Clicked download PNG Button")
+        // console.log("Clicked download PNG Button")
         // svg element
         const svgElement = generateSVG();
 

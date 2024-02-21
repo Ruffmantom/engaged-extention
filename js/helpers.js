@@ -71,7 +71,7 @@ function findAndReplaceLinks(text) {
 // copy function
 const copyFunction = (element) => {
     if ($(element).val() !== "") {
-        console.log('copy value: ' + $(element).val())
+        // console.log('copy value: ' + $(element).val())
         $(element).select();
         document.execCommand("copy");
         sendNotification('', 5000, 'Copied!')
