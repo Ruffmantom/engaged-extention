@@ -1689,12 +1689,19 @@ input[type=number]::-webkit-outer-spin-button {
     transition: opacity 100ms ease-in;
 }
 
-.e_color_pallet_item_text {
+.e_color_pallet_item_text,
+.e_color_pallet_item_name {
     position: absolute;
     top: 0px;
 
 }
 
+.e_color_pallet_item_name {
+    top: 25px;
+    font-size: 12px;
+    max-width: 90%;
+    text-align: center;
+}
 
 
 .lock_icon,
@@ -1741,11 +1748,11 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
-.e_color_pallet_item_text.light {
+.e_color_pallet_item_text.light, .e_color_pallet_item_name.light {
     color: white;
 }
 
-.e_color_pallet_item_text.dark {
+.e_color_pallet_item_text.dark, .e_color_pallet_item_name.dark {
     color: black;
 }
 

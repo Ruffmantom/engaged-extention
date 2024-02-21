@@ -51,6 +51,7 @@ function hexToRgb(hex) {
     }
     return [r, g, b];
 }
+
 function interpolateColors(color1, color2) {
     // Helper function to convert RGB to hex
     function rgbToHex(r, g, b) {
@@ -67,7 +68,6 @@ function interpolateColors(color1, color2) {
     // Convert the midpoint RGB back to hex
     return rgbToHex(...midpointRgb);
 }
-
 
 function rgbToHsl(r, g, b) {
     r /= 255, g /= 255, b /= 255;
@@ -177,17 +177,22 @@ function generateRandomColor() {
     return colorBuild
 }
 
+function returnRandomColorFromLib() {
+    return colorLib[Math.floor(Math.random() * colorLib.length) + 1]
+}
+
 // when user first loads app, generate 5 colors
 const generateFirstFiveColors = () => {
     let newPallet = new ColorPallet()
     for (let index = 0; index < 5; index++) {
+        let returnedRandomColor = returnRandomColorFromLib()
         let newColor = {
             id: createId(),
-            color: `#${generateRandomColor()}`,
+            color: returnedRandomColor.hex,
+            colorName: returnedRandomColor.colorName,
             isLocked: false,
         }
         newPallet.addColor(newColor)
-
     }
     global_app_data.e_color_pallet.push(newPallet)
     // save to local
@@ -206,13 +211,14 @@ const generateSingleColorAtIndex = (addIndex) => {
     let colorA = currentPallet.colors[addIndex].color
     let colorB = currentPallet.colors[addIndex >= currentPallet.colors.length ? addIndex + 1 : addIndex - 1].color
     let analogousColor = interpolateColors(colorA, colorB)
-    console.log("Color A: ", colorA)
-    console.log("Color B: ", colorB)
-    console.log("Analogous Color: ", analogousColor)
+    // console.log("Color A: ", colorA)
+    // console.log("Color B: ", colorB)
+    // console.log("Analogous Color: ", analogousColor)
     // create color
     let newColor = {
         id: createId(),
         color: analogousColor,
+        colorName: undefined,
         isLocked: false,
     }
     // add new color at index
@@ -242,11 +248,13 @@ const generateUnlockedColors = () => {
     console.log("New Pallet in generateUnlockedColors: ", newPallet)
     // foreach color, check if locked, if locked skip
     newPallet.colors.forEach((c, index) => {
+        let returnedRandomColor = returnRandomColorFromLib()
         if (!c.isLocked) {
             // create color
             let newColor = {
                 id: createId(),
-                color: `#${generateRandomColor()}`,
+                color: returnedRandomColor.hex,
+                colorName: returnedRandomColor.colorName,
                 isLocked: false,
             }
             // replace this color

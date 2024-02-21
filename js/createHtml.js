@@ -152,13 +152,14 @@ const createNote = (noteData) => {
 const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
 
     let isLight = isColorLight(colorData.color)
-    let colorName = returnColorName(colorData.color)
+    let colorHex = returnColorName(colorData.color)
 
     return `
     
     <div class="e_color_pallet_item" style="background-color: ${colorData.color};">
                     <div class="e_color_pallet_item_overlay">
-                        <p class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorName}</p>
+                        <p class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorHex}</p>
+                        ${colorData.colorName != undefined ? `<p class="e_color_pallet_item_name ${isLight ? "dark" : "light"}">${colorData.colorName}</p>`:""}
                         <div class="e_color_pallet_item_settings_cont">
                             <!-- copy button -->
                             <div class="color_pallet_item_setting_btn_cont">
