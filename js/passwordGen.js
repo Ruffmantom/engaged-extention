@@ -29,6 +29,7 @@ const generateReadableWords = () => {
     // check if upper is checked
     if (global_app_data.e_pass_settings.inc_uppercase) {
         let splitReadableWords = readableWords.split(',');
+        // capitalize the letters
         for (let i = 0; i < splitReadableWords.length; i++) {
             let word = splitReadableWords[i].trim();
             if (word !== "") {
@@ -53,7 +54,8 @@ const generateReadableWords = () => {
         // console.log(splitReadableWords.join(','))
         return splitReadableWords.join(',');
     } else {
-        return ""
+        // console.log("Readable Words that fit length: ", readableWords)
+        return readableWords
     }
 }
 
@@ -92,33 +94,66 @@ const generateNumbers = (numOfNumsToAdd) => {
 
 // Function to shuffle an array
 const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    if (array.length >= 1) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        
+        return array
+    } else {
+        return array
     }
 }
 
 // final build readable password
-const buildReadablePassword = (words, specialChars, numbers) => {
+const buildReadablePassword = (words, specialChars = "", numbers = "") => {
+    // console.log("words: " + words)
+    // console.log("specialChars: " + specialChars)
+    // console.log("numbers: " + numbers)
     // Split words and prepare characters
-    const wordArray = words.split(',');
-    const combinedChars = specialChars + numbers;
-    let charArray = combinedChars.split('');
+    const wordIntoArray = words.split(',');
+    // remove empty array item
+    let wordArray = wordIntoArray.filter(item => item !== "");
+
+    // console.log("wordArray: ", wordArray)
+    let combinedSpecAndNum = ''
+    if (specialChars && numbers) {
+        combinedSpecAndNum = specialChars + numbers
+    } else if (specialChars) {
+        combinedSpecAndNum = specialChars
+    } else if (numbers) {
+        combinedSpecAndNum = numbers
+    }
+
+    // console.log("combinedSpecAndNum: " + combinedSpecAndNum)
+    let charArray = combinedSpecAndNum.split('');
+    // console.log("charArray: ", charArray)
 
     // Shuffle the characters
-    shuffleArray(charArray);
+    let shuffledArray = []
+    if (charArray.length >= 1) {
+        shuffledArray = shuffleArray(charArray);
+    }
 
     // Build password
     let password = '';
+
     wordArray.forEach((word, index) => {
         password += word;
+        // console.log("Word array foreach: " + word)
         if (index < wordArray.length - 1) {
-            password += charArray.pop(); // Add one shuffled char between words
+            if (shuffleArray && shuffleArray.length >= 1) {
+                password += shuffledArray.pop(); // Add one shuffled char between words
+            }
         }
     });
 
     // Add any remaining characters to the end
-    password += charArray.join('');
+    if (shuffleArray.length >= 1) {
+        password += shuffledArray.join('');
+    }
+    // return readable pass
     return password;
 }
 
@@ -130,6 +165,7 @@ const makePassword = (len) => {
 
     // build password based on if readable or not
     if (global_app_data.e_pass_settings.inc_readable) {
+        // console.log("Readable is selected: about to generate password")
         // return the words
         genWords = generateReadableWords()
         // console.log("genwords before genspecial: " + genWords)
@@ -140,7 +176,7 @@ const makePassword = (len) => {
         // console.log("genwords after passwordsofar: " + genWords)
         let spaceLeft = len - passwordSoFar.split(',').join('').length
         let numOfNumsToAdd = global_app_data.e_pass_settings.inc_numbers ? Math.floor(spaceLeft / 2) : spaceLeft
-
+        // get numbers
         genNumbers = generateNumbers(numOfNumsToAdd)
 
         // build randomized password
@@ -226,6 +262,7 @@ const makePassword = (len) => {
 // generate password function
 const generatePasswordOutput = () => {
     let generatedPass = makePassword(global_app_data.e_pass_length)
+    // console.log("Returning Password: " + generatedPass)
     $(passwordOutput).val(generatedPass);
     // save to local storage to access later
     global_app_data.e_password = generatedPass
