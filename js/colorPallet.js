@@ -507,8 +507,8 @@ const sortColorsMovedByUser = (sortedColors) => {
     global_app_data.e_color_pallet.push(newPallet)
     // save to local
     saveToLocalStorage()
-     // render pallet
-     renderColorPallet()
+    // render pallet
+    renderColorPallet()
 }
 
 // undo recent pallet
@@ -517,11 +517,30 @@ const undoAction = () => {
     console.log("undo last action")
     let currPallet = returnCurrentPallet()
     // get index of current pallet
-   let currPaletIndex =  global_app_data.e_color_pallet.find(p =>{
-    if(p.id === currPallet.id){
-        console.log(p.id === currPallet.id)
+    let currPalletIndex;
+    global_app_data.e_color_pallet.forEach(p => {
+        if (p.id === currPallet.id) {
+            currPalletIndex = global_app_data.e_color_pallet.indexOf(p)
+        }
+    })
+    // set current pallet active to false
+    global_app_data.e_color_pallet[currPalletIndex].active = false
+    
+    // check to see if current index is less than max and above min
+    if (currPalletIndex > 0) {
+        currPalletIndex = currPalletIndex - 1;
+        console.log(currPalletIndex);
+        // set previous color pallet to active
+        global_app_data.e_color_pallet[currPalletIndex].active = true;
+    } else {
+        // Optionally handle the case where there is no previous state to revert to
+        console.log("No more undo steps available.");
     }
-   })
+    // save to local
+    saveToLocalStorage()
+    // render pallet
+    renderColorPallet()
+
 }
 
 // redo recent pallet
