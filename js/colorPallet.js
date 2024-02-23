@@ -36,6 +36,18 @@ class ColorPallet {
     newSortedColors(pallet) {
         this.colors = pallet
     }
+
+    changeColor(hex, id) {
+        let foundColorName = findColorName(hex)
+        this.colors.forEach(h => {
+            if (h.id === id) {
+                h.color = `#${hex}`
+                // replace name as well
+                h.colorName = foundColorName
+            }
+
+        })
+    }
 }
 
 // color helpers
@@ -495,15 +507,23 @@ const sortColorsMovedByUser = (sortedColors) => {
     global_app_data.e_color_pallet.push(newPallet)
     // save to local
     saveToLocalStorage()
-
-
+     // render pallet
+     renderColorPallet()
 }
 
 // undo recent pallet
 const undoAction = () => {
     // go back to last pallet
     console.log("undo last action")
+    let currPallet = returnCurrentPallet()
+    // get index of current pallet
+   let currPaletIndex =  global_app_data.e_color_pallet.find(p =>{
+    if(p.id === currPallet.id){
+        console.log(p.id === currPallet.id)
+    }
+   })
 }
+
 // redo recent pallet
 const redoAction = () => {
     // go back to last pallet
@@ -627,8 +647,10 @@ $(() => {
         tolerance: "pointer",
         update: function (event, ui) {
             var sortedIDs = $(this).sortable("toArray", { attribute: "id" });
-            // console.log(sortedIDs);
+
             sortColorsMovedByUser(sortedIDs)
+            // re-render list
+
         }
     });
 
@@ -655,5 +677,62 @@ $(() => {
             redoAction();
         }
     })
+
+
+    // Use event delegation to handle clicks on dynamically created elements
+    $(".e_color_pallet_cont").on("click", ".e_color_pallet_item_text", function () {
+        // Find the parent container of the clicked element
+        var colorItem = $(this).closest(".e_color_pallet_item");
+
+        // Get the value of the data-todoid attribute
+        let clickedColorTextId = colorItem.attr('id');
+        console.log(clickedColorTextId)
+        let todoEditTextInput = $(`.e_color_change_input[data-colorid="${clickedColorTextId}"]`);
+
+        // saving when enter btn is pressed
+        todoEditTextInput.keydown(function (event) {
+            var keycode = event.keyCode ? event.keyCode : event.which;
+
+            if (keycode == 13 && !event.shiftKey) {
+                // Prevent default behavior if Enter is pressed without Shift
+                event.preventDefault();
+                let newHex = $(this).val()
+
+                // Now save the new color pallet
+                let currentPallet = returnCurrentPallet()
+
+                let newPallet = new ColorPallet
+                newPallet.replacePallet(currentPallet.colors)
+                // change color
+                newPallet.changeColor(newHex, clickedColorTextId)
+                // set active to false
+                setActivePalletsToFalse()
+                // add pallet to global
+                global_app_data.e_color_pallet.push(newPallet)
+                // save
+                saveToLocalStorage()
+                // render pallet
+                renderColorPallet()
+
+                // Hide the input field and show the <p> tag
+                colorItem.find(".e_color_pallet_item_text").hide();
+                colorItem.find(".e_color_change_input").show();
+            }
+        });
+
+        // Hide the <p> tag and show the <input> input field
+        colorItem.find(".e_color_pallet_item_text").hide();
+        colorItem.find(".e_color_change_input").css("display", "block");
+        // colorItem.find(".e_color_change_input").focus();
+        todoEditTextInput.select()
+
+        $(document).on("click", function (event) {
+            // Check if the click event target is not within the color item
+            if (!colorItem.is(event.target) && colorItem.has(event.target).length === 0) {
+                colorItem.find(".e_color_change_input").hide();
+                colorItem.find(".e_color_pallet_item_text").show();
+            }
+        });
+    });
 
 })

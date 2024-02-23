@@ -111,9 +111,19 @@ function isColorLight(hex) {
 }
 
 // return name without hash
-const returnColorName = (hex)=>{
-    if(hex !== "" || hex !== null){
+const returnColorName = (hex) => {
+    if (hex !== "" || hex !== null) {
         let a = hex.split('#')
         return a[1]
     }
+}
+
+const findColorName = (hex) => {
+    let foundColorName = ""
+    colorLib.find(c => {
+        if (c.hex === `#${hex}`) {
+            foundColorName = c.colorName
+        }
+    })
+    return foundColorName
 }

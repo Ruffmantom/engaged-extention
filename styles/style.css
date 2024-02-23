@@ -1884,3 +1884,23 @@ svg.dark {
 #generate_colors_btn {
     width: 100%;
 }
+.color_change_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 15px;
+    position: absolute;
+    top: 0;
+}
+.e_color_change_input {
+    width: 100%;
+    padding: 5px 5px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 14px;
+    outline: var(--eng-primary);
+    border: 1px solid var(--eng-primary);
+    background-color: var(--eng-input-bkg);
+    color: var(--eng-text-color);
+}

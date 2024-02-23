@@ -158,7 +158,10 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
     
     <div class="e_color_pallet_item" style="background-color: ${colorData.color};" id="${colorData.id}">
                     <div class="e_color_pallet_item_overlay">
-                        <p class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorHex}</p>
+                    <div class="color_change_form">
+                        <p data-colorid="${colorData.id}" class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorHex}</p>
+                        <input data-colorid="${colorData.id}" hidden type="text" placeholder="#FFFFFF" value="${colorHex}" class="e_color_change_input"/>
+                    </div>
                         ${colorData.colorName != undefined ? `<p class="e_color_pallet_item_name ${isLight ? "dark" : "light"}">${colorData.colorName}</p>`:""}
                         <div class="e_color_pallet_item_settings_cont">
                             <!-- copy button -->
