@@ -243,64 +243,62 @@ const findAnalogousColorName = (hex) => {
 
 // add / generate a new color at specified index
 const generateSingleColorAtIndex = (addIndex) => {
-  // need to create a new pallet
-  let newPallet = new ColorPallet();
   let currentPallet = returnCurrentPallet();
-  // console.log("about to create new color at index: " + addIndex)
+  let newPallet = new ColorPallet();
   newPallet.setPallet(currentPallet.colors);
-  // Get the colors at index and before
+
+  // Ensure addIndex is within bounds
+  if (addIndex < 0 || addIndex >= currentPallet.colors.length) {
+    console.error("addIndex is out of bounds");
+    return;
+  }
+
+  // Adjust colorB index calculation
+  let colorBIndex = addIndex === 0 ? addIndex + 1 : addIndex - 1;
   let colorA = currentPallet.colors[addIndex].color;
-  let colorB =
-    currentPallet.colors[
-      addIndex >= currentPallet.colors.length ? addIndex + 1 : addIndex - 1
-    ].color;
+  let colorB = currentPallet.colors[colorBIndex].color;
+
   let analogousColor = interpolateColors(colorA, colorB);
   let foundColorName = findAnalogousColorName(analogousColor);
-  console.log("Found analogousColor color: ", foundColorName);
-  // create color
+
+  // Directly create the new color object with a ternary operator for colorName
   let newColor = {
     id: createId(),
     color: analogousColor,
-    colorName: foundColorName ? foundColorName : undefined,
+    colorName: foundColorName || undefined,
     isLocked: false,
   };
-  // add new color at index
-  if (addIndex === 0) {
-    let newIndex = addIndex + 1;
-    // global_app_data.e_color_pallet.splice(addIndex + 1, 0, newColor);
-    newPallet.addColorAtIndex(newIndex, newColor);
-  } else {
-    newPallet.addColorAtIndex(addIndex, newColor);
-  }
-  // newpallet master function
+
+  // Add the new color at the specified index
+  newPallet.addColorAtIndex(addIndex, newColor);
+
+  // Update the palette
   addNewPalletMaster(newPallet);
 };
 
-// generate new colors for unlocked items
+
+
 const generateUnlockedColors = () => {
-  // need to create a new pallet
-  let newPallet = new ColorPallet();
   let currentPallet = returnCurrentPallet();
-  newPallet.setPallet(currentPallet.colors);
-  // console.log("New Pallet in generateUnlockedColors: ", newPallet)
-  // foreach color, check if locked, if locked skip
-  newPallet.colors.forEach((c, index) => {
-    let returnedRandomColor = returnRandomColorFromLib();
-    if (!c.isLocked) {
-      // create color
-      let newColor = {
+  let newPalletColors = currentPallet.colors.map(color => {
+    if (!color.isLocked) {
+      let { hex, colorName } = returnRandomColorFromLib();
+      return {
         id: createId(),
-        color: returnedRandomColor.hex,
-        colorName: returnedRandomColor.colorName,
+        color: hex,
+        colorName,
         isLocked: false,
       };
-      // replace this color
-      newPallet.replaceColor(index, newColor);
     }
+    return color;
   });
-  // newpallet master function
+
+  let newPallet = new ColorPallet();
+  newPallet.setPallet(newPalletColors);
+
   addNewPalletMaster(newPallet);
 };
+
 
 // render and load UI
 const renderColorPallet = () => {
@@ -560,21 +558,33 @@ const redoAction = () => {
   console.log(global_app_data.e_color_pallet);
 };
 
-// function to hold all pallet creation, saving, and rendering
-const addNewPalletMaster = (newPallet) => {
-  // get current index
-  let activeIndex = returnCurrentPalletIndex();
-  // set active to false
-  setActivePalletsToFalse();
-  // add pallet to global
-  global_app_data.e_color_pallet.splice(activeIndex + 1, 0, newPallet);
+function addNewPalletMaster(newPallet) {
+  // Find the index of the current active palette
+  let currentActiveIndex = global_app_data.e_color_pallet.findIndex(p => p.active);
+
+  // Mark the current active palette as inactive (if there is one)
+  if (currentActiveIndex !== -1) {
+      global_app_data.e_color_pallet[currentActiveIndex].active = false;
+  }
+
+  // Add the new palette and mark it as active
+  newPallet.active = true;
+
+  // Insert the new palette into the array
+  if (currentActiveIndex !== -1 && currentActiveIndex < global_app_data.e_color_pallet.length - 1) {
+      // Insert after the current active palette if it's not the last one
+      global_app_data.e_color_pallet.splice(currentActiveIndex + 1, 0, newPallet);
+  } else {
+      // Otherwise, add to the end of the array
+      global_app_data.e_color_pallet.push(newPallet);
+  }
   // check if action is after an undo
   cleanUpAfterUndo();
-  // save
+  // Update application state and UI as necessary
   saveToLocalStorage();
-  // render pallet
   renderColorPallet();
-};
+}
+
 
 $(() => {
   // clean up if over 30
