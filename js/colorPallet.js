@@ -208,7 +208,8 @@ function generateRandomColor() {
 }
 
 function returnRandomColorFromLib() {
-  return colorLib[Math.floor(Math.random() * colorLib.length) + 1];
+  const randomIndex = Math.floor(Math.random() * colorLib.length);
+  return colorLib[randomIndex];
 }
 
 // when user first loads app, generate 5 colors
@@ -228,6 +229,7 @@ const generateFirstFiveColors = () => {
   // save to local
   saveToLocalStorage();
 };
+
 const findAnalogousColorName = (hex) => {
   let name = "";
   // run through color list and find name if any
@@ -244,8 +246,9 @@ const findAnalogousColorName = (hex) => {
 // add / generate a new color at specified index
 const generateSingleColorAtIndex = (addIndex) => {
   let currentPallet = returnCurrentPallet();
+  let currentColors = currentPallet.colors
   let newPallet = new ColorPallet();
-  newPallet.setPallet(currentPallet.colors);
+  newPallet.setPallet(currentColors);
 
   // Ensure addIndex is within bounds
   if (addIndex < 0 || addIndex >= currentPallet.colors.length) {
@@ -268,7 +271,9 @@ const generateSingleColorAtIndex = (addIndex) => {
     colorName: foundColorName || undefined,
     isLocked: false,
   };
-
+  
+  console.log("Added new color at index. New Pallet: ",currentPallet.colors)
+  console.log("Added new color at index. New Pallet: ",newPallet.colors)
   // Add the new color at the specified index
   newPallet.addColorAtIndex(addIndex, newColor);
 
@@ -277,7 +282,7 @@ const generateSingleColorAtIndex = (addIndex) => {
 };
 
 
-
+// generate colors for unlocked colors
 const generateUnlockedColors = () => {
   let currentPallet = returnCurrentPallet();
   let newPalletColors = currentPallet.colors.map(color => {
@@ -381,13 +386,13 @@ const palletCleanUp = (limit = 30) => {
 
 const cleanUpAfterUndo = () => {
   let activeIndex = returnCurrentPalletIndex();
-  console.log(activeIndex);
-  console.log(global_app_data.e_color_pallet.length);
+  // console.log(activeIndex);
+  // console.log(global_app_data.e_color_pallet.length);
 
   // Adjusted logic: Always truncate the array beyond the active pallet
   let updatedPallets = global_app_data.e_color_pallet.slice(0, activeIndex + 1);
   global_app_data.e_color_pallet = updatedPallets;
-  console.log("After clean", global_app_data.e_color_pallet);
+  // console.log("After clean", global_app_data.e_color_pallet);
   // save to local
   saveToLocalStorage();
 };
@@ -495,7 +500,7 @@ const generateHEXOutput = () => {
 
 // sorting based off user click and drag
 const sortColorsMovedByUser = (sortedColors) => {
-  console.log(sortedColors);
+  // console.log(sortedColors);
   // need to create a new pallet
   let newPallet = new ColorPallet();
   let currentPallet = returnCurrentPallet();
@@ -513,7 +518,7 @@ const sortColorsMovedByUser = (sortedColors) => {
 // undo recent pallet
 const undoAction = () => {
   // go back to last pallet
-  console.log("undo last action");
+  // console.log("undo last action");
 
   // go to last pallet
   // get current pallet
@@ -531,13 +536,13 @@ const undoAction = () => {
     //render pallet
     renderColorPallet();
   }
-  console.log(global_app_data.e_color_pallet);
+  // console.log(global_app_data.e_color_pallet);
 };
 
 // redo recent pallet
 const redoAction = () => {
   // go back to last pallet
-  console.log("redo last action");
+  // console.log("redo last action");
   // go back to last pallet
 
   // go to last pallet
@@ -555,7 +560,7 @@ const redoAction = () => {
     //render pallet
     renderColorPallet();
   }
-  console.log(global_app_data.e_color_pallet);
+  // console.log(global_app_data.e_color_pallet);
 };
 
 function addNewPalletMaster(newPallet) {
@@ -564,7 +569,7 @@ function addNewPalletMaster(newPallet) {
 
   // Mark the current active palette as inactive (if there is one)
   if (currentActiveIndex !== -1) {
-      global_app_data.e_color_pallet[currentActiveIndex].active = false;
+    global_app_data.e_color_pallet[currentActiveIndex].active = false;
   }
 
   // Add the new palette and mark it as active
@@ -572,11 +577,11 @@ function addNewPalletMaster(newPallet) {
 
   // Insert the new palette into the array
   if (currentActiveIndex !== -1 && currentActiveIndex < global_app_data.e_color_pallet.length - 1) {
-      // Insert after the current active palette if it's not the last one
-      global_app_data.e_color_pallet.splice(currentActiveIndex + 1, 0, newPallet);
+    // Insert after the current active palette if it's not the last one
+    global_app_data.e_color_pallet.splice(currentActiveIndex + 1, 0, newPallet);
   } else {
-      // Otherwise, add to the end of the array
-      global_app_data.e_color_pallet.push(newPallet);
+    // Otherwise, add to the end of the array
+    global_app_data.e_color_pallet.push(newPallet);
   }
   // check if action is after an undo
   cleanUpAfterUndo();
@@ -747,7 +752,7 @@ $(() => {
 
       // Get the value of the data-todoid attribute
       let clickedColorTextId = colorItem.attr("id");
-      console.log(clickedColorTextId);
+      // console.log(clickedColorTextId);
       let todoEditTextInput = $(
         `.e_color_change_input[data-colorid="${clickedColorTextId}"]`
       );
