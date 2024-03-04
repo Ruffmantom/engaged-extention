@@ -7,7 +7,7 @@ function createNewNote() {
     noteDataObj.id = createId()
     noteDataObj.note = global_app_data.stagingDefault.text
     noteDataObj.label = ""
-    noteDataObj.dateCreated = createDate()
+    noteDataObj.dateCreated = new Date().toLocaleString();
     global_app_data.e_notes.unshift(noteDataObj)
     // clear values
     global_app_data.stagingDefault.text = ''

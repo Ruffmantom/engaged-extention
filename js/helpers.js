@@ -28,6 +28,33 @@ function formatDate(inputDate) {
 
     return formattedDate;
 }
+function formatDateAndTime(isoDateString) {
+    const date = new Date(isoDateString);
+  
+    // Pad with leading zeros where necessary
+    const pad = (num) => num.toString().padStart(2, "0");
+  
+    // Extract components
+    const month = pad(date.getMonth() + 1); // getMonth() is zero-indexed
+    const day = pad(date.getDate());
+    const year = date.getFullYear();
+    let hour = date.getHours();
+    const minute = pad(date.getMinutes());
+  
+    // Determine AM or PM suffix
+    const ampm = hour >= 12 ? "PM" : "AM";
+  
+    // Convert hour to 12-hour format
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
+  
+    // Construct formatted date string
+    const formattedDate = `${month}/${day}/${year} @ ${pad(
+      hour
+    )}:${minute} ${ampm}`;
+  
+    return formattedDate;
+  }
 
 // create date helper
 const createDate = () => {

@@ -9,6 +9,11 @@ class ColorPallet {
     return createId();
   }
 
+  setPallet(pallet) {
+    // Deep clone each color object in the array to avoid reference issues
+    this.colors = pallet.map(color => ({ ...color }));
+  }
+
   addColor(color) {
     this.colors.push(color);
   }
@@ -23,18 +28,27 @@ class ColorPallet {
 
   replaceColor(colorIndex, newColor) {
     this.colors.splice(colorIndex, 1, newColor);
+
   }
 
   toggleActive() {
     this.active = !this.active;
   }
 
-  setPallet(pallet) {
-    this.colors = pallet;
+  lockColor(lockId) {
+    this.colors.forEach((color) => {
+      color.id === lockId ? (color.isLocked = !color.isLocked) : "";
+    });
   }
 
-  newSortedColors(pallet) {
-    this.colors = pallet;
+  rearrangeColors(sortedIds) {
+    let currentColors = this.colors
+    // console.log(currentColors)
+    currentColors.sort((a, b) => {
+      return sortedIds.indexOf(a.id) - sortedIds.indexOf(b.id);
+    });
+
+    this.colors = currentColors
   }
 
   changeColor(hex, id) {
@@ -246,20 +260,22 @@ const findAnalogousColorName = (hex) => {
 // add / generate a new color at specified index
 const generateSingleColorAtIndex = (addIndex) => {
   let currentPallet = returnCurrentPallet();
-  let currentColors = currentPallet.colors
+  // let currentColors = currentPallet.colors
   let newPallet = new ColorPallet();
-  newPallet.setPallet(currentColors);
+  newPallet.setPallet(currentPallet.colors);
+  // console.log("Current Pallet colors: ", currentPallet.colors)
+  // console.log("Current colors before add at index: ", newPallet.colors)
 
   // Ensure addIndex is within bounds
   if (addIndex < 0 || addIndex >= currentPallet.colors.length) {
-    console.error("addIndex is out of bounds");
+    // console.error("addIndex is out of bounds");
     return;
   }
 
   // Adjust colorB index calculation
   let colorBIndex = addIndex === 0 ? addIndex + 1 : addIndex - 1;
-  let colorA = currentPallet.colors[addIndex].color;
-  let colorB = currentPallet.colors[colorBIndex].color;
+  let colorA = newPallet.colors[addIndex].color;
+  let colorB = newPallet.colors[colorBIndex].color;
 
   let analogousColor = interpolateColors(colorA, colorB);
   let foundColorName = findAnalogousColorName(analogousColor);
@@ -271,14 +287,18 @@ const generateSingleColorAtIndex = (addIndex) => {
     colorName: foundColorName || undefined,
     isLocked: false,
   };
-  
-  console.log("Added new color at index. New Pallet: ",currentPallet.colors)
-  console.log("Added new color at index. New Pallet: ",newPallet.colors)
+
+
   // Add the new color at the specified index
   newPallet.addColorAtIndex(addIndex, newColor);
+  // console.log("Adding new color to index: ", newPallet.colors)
 
+  // let newPallet = new ColorPallet();
+  // newPallet.setPallet(currentColors);
+
+  // console.log("New pallet after setting Pallet: ", newPallet.colors)
   // Update the palette
-  addNewPalletMaster(newPallet);
+  addNewPalletMaster(currentPallet, newPallet);
 };
 
 
@@ -301,7 +321,7 @@ const generateUnlockedColors = () => {
   let newPallet = new ColorPallet();
   newPallet.setPallet(newPalletColors);
 
-  addNewPalletMaster(newPallet);
+  addNewPalletMaster(currentPallet, newPallet);
 };
 
 
@@ -344,18 +364,7 @@ const loadColorPallet = () => {
   generateCSSOutput();
   generateHEXOutput();
 };
-
-const handleLockColor = (lockId) => {
-  let currentPallet = returnCurrentPallet();
-  let newPallet = new ColorPallet();
-  newPallet.setPallet(currentPallet.colors);
-  newPallet.colors.forEach((color) => {
-    color.id === lockId ? (color.isLocked = !color.isLocked) : "";
-  });
-  // newpallet master function
-  addNewPalletMaster(newPallet);
-};
-
+// copy color
 const handleCopyColor = (copyId) => {
   let currentPallet = returnCurrentPallet();
   let copyColorData = currentPallet.colors.find((color) => color.id === copyId);
@@ -364,19 +373,41 @@ const handleCopyColor = (copyId) => {
   // copy
   copyFunction(copy_color_hidden_input);
 };
-
+// lock color
+const handleLockColor = (lockId) => {
+  let currentPallet = returnCurrentPallet();
+  let newPallet = new ColorPallet();
+  newPallet.setPallet(currentPallet.colors);
+  // lock color
+  newPallet.lockColor(lockId)
+  // newPallet master function
+  addNewPalletMaster(currentPallet, newPallet);
+};
+// remove color
 const handleRemoveColor = (colorId) => {
   let currentPallet = returnCurrentPallet();
   let newPallet = new ColorPallet();
   newPallet.setPallet(currentPallet.colors);
   // remove color
   newPallet.removeColor(colorId);
-  // newpallet master function
-  addNewPalletMaster(newPallet);
+  // newPallet master function
+  addNewPalletMaster(currentPallet, newPallet);
+};
+// sorting based off user click and drag
+const sortColorsMovedByUser = (sortedIds) => {
+  // need to create a new pallet
+  let newPallet = new ColorPallet();
+  let currentPallet = returnCurrentPallet();
+  newPallet.setPallet(currentPallet.colors);
+  // console.log(sortedIds)
+  // sort currentPallet pallet based on ids of sortedColors
+  newPallet.rearrangeColors(sortedIds)
+  // add pallet to state
+  addNewPalletMaster(currentPallet, newPallet);
 };
 
 // delete old entries
-const palletCleanUp = (limit = 30) => {
+const cleanPalletHistory = (limit = 30) => {
   // remove all history up to the latest 30
   let cleanedArr = global_app_data.e_color_pallet.slice(-limit);
   global_app_data.e_color_pallet = cleanedArr;
@@ -498,29 +529,10 @@ const generateHEXOutput = () => {
   e_color_pallet_hex_output.val(output.join("\r\n"));
 };
 
-// sorting based off user click and drag
-const sortColorsMovedByUser = (sortedColors) => {
-  // console.log(sortedColors);
-  // need to create a new pallet
-  let newPallet = new ColorPallet();
-  let currentPallet = returnCurrentPallet();
 
-  // add logic here
-  // sort currentPallet pallet based on ids of sortedColors
-  let sortedArr = currentPallet.colors.sort((a, b) => {
-    return sortedColors.indexOf(a.id) - sortedColors.indexOf(b.id);
-  });
-
-  newPallet.newSortedColors(sortedArr);
-  addNewPalletMaster(newPallet);
-};
 
 // undo recent pallet
 const undoAction = () => {
-  // go back to last pallet
-  // console.log("undo last action");
-
-  // go to last pallet
   // get current pallet
   let activeIndex = returnCurrentPalletIndex();
 
@@ -533,19 +545,15 @@ const undoAction = () => {
     // - next set the previous index active to true
     global_app_data.e_color_pallet[activeIndex - 1].active = true;
 
+    // save to local storage the undo 
+    saveToLocalStorage()
     //render pallet
     renderColorPallet();
   }
-  // console.log(global_app_data.e_color_pallet);
 };
 
 // redo recent pallet
 const redoAction = () => {
-  // go back to last pallet
-  // console.log("redo last action");
-  // go back to last pallet
-
-  // go to last pallet
   // get current pallet
   let activeIndex = returnCurrentPalletIndex();
   if (activeIndex === global_app_data.e_color_pallet.length - 1) {
@@ -557,23 +565,17 @@ const redoAction = () => {
     // - next set the previous index active to true
     global_app_data.e_color_pallet[activeIndex + 1].active = true;
 
+    // save to local storage the undo
+    saveToLocalStorage()
     //render pallet
     renderColorPallet();
   }
-  // console.log(global_app_data.e_color_pallet);
 };
 
-function addNewPalletMaster(newPallet) {
+function addNewPalletMaster(currentPallet, newPallet) {
+  console.log("Before addNewPalletMaster HISTORY: ", global_app_data.e_color_pallet)
   // Find the index of the current active palette
-  let currentActiveIndex = global_app_data.e_color_pallet.findIndex(p => p.active);
-
-  // Mark the current active palette as inactive (if there is one)
-  if (currentActiveIndex !== -1) {
-    global_app_data.e_color_pallet[currentActiveIndex].active = false;
-  }
-
-  // Add the new palette and mark it as active
-  newPallet.active = true;
+  let currentActiveIndex = returnCurrentPalletIndex()
 
   // Insert the new palette into the array
   if (currentActiveIndex !== -1 && currentActiveIndex < global_app_data.e_color_pallet.length - 1) {
@@ -583,17 +585,22 @@ function addNewPalletMaster(newPallet) {
     // Otherwise, add to the end of the array
     global_app_data.e_color_pallet.push(newPallet);
   }
+
+  // set current to false now
+  currentPallet.active = false
+
   // check if action is after an undo
   cleanUpAfterUndo();
   // Update application state and UI as necessary
   saveToLocalStorage();
   renderColorPallet();
+  console.log("After addNewPalletMaster HISTORY: ", global_app_data.e_color_pallet)
 }
 
 
 $(() => {
-  // clean up if over 30
-  palletCleanUp();
+  // on load clean up if over 30
+  cleanPalletHistory();
   loadColorPallet();
   // handle color item setting buttons
   $(".e_color_pallet_cont").on(
@@ -728,6 +735,7 @@ $(() => {
 
       // Call your function here
       undoAction();
+
     }
   });
 
@@ -774,7 +782,7 @@ $(() => {
           // change color
           newPallet.changeColor(newHex, clickedColorTextId);
           // newpallet master function
-          addNewPalletMaster(newPallet);
+          addNewPalletMaster(currentPallet, newPallet);
 
           // Hide the input field and show the <p> tag
           colorItem.find(".e_color_pallet_item_text").hide();
