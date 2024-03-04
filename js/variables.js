@@ -131,3 +131,6 @@ const e_pallet_copy_hex_btn = $("#e_pallet_copy_hex_btn")
 // const e_pallet_download_pdf_btn = $("#e_pallet_download_pdf_btn")
 // global values
 let downloadPalletMenuOpen = false;
+// *************** Updates Modal VARIABLES **************************
+let close_updates_modal_btn = $("#close_updates_modal_btn")
+let latestUpdate = null
