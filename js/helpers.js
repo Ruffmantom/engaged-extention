@@ -13,6 +13,29 @@ const createId = () => {
     }
     return newId;
 };
+// most recent Update
+function findMostRecentUpDate(array) {
+    // Get the current date with time set to 00:00:00 for comparison
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+  
+    // Convert the date strings to Date objects and filter out future dates
+    const validDates = array
+      .map((element) => {
+        return {
+          ...element,
+          dateObj: new Date(element.date_issued)
+        };
+      })
+      .filter((element) => element.dateObj <= currentDate);
+  
+    // Sort the dates in descending order
+    validDates.sort((a, b) => b.dateObj - a.dateObj);
+  
+    // Return the most recent date object, or null if none are valid
+    return validDates.length > 0 ? validDates[0] : null;
+  }
+
 // format date from date picker
 function formatDate(inputDate) {
     // Parse the input date string into a Date object

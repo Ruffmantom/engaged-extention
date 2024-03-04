@@ -1615,13 +1615,13 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
 }
 
-#buy_a_coffee {
+
+.modal_link{
     display: inline;
     text-decoration: none;
     color: var(--eng-primary);
 }
-
-#buy_a_coffee:hover {
+.modal_link:hover {
     text-decoration: underline;
 }
 
@@ -1903,4 +1903,8 @@ svg.dark {
     border: 1px solid var(--eng-primary);
     background-color: var(--eng-input-bkg);
     color: var(--eng-text-color);
+}
+.sign_off{
+    font-style: italic;
+    font-size: smaller;
 }
