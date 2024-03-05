@@ -39,9 +39,7 @@ const tabNavBtnElm = $(".tab_nav_button")
 // *************** MENU AND SETTINGS VARIABLES **************************
 // default settings always on
 // settings checkbox's
-let settings = {
-    // write settings here
-}
+const settings_enable_update_notifications = $("#settings_enable_update_notifications")
 const clearAllSettingsBtn = $("#settings_clear_all_data")
 const settingsBtn = $("#settings_button")
 const closeBtn = $('#close_settings_btn')
