@@ -717,6 +717,9 @@ $(() => {
     helper: "clone",
     cursorAt: { top: 150, left: 45 },
     tolerance: "pointer",
+    axis: 'x',
+    cursor: "grabbing",
+    containment: "parent",
     update: function (event, ui) {
       var sortedIDs = $(this).sortable("toArray", { attribute: "id" });
 

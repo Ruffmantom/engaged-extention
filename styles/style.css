@@ -1022,9 +1022,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .todo_list_item_cont {
-    max-height: 150px;
+    max-height: 250px;
     overflow-y: scroll;
-
 }
 
 .todo_list_item_cont::-webkit-scrollbar {
@@ -1193,6 +1192,10 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: var(--eng-input-bkg);
     border-radius: 10px;
     padding: 5px;
+}
+
+.todo_grab:hover{
+    cursor: grab;
 }
 
 .deleted_todo {
@@ -1729,7 +1732,9 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 4px;
 
 }
-
+.color_drag_handle{
+    cursor: grab;
+}
 .color_pallet_item_setting_btn_cont:hover {
     background-color: var(--eng-modal-bg-color);
     cursor: pointer;

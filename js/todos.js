@@ -380,12 +380,12 @@ const deleteTodoList = (listId) => {
             deletingActiveList = true
         }
     })
-    
-    
-    
+
+
+
     let updatedUserTodos = global_app_data.e_todos.filter(l => l.id !== listId);
     global_app_data.e_todos = updatedUserTodos
-    
+
     if (deletingActiveList) {
         console.log('Deleting active list? ' + deletingActiveList)
         let lastActiveList = getLastActiveList()
@@ -483,6 +483,11 @@ const importJsonListData = (data) => {
     // clear file input
     $("#todo_list_import").val('');
 
+}
+
+const reorderTodos = () => {
+    // when the user moves a todo
+    // need to sort the list and save the re ordered list
 }
 
 // -----------------------------------------------------------------------------------
@@ -835,5 +840,39 @@ $(function () {
             reader.readAsText(file);
         }
     });
+
+    // sortable todo items
+    $(".todo_cont").sortable({
+        handle: ".todo_item_drag_handle",
+        helper: "clone",
+        tolerance: "pointer",
+        axis: 'y',
+        containment: "parent",
+        cursor: "grabbing",
+        update: function (event, ui) {
+            var sortedIDs = $(this).sortable("toArray", { attribute: "data-todoid" });
+            console.log($(this))
+            console.log(sortedIDs);
+        },
+    });
+    // sortable lists in menu
+    $(".todo_list_item_cont").sortable({
+        handle: ".todo_list_item_drag_handle",
+        // helper: "clone",
+        tolerance: "pointer",
+        axis: 'y',
+        containment: "parent",
+        cursor: "grabbing",
+        update: function (event, ui) {
+            var sortedIDs = $(this).sortable("toArray", { attribute: "data-listid" });
+            console.log(sortedIDs);
+
+        },
+    });
+
+
+
+
+
     // end of doc ready
 })
