@@ -1,6 +1,6 @@
 # Stay Engaged Extension
 >This project was conceived and developed with the objective of enhancing my work efficiency by integrating the functionalities of various applications I frequently utilize into a singular, cohesive platform. Drawing upon a wealth of inspiration from these regularly used applications, the aim was to consolidate their most valuable features into one accessible location. This tool adheres to the same foundational principles and architecture as my previously developed extension, the LabCloud Tool, ensuring a consistent user experience while expanding on its utility and efficiency..
-> Check out the extension [_here_]().
+> Check out the extension [_here_](https://chromewebstore.google.com/detail/stay-engaged/kglmccjefpibbpgbfmlccaknajmdpogd).
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -56,7 +56,7 @@
 ## Setup
 - Direct Browser Execution: You may download the repository and initiate the application by simply opening the HTML file within your browser. This is achieved by double-clicking the HTML file, which will directly load the application in your preferred web browser.
 
-- Chrome Extension Installation: For a more integrated experience, users are encouraged to install the Chrome extension. This option provides seamless access to the application's features directly within the Chrome browser. To install, please follow this link: [Chrome Extension]()
+- Chrome Extension Installation: For a more integrated experience, users are encouraged to install the Chrome extension. This option provides seamless access to the application's features directly within the Chrome browser. To install, please follow this link: [Chrome Extension](https://chromewebstore.google.com/detail/stay-engaged/kglmccjefpibbpgbfmlccaknajmdpogd)
 
 
 ## Usage
@@ -73,7 +73,7 @@ Room for improvement:
 
 
 ## Acknowledgments
-- This project draws inspiration from applications such as Trello and Coolors, with the aim of simplifying both my life and the lives of others. Its development was guided by the desire to incorporate the efficiency and creativity these platforms offer, thereby enhancing everyday productivity and organizational tasks.
+- This project draws inspiration from applications such as [Trello](https://trello.com/) and [Coolors](https://coolors.co/), with the aim of simplifying both my life and the lives of others. Its development was guided by the desire to incorporate the efficiency and creativity these platforms offer, thereby enhancing everyday productivity and organizational tasks.
 
 
 ## Contact

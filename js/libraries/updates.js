@@ -47,8 +47,8 @@ const app_updates = [
 
                 </div>
         `,
-        version:"1.1.3",
-        id:"U-1.1.3",
+        version:"1.1.0",
+        id:"U-1.1.0",
         date_issued:"03/04/24",
     }
 ]
