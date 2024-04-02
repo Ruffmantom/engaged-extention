@@ -220,7 +220,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #password_gen_icon,
-#color_pallet_icon {
+#color_pallet_icon,
+#css_minify_icon {
     max-width: 14px;
 }
 

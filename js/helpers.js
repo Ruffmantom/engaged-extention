@@ -177,3 +177,15 @@ const findColorName = (hex) => {
     })
     return foundColorName
 }
+
+function minifyCSS(css) {
+    // Remove comments
+    css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+    // Remove whitespace characters
+    css = css.replace(/\s+/g, ' ');
+    // Remove spaces before and after certain characters
+    css = css.replace(/\s?([;:,{\}])\s?/g, '$1');
+    // Remove the last semicolon before a closing '}' (optional)
+    css = css.replace(/;}/g, '}');
+    return css.trim();
+  }

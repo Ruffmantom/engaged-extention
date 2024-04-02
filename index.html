@@ -41,8 +41,7 @@
             <div class="due_date_form">
                 <p class="chosen_due_date"></p>
                 <input type="date" name="due" id="todo_due_date_input">
-                <button type="button" class="tf_btn main_btn" id="save_due_date_btn"
-                    style="display: inline-block;">Save</button>
+                <button type="button" class="tf_btn main_btn" id="save_due_date_btn" style="display: inline-block;">Save</button>
             </div>
         </div>
     </div>
@@ -64,7 +63,7 @@
             </div>
 
             <div class="settings_form " id="updates_cont">
-                
+
             </div>
         </div>
     </div>
@@ -249,6 +248,36 @@
 
                     <p class="hover_helper">Color Pallet</p>
                     <div class="tab_nav_button" data-tab="four">
+
+                    </div>
+                </div>
+                <!-- Nav Button: Css Minify -->
+                <div class="setting_btn menu_item_cont">
+
+                    <?xml version="1.0" encoding="UTF-8"?>
+
+                    <svg id="css_minify_icon" data-name="Group 157" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="11.64" height="14.157"
+                        viewBox="0 0 11.64 14.157">
+                        <defs>
+                            <clipPath id="clip-path">
+                                <rect id="Rectangle_126" data-name="Rectangle 126" width="11.64" height="14.157"
+                                    fill="none" />
+                            </clipPath>
+                        </defs>
+                        <g id="Group_156" data-name="Group 156" clip-path="url(#clip-path)">
+                            <path id="Path_36" data-name="Path 36"
+                                d="M11.482.2a.608.608,0,0,0-.452-.2H.608A.608.608,0,0,0,0,.67L1.179,12.19a.608.608,0,0,0,.4.512l4.035,1.42a.608.608,0,0,0,.4,0l4.035-1.42a.608.608,0,0,0,.4-.512L11.636.67A.608.608,0,0,0,11.482.2M9.289,11.683,5.819,12.9,2.35,11.683,1.282,1.217h9.076Z"
+                                transform="translate(0.001)" />
+                            <path id="Path_37" data-name="Path 37"
+                                d="M66.4,95.731H72.14l-.2,1.82H66.745a.608.608,0,1,0,0,1.217H71.8l-.274,2.48-1.72.434-1.952-.545-.167-1a.608.608,0,1,0-1.2.2l.231,1.384a.608.608,0,0,0,.437.486l2.48.692a.609.609,0,0,0,.312,0l2.287-.577a.608.608,0,0,0,.456-.523l.4-3.579h0l.335-3.032a.608.608,0,0,0-.6-.675H66.4a.608.608,0,1,0,0,1.217"
+                                transform="translate(-63.789 -91.639)" />
+                        </g>
+                    </svg>
+
+
+                    <p class="hover_helper">CSS Minify</p>
+                    <div class="tab_nav_button" data-tab="five">
 
                     </div>
                 </div>
@@ -580,7 +609,26 @@
 
         </div>
 
+        <!-- Tab: five -->
+        <!-- css Minify -->
+        <div class="tab tf_control_group" data-tab="five">
+            <h1 class="eng_tab_heading">CSS Minify</h1>
+            <p>Password Length</p>
+            <div class="tf_control_group bottom_input_group">
+                <div id="minified_css_input_cont" class="textarea_cont tf_control_group bottom_input_group">
+                    <textarea class="tf_input textarea_cont e_cursor_p" name="cssInput" cols="30" rows="3"
+                        id="minified_css_input" placeholder='Input CSS'></textarea>
+                </div>
+            </div>
 
+            <p>Output</p>
+            <div id="minified_css_output_cont" class="textarea_cont tf_control_group bottom_input_group">
+                <textarea class="tf_input textarea_cont e_cursor_p" readonly name="cssOutput" cols="30" rows="3"
+                    id="minified_css_output" placeholder='Minified CSS...'></textarea>
+                <div class="helper">Click To Copy</div>
+            </div>
+            <button type="button" class="tf_btn main_btn" id="clear_minify_css_output_btn">Clear Output</button>
+        </div>
 
 
         <!-- end of  -->
@@ -598,6 +646,7 @@
     <script type="text/javascript" src="./js/todos.js"></script>
     <script type="text/javascript" src="./js/passwordGen.js"></script>
     <script type="text/javascript" src="./js/colorPallet.js"></script>
+    <script type="text/javascript" src="./js/cssMinify.js"></script>
     <script type="text/javascript" src="./js/theme.js"></script>
 </body>
 

@@ -35,6 +35,7 @@
         "./js/notes.js",
         "./js/passwordGen.js",
         "./js/colorPallet.js",
+        "./js/cssMinify.js",
         "./js/todos.js"
       ]
     }
