@@ -44,26 +44,57 @@ const createTodoList = (listInfo) => {
 const createTodo = (todoInfo) => {
     const todoWithLinks = findAndReplaceLinks(todoInfo.todo);
 
-    const checkDueDateIsPastDue = (dueDate) => {
-        // if the todo has a dueDate, check to see if it is past due
-        if (dueDate) {
-            // Parse the input due date string into a Date object
-            const dueDateObject = new Date(dueDate);
+    // const checkDueDateIsPastDue = (dueDate) => {
+    //     // if the todo has a dueDate, check to see if it is past due
+    //     if (dueDate) {
+    //         // Parse the input due date string into a Date object
+    //         const dueDateObject = new Date(dueDate);
 
-            // Get the current date
-            const currentDate = new Date();
+    //         // Get the current date
+    //         const currentDate = new Date();
 
-            // Compare the due date with the current date
-            return dueDateObject < currentDate;
+    //         // Compare the due date with the current date
+    //         return dueDateObject < currentDate;
+    //     }
+
+    //     // If there's no due date, it's not past due
+    //     return false;
+    // }
+
+    const checkDueDateStatus = (dueDateString) => {
+        if (!dueDateString) {
+            // If there's no due date, consider it not applicable or handle as desired
+            return 'na';
         }
+        // Parse the input due date string into a Date object
+        const dueDate = new Date(dueDateString + 'T00:00:00');
 
-        // If there's no due date, it's not past due
-        return false;
-    }
+        // Get the current date and reset time for accurate comparison
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Reset hours to midnight
+
+        // Convert both dates to their time value for comparison
+        const dueDateTime = dueDate.getTime();
+        const currentDateTime = currentDate.getTime();
+
+        // Compare the due date with the current date
+        if (dueDateTime === currentDateTime) {
+            // Due date is today
+            return 'today';
+        } else if (dueDateTime < currentDateTime) {
+            // Due date is in the past
+            return 'overdue';
+        } else {
+            // Due date is in the future
+            return 'fine';
+        }
+    };
+
+
     return `
             <div class="todo_item ${todoInfo.checked ? "todo_checked" : ""}" data-todoid=${todoInfo.id}>
                 <!-- if there is a due date -->
-                ${todoInfo.dueDate ? `<p class="todo_due_date ${!todoInfo.checked && checkDueDateIsPastDue(todoInfo.dueDate) ? "overdue" : ""} ${todoInfo.checked ? "complete" : ""}">Due: ${formatDate(todoInfo.dueDate)}</p>` : ''}
+                ${todoInfo.dueDate ? `<p class="todo_due_date ${!todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'overdue' ? "overdue" : !todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'today' ? 'today' : ""} ${todoInfo.checked ? "complete" : ""}">Due: ${formatDate(todoInfo.dueDate)}</p>` : ''}
 
                 <div class="todo_item_cont">
                     <div class="todo_item_col todo_item_left">
@@ -163,7 +194,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                         <p data-colorid="${colorData.id}" class="e_color_pallet_item_text ${isLight ? "dark" : "light"}">${colorHex}</p>
                         <input data-colorid="${colorData.id}" hidden type="text" placeholder="#FFFFFF" value="${colorHex}" class="e_color_change_input"/>
                     </div>
-                        ${colorData.colorName != undefined ? `<p class="e_color_pallet_item_name ${isLight ? "dark" : "light"}">${colorData.colorName}</p>`:""}
+                        ${colorData.colorName != undefined ? `<p class="e_color_pallet_item_name ${isLight ? "dark" : "light"}">${colorData.colorName}</p>` : ""}
                         <div class="e_color_pallet_item_settings_cont">
                             <!-- copy button -->
                             <div class="color_pallet_item_setting_btn_cont">
@@ -272,7 +303,7 @@ const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
                             </g>
                         </svg>
 
-                        <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index + 1 }"></div>
+                        <div class="color_pallet_item_add_btn" data-index="${index}" data-addcolorindex="${index + 1}"></div>
                     </div>
                 </div> `}
                     

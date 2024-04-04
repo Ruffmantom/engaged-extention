@@ -44,14 +44,10 @@ const createTodoListAction = (first, listName) => {
     if (first) {
         list.active = true
     }
-    // push new list into global_app_data.e_todos
-    global_app_data.e_todos.unshift(list)
+    // push new list into global_app_data.e_todos add to end of array
+    global_app_data.e_todos.push(list)
     // add list to list menu
-    $(todoMenuListItemCont).prepend(createTodoList(list))
-    // Scroll down to the bottom of the todo container
-    // $(".todo_list_item_cont").animate({
-    //     scrollTop: $(todoItemCont)[0].scrollHeight
-    // }, 500);
+    $(todoMenuListItemCont).append(createTodoList(list)) // adds to end of list
     // clear first input
     $(addFirstListInputElm).val("")
     // Clear menu input
@@ -59,6 +55,7 @@ const createTodoListAction = (first, listName) => {
     // re render the UI
     updateFullTodoUi()
 }
+
 // create a new todo
 const createTodoAction = (todoVal) => {
     if (todoVal !== "") {
@@ -74,15 +71,15 @@ const createTodoAction = (todoVal) => {
         updateList.todos.unshift(todo)
         // update global_app_data.e_todos
         updateGlobalUsersTodos(updateList)
-        $(todoItemCont).prepend(createTodo(todo))
+        $(todoItemCont).append(createTodo(todo))
         // reset
         $(addTodoInputElm).val("")
         //update UI
         updateFullTodoUi()
-        // scroll up on the todo container
+        // scroll when new todo is added
         $(todoItemCont).animate({
-            scrollTop: 0
-        }, 500)
+            scrollTop: $(todoItemCont)[0].scrollHeight
+        }, 500);
     } else {
         sendNotification('fast', 3000, 'Please enter a todo')
     }
@@ -141,7 +138,6 @@ const updateTodoCheckedStateUI = (todoId, checked) => {
             if (checked) {
                 $(t).addClass('todo_checked');
                 $(t).children('.todo_due_date').addClass('complete')
-                $(t).children('.todo_due_date').removeClass('overdue')
             } else {
                 $(t).removeClass('todo_checked');
                 $(t).children('.todo_due_date').removeClass('complete')
@@ -206,7 +202,7 @@ const updateFullTodoUi = () => {
     $(todoMenuListItemCont).empty()
     // Render todo menu lists in the menu
     global_app_data.e_todos.forEach(l => {
-        $(todoMenuListItemCont).prepend(createTodoList(l));
+        $(todoMenuListItemCont).append(createTodoList(l)); // add to bottom of list
     });
     // scroll list to bottom
     $(".todo_list_item_cont").animate({
@@ -265,20 +261,17 @@ const loadUsersTodos = () => {
         // Load the current list todos and sort them
         let currList = returncurrList();
         let sortedList = currList.todos.sort((a, b) => {
-            // First, sort by checked state (unchecked first)
+            // sort by checked state (unchecked first)
             if (a.checked !== b.checked) {
                 return a.checked ? -1 : 1;
             }
-
-            // If the checked state is the same, then sort by createdDate
-            return new Date(a.createdDate) - new Date(b.createdDate);
         });
 
         // empty the todo container before rendering them.
         $(todoItemCont).empty()
         // Render sorted todos
         sortedList.forEach(todo => {
-            $(todoItemCont).prepend(createTodo(todo));
+            $(todoItemCont).append(createTodo(todo));
         });
         // check and hide todos if needed
         handleDisplayCompletedTasks(false)
@@ -477,7 +470,7 @@ const importJsonListData = (data) => {
         return
     } else {
         data.active = false
-        global_app_data.e_todos.unshift(data)
+        global_app_data.e_todos.push(data)
         // add scroll function to top of list
         sendNotification('fast', 3000, `${data.name} list has been added!`)
     }
@@ -486,15 +479,10 @@ const importJsonListData = (data) => {
     saveToLocalStorage()
     // rerender list
     updateFullTodoUi()
-    
+
     // clear file input
     $("#todo_list_import").val('');
 
-}
-
-const reorderTodos = () => {
-    // when the user moves a todo
-    // need to sort the list and save the re ordered list
 }
 
 // -----------------------------------------------------------------------------------
@@ -857,9 +845,16 @@ $(function () {
         containment: "parent",
         cursor: "grabbing",
         update: function (event, ui) {
-            var sortedIDs = $(this).sortable("toArray", { attribute: "data-todoid" });
-            console.log($(this))
-            console.log(sortedIDs);
+            let sortedIDs = $(this).sortable("toArray", { attribute: "data-todoid" });
+            let currList = returncurrList()
+            // sort todos based on what the user moved
+            let sortedTodos = sortedIDs.map(id =>
+                currList.todos.find(todo => todo.id.toString() === id)
+            );
+            // update currentTodo list
+            currList.todos = sortedTodos
+            // updateUsersTodos(currList)
+            updateGlobalUsersTodos(currList)
         },
     });
     // sortable lists in menu
@@ -871,9 +866,15 @@ $(function () {
         containment: "parent",
         cursor: "grabbing",
         update: function (event, ui) {
-            var sortedIDs = $(this).sortable("toArray", { attribute: "data-listid" });
-            console.log(sortedIDs);
+            let sortedIDs = $(this).sortable("toArray", { attribute: "data-listid" });
+            // sort lists based on sortedIds
+            let sortedLists = sortedIDs.map(id =>
+                global_app_data.e_todos.find(list => list.id === id)
+            )
 
+            global_app_data.e_todos = sortedLists
+            // save to local
+            saveToLocalStorage()
         },
     });
 

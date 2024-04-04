@@ -1216,6 +1216,7 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     align-items: start;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .todo_item_col {
@@ -1303,10 +1304,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
-.todo_due_date.complete {
-    color: var(--eng-complete);
-}
-
 .todo_change_text_input {
     padding: 5px 10px;
     border: 1px solid var(--eng-primary);
@@ -1320,10 +1317,15 @@ input[type=number]::-webkit-outer-spin-button {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.todo_due_date.overdue {
+.todo_due_date.today {
     color: var(--eng-warning);
 }
-
+.todo_due_date.overdue {
+    color: var(--eng-danger);
+}
+.todo_due_date.complete {
+    color: var(--eng-complete);
+}
 .danger_btn:hover {
     background-color: var(--eng-danger);
     color: white;
