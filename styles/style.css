@@ -244,7 +244,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 10px;
     border-radius: 7px;
     width: 1000%;
-    max-width: 500px;
+    max-width: 470px;
     position: relative;
     min-height: 480px;
     overflow: hidden;
