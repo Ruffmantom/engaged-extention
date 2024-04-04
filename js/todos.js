@@ -48,6 +48,10 @@ const createTodoListAction = (first, listName) => {
     global_app_data.e_todos.unshift(list)
     // add list to list menu
     $(todoMenuListItemCont).prepend(createTodoList(list))
+    // Scroll down to the bottom of the todo container
+    // $(".todo_list_item_cont").animate({
+    //     scrollTop: $(todoItemCont)[0].scrollHeight
+    // }, 500);
     // clear first input
     $(addFirstListInputElm).val("")
     // Clear menu input
@@ -204,6 +208,10 @@ const updateFullTodoUi = () => {
     global_app_data.e_todos.forEach(l => {
         $(todoMenuListItemCont).prepend(createTodoList(l));
     });
+    // scroll list to bottom
+    $(".todo_list_item_cont").animate({
+        scrollTop: $(".todo_list_item_cont")[0].scrollHeight
+    }, 500);
     // set UI
     // set list title
     $(todoListTitle).text(currList.name)
@@ -478,8 +486,7 @@ const importJsonListData = (data) => {
     saveToLocalStorage()
     // rerender list
     updateFullTodoUi()
-    // scroll to top of list container
-    $(".todo_list_item_cont").animate({ scrollTop: 0 }, 'slow');
+    
     // clear file input
     $("#todo_list_import").val('');
 
@@ -843,7 +850,7 @@ $(function () {
 
     // sortable todo items
     $(".todo_cont").sortable({
-        handle: ".todo_item_drag_handle",
+        handle: ".todo_item_cont",
         helper: "clone",
         tolerance: "pointer",
         axis: 'y',
@@ -857,7 +864,7 @@ $(function () {
     });
     // sortable lists in menu
     $(".todo_list_item_cont").sortable({
-        handle: ".todo_list_item_drag_handle",
+        handle: ".todo_list_btn",
         // helper: "clone",
         tolerance: "pointer",
         axis: 'y',

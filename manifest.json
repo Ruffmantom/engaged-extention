@@ -1,16 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Stay Engaged",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "This extension was designed to keep you focused and engaged, no need to keep opening new tabs. Keep all your tools in one place.",
   "action": {
     "default_title": "Stay Engaged",
     "default_popup": "index.html"
   },
   "icons": {
-    "16": "./assets/images/logo/logo-16px.png",
-    "48": "./assets/images/logo/logo-48px.png",
-    "128": "./assets/images/logo/logo-128px.png"
+    "16": "./assets/images/logo/v2/logo-rounded-v2-16.png",
+    "48": "./assets/images/logo/v2/logo-rounded-v2-48.png",
+    "128": "./assets/images/logo/v2/logo-rounded-v2-128.png"
   },
   "content_scripts": [
     {

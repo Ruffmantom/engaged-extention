@@ -4,15 +4,15 @@ const clear_minify_css_output_btn = $("#clear_minify_css_output_btn")
 
 $(() => {
 
-    minified_css_input.on("keyup change", function(e) {
-        // Assuming minifyCSS is a function available that takes a string and returns a minified CSS string
-        const minifiedContent = minifyCSS($(e.target).val());
-        minified_css_output.val(minifiedContent);
-    });
+  minified_css_input.on("keyup change", function (e) {
+    // Assuming minifyCSS is a function available that takes a string and returns a minified CSS string
+    const minifiedContent = minifyCSS($(e.target).val());
+    minified_css_output.val(minifiedContent);
+  });
 
 
-    // copy hex codes
-    minified_css_output.on("click", (e) => {
+  // copy hex codes
+  minified_css_output.on("click", (e) => {
     if (minified_css_output.val() === "") {
       sendNotification("fast", 3000, "Please add CSS before copying.");
       return;
@@ -20,4 +20,13 @@ $(() => {
       copyFunction(minified_css_output);
     }
   });
+
+  // clear output
+  clear_minify_css_output_btn.on('click', (e) => {
+    // clear both input and output
+    minified_css_input.val('')
+    minified_css_output.val('')
+
+  })
+
 })

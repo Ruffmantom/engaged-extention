@@ -50,5 +50,37 @@ const app_updates = [
         version:"1.1.0",
         id:"U-1.1.0",
         date_issued:"03/04/24",
-    }
+    },
+    {
+        acknowledged:false,
+        content:`
+        <div>
+            <p>🎉 <strong>What's New with Stay Engaged?</strong></p>
+            <p>Version 1.2.0</p>
+            <p>Hello, Engagers! We're thrilled to announce some exciting new features and important bug fixes in our latest update to Stay Engaged. We're constantly working to enhance your experience, and this update is no exception. Here's what's new:</p>
+            <p>🔧 <strong>New Features:</strong></p>
+            <ul>
+                <li><strong>CSS Minify Tool:</strong> Introducing the CSS Minify tool! Easily minify your CSS by copying and pasting it into the input field. The minified code will appear in the output field, ready for use.</li>
+                <li><strong>Sort Todo's by Hand:</strong> You now have the flexibility to sort todo's in your lists manually. Just click and drag to reorder them as you see fit.</li>
+                <li><strong>Drag & Drop Todo Lists:</strong> Enhancing organization further, todo lists in the list menu can now also be sorted with a simple click and drag action.</li>
+            </ul>
+            <p>🛠 <strong>Bug Fixes:</strong></p>
+            <ul>
+                <li>The color indicating past due todos has been fixed for better visibility.</li>
+                <li>Adding a new todo list will trigger the main container to scroll down if set to overflow scroll.</li>
+                <li>Fixed bug where when moving color pallet color goes outside of its parent container.</li>
+                <li>Smoothed out some other various style issues to ensure a smoother user experience.</li>
+            </ul>
+            <p>🚀 <strong>Experience the Enhancements!</strong> We're excited for you to try out the new CSS Minify tool and enjoy the improved flexibility in organizing your tasks and todo lists. These updates are designed to make your interaction with Stay Engaged more intuitive and efficient.</p>
+            <p>Your feedback is invaluable to us. If you encounter any issues or have suggestions for our next update, please don't hesitate to get in touch. Connect with us through my <a href="https://www.buymeacoffee.com/tomruffcodes" class="modal_link" target="_blank">Buy Me a Coffee link here ☕️</a>.</p>
+            <p>We hope you love these new features and bug fixes!</p>
+            <p class="sign_off">- Tom</p>
+        </div>
+
+        `,
+        version:"1.2.0",
+        id:"U-1.2.0",
+        date_issued:"04/04/24",
+    },
+
 ]

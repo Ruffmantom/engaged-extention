@@ -1023,7 +1023,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .todo_list_item_cont {
-    max-height: 250px;
+    max-height: 190px;
     overflow-y: scroll;
 }
 
@@ -1913,4 +1913,7 @@ svg.dark {
 .sign_off{
     font-style: italic;
     font-size: smaller;
+}
+.css_output_label{
+    margin-top: 0;
 }

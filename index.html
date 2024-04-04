@@ -41,7 +41,8 @@
             <div class="due_date_form">
                 <p class="chosen_due_date"></p>
                 <input type="date" name="due" id="todo_due_date_input">
-                <button type="button" class="tf_btn main_btn" id="save_due_date_btn" style="display: inline-block;">Save</button>
+                <button type="button" class="tf_btn main_btn" id="save_due_date_btn"
+                    style="display: inline-block;">Save</button>
             </div>
         </div>
     </div>
@@ -158,7 +159,7 @@
 
                 </div>
                 <div class="setting_form_row ">
-                    <p class="version_text">Version 1.1.0</p>
+                    <p class="version_text">Version 1.2.0</p>
 
                 </div>
             </div>
@@ -613,21 +614,18 @@
         <!-- css Minify -->
         <div class="tab tf_control_group" data-tab="five">
             <h1 class="eng_tab_heading">CSS Minify</h1>
-            <p>Password Length</p>
-            <div class="tf_control_group bottom_input_group">
-                <div id="minified_css_input_cont" class="textarea_cont tf_control_group bottom_input_group">
-                    <textarea class="tf_input textarea_cont e_cursor_p" name="cssInput" cols="30" rows="3"
-                        id="minified_css_input" placeholder='Input CSS'></textarea>
-                </div>
+            <p>Paste CSS Here</p>
+            <div id="minified_css_input_cont" class="textarea_cont tf_control_group bottom_input_group">
+                <textarea class="tf_input textarea_cont e_cursor_p" name="cssInput" cols="30" rows="3"
+                    id="minified_css_input" placeholder='Input CSS...'></textarea>
             </div>
-
-            <p>Output</p>
+            <p class="css_output_label">Output</p>
             <div id="minified_css_output_cont" class="textarea_cont tf_control_group bottom_input_group">
                 <textarea class="tf_input textarea_cont e_cursor_p" readonly name="cssOutput" cols="30" rows="3"
                     id="minified_css_output" placeholder='Minified CSS...'></textarea>
                 <div class="helper">Click To Copy</div>
             </div>
-            <button type="button" class="tf_btn main_btn" id="clear_minify_css_output_btn">Clear Output</button>
+            <button type="button" class="tf_btn main_btn" id="clear_minify_css_output_btn">Clear Data</button>
         </div>
 
 

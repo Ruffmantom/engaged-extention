@@ -35,7 +35,6 @@ const createTodoList = (listInfo) => {
                 </g>
             </svg>
         </button>
-        <div class="todo_list_item_drag_handle">⁞</div>
         
     </div>
     
@@ -68,7 +67,6 @@ const createTodo = (todoInfo) => {
 
                 <div class="todo_item_cont">
                     <div class="todo_item_col todo_item_left">
-                    <div class="todo_item_drag_handle todo_grab">⁞</div>
                         <input type="checkbox" data-todoid=${todoInfo.id} name="doublequotes" class="checkbox_input complete_todo" ${todoInfo.checked ? "checked" : ''}>
                         <div class="todo_text_cont">
                             <p class="todo_item_text" data-todoid=${todoInfo.id}>${todoWithLinks}</p>
