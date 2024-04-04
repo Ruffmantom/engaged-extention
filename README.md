@@ -70,6 +70,7 @@ The project is: _in progress_
 ## Room for Improvement
 Room for improvement:
 - Continued updates on bugs
+- Continued creation of new tools
 
 
 ## Acknowledgments
