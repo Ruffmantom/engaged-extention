@@ -68,10 +68,10 @@ const createTodoAction = (todoVal) => {
         todo.checked = false
         // save to global_app_data.e_todos
         let updateList = returncurrList()
-        updateList.todos.unshift(todo)
+        updateList.todos.push(todo) // add to end of array
         // update global_app_data.e_todos
         updateGlobalUsersTodos(updateList)
-        $(todoItemCont).append(createTodo(todo))
+        $(todoItemCont).append(createTodo(todo)) // add to end of list
         // reset
         $(addTodoInputElm).val("")
         //update UI
