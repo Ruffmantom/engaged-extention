@@ -177,6 +177,7 @@ input[type=number]::-webkit-outer-spin-button {
     border: none;
 }
 
+
 .main_icon_button:hover {
     background-color: var(--eng-hover-secondary-bg-color);
 
@@ -188,6 +189,11 @@ input[type=number]::-webkit-outer-spin-button {
 
 .main_icon_button.disabled:hover {
     cursor: not-allowed;
+}
+
+.small_icon_btn {
+    height: 25px;
+    width: 25px;
 }
 
 .menu_item_cont {
@@ -738,7 +744,8 @@ input[type=number]::-webkit-outer-spin-button {
     z-index: -1;
 }
 
-.setting_btn:hover>.hover_helper {
+.setting_btn:hover>.hover_helper,
+.main_icon_button:hover>.hover_helper {
     left: 120%;
     width: max-content;
     opacity: 1;
@@ -1195,7 +1202,11 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 5px;
 }
 
-.todo_grab:hover{
+#todo_add_tag_btn {
+    margin-left: 7px;
+}
+
+.todo_grab:hover {
     cursor: grab;
 }
 
@@ -1320,12 +1331,15 @@ input[type=number]::-webkit-outer-spin-button {
 .todo_due_date.today {
     color: var(--eng-warning);
 }
+
 .todo_due_date.overdue {
     color: var(--eng-danger);
 }
+
 .todo_due_date.complete {
     color: var(--eng-complete);
 }
+
 .danger_btn:hover {
     background-color: var(--eng-danger);
     color: white;
@@ -1622,11 +1636,12 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 
-.modal_link{
+.modal_link {
     display: inline;
     text-decoration: none;
     color: var(--eng-primary);
 }
+
 .modal_link:hover {
     text-decoration: underline;
 }
@@ -1735,9 +1750,11 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 4px;
 
 }
-.color_drag_handle{
+
+.color_drag_handle {
     cursor: grab;
 }
+
 .color_pallet_item_setting_btn_cont:hover {
     background-color: var(--eng-modal-bg-color);
     cursor: pointer;
@@ -1758,11 +1775,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
-.e_color_pallet_item_text.light, .e_color_pallet_item_name.light {
+.e_color_pallet_item_text.light,
+.e_color_pallet_item_name.light {
     color: white;
 }
 
-.e_color_pallet_item_text.dark, .e_color_pallet_item_name.dark {
+.e_color_pallet_item_text.dark,
+.e_color_pallet_item_name.dark {
     color: black;
 }
 
@@ -1892,6 +1911,7 @@ svg.dark {
 #generate_colors_btn {
     width: 100%;
 }
+
 .color_change_form {
     display: flex;
     flex-direction: column;
@@ -1900,6 +1920,7 @@ svg.dark {
     position: absolute;
     top: 0;
 }
+
 .e_color_change_input {
     width: 100%;
     padding: 5px 5px;
@@ -1912,10 +1933,12 @@ svg.dark {
     background-color: var(--eng-input-bkg);
     color: var(--eng-text-color);
 }
-.sign_off{
+
+.sign_off {
     font-style: italic;
     font-size: smaller;
 }
-.css_output_label{
+
+.css_output_label {
     margin-top: 0;
 }

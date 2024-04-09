@@ -44,23 +44,6 @@ const createTodoList = (listInfo) => {
 const createTodo = (todoInfo) => {
     const todoWithLinks = findAndReplaceLinks(todoInfo.todo);
 
-    // const checkDueDateIsPastDue = (dueDate) => {
-    //     // if the todo has a dueDate, check to see if it is past due
-    //     if (dueDate) {
-    //         // Parse the input due date string into a Date object
-    //         const dueDateObject = new Date(dueDate);
-
-    //         // Get the current date
-    //         const currentDate = new Date();
-
-    //         // Compare the due date with the current date
-    //         return dueDateObject < currentDate;
-    //     }
-
-    //     // If there's no due date, it's not past due
-    //     return false;
-    // }
-
     const checkDueDateStatus = (dueDateString) => {
         if (!dueDateString) {
             // If there's no due date, consider it not applicable or handle as desired
@@ -93,6 +76,20 @@ const createTodo = (todoInfo) => {
 
     return `
             <div class="todo_item ${todoInfo.checked ? "todo_checked" : ""}" data-todoid=${todoInfo.id}>
+            <!-- add tag area -->
+            <button type="button" class="main_icon_button small_icon_btn" id="todo_add_tag_btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12" viewBox="0 0 12 12">
+                                        <defs>
+                                            <clipPath id="a">
+                                                <rect width="12" height="12"></rect>
+                                            </clipPath>
+                                        </defs>
+                                        <g clip-path="url(#a)">
+                                            <path d="M7.5,10.95V7.5h3.45A1.051,1.051,0,0,0,12,6.45v-.9A1.051,1.051,0,0,0,10.95,4.5H7.5V1.05A1.051,1.051,0,0,0,6.45,0h-.9A1.051,1.051,0,0,0,4.5,1.05V4.5H1.05A1.051,1.051,0,0,0,0,5.55v.9A1.051,1.051,0,0,0,1.05,7.5H4.5v3.45A1.051,1.051,0,0,0,5.55,12h.9A1.051,1.051,0,0,0,7.5,10.95" fill-rule="evenodd"></path>
+                                        </g>
+                                    </svg>
+                                    <p class="hover_helper">Add Tag</p>
+                                </button>
                 <!-- if there is a due date -->
                 ${todoInfo.dueDate ? `<p class="todo_due_date ${!todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'overdue' ? "overdue" : !todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'today' ? 'today' : ""} ${todoInfo.checked ? "complete" : ""}">Due: ${formatDate(todoInfo.dueDate)}</p>` : ''}
 

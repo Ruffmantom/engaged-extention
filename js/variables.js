@@ -16,6 +16,7 @@ let global_app_default_data = {
     },
     e_notes: [],
     e_todos: [],
+    e_todo_tags:[],
     e_todos_lal: "",
     e_note_stage: "",
     stagingDefault: {
