@@ -16,10 +16,13 @@ const getCompletionPercentage = (currList) => {
     if (currList.todos.length >= 1) {
         let numberOfTodos = currList.todos.length;
         let completeTodos = currList.todos.filter(t => t.checked);
+        // todos left
+        let todosLeft = currList.todos.filter(t => !t.checked);
         let numberOfCompleteTodos = completeTodos.length;
-        return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}%`;
+        // return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}% Finished, ${todosLeft.length} todo${todosLeft.length === 1?"":"s"} left out of ${numberOfTodos} todo${numberOfTodos === 1?"":"s"}`;
+        return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}% Finished, ${todosLeft.length} left out of ${numberOfTodos}`;
     } else {
-        return '0%';
+        return '0% out of 0 todos';
     }
 };
 
@@ -195,7 +198,7 @@ const updateFullTodoUi = () => {
     // update the list percentage in menu
     listItemsArr.forEach(l => {
         if ($(l).data("listid") === currList.id) {
-            $(l).text(`${completePercentage} complete`)
+            $(l).text(`${completePercentage}`)
         }
     })
     // empty menu first
@@ -221,7 +224,7 @@ const updateFullTodoUi = () => {
         "transition": "width 150ms ease"
     })
     // update the completion text
-    $(todoListCompletionText).text(`${completePercentage} complete`)
+    $(todoListCompletionText).text(`${completePercentage}`)
     // update the progress bar color if 100%
     if (completePercentage === "100%") {
 
