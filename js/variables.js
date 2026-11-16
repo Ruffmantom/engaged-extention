@@ -15,6 +15,7 @@ let global_app_default_data = {
         inc_special: true,
     },
     e_notes: [],
+    e_notes_vault: null,
     e_todos: [],
     e_todo_tags:[],
     e_todos_lal: "",
@@ -91,6 +92,7 @@ let todoMenuIsOpen = false;
 // *************** NOTES VARIABLES **************************
 // Elements
 const noteInputElm = $("#add_note_textarea")
+const noteTitleInputElm = $("#note_title_input")
 const noteListContainer = $('.note_container')
 // BTNS
 const addNoteBtn = $('#add_note_btn')

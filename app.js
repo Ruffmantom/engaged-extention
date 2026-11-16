@@ -13,8 +13,8 @@ const initApp = () => {
 };
 
 // Ensure global_app_data and global_app_default_data are defined outside this function
-const startApp = async () => {
-    await initApp()
+const startApp = () => {
+    initApp()
 }
 
 $(function () {

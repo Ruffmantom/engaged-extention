@@ -188,6 +188,45 @@
         </div>
     </div>
 
+    <!-- note editor modal -->
+    <div id="note_composer_modal_cont" class="main_modal_container note_composer_modal_cont">
+        <div class="modal_cont note_composer_modal_dialog" role="dialog" aria-modal="true" aria-labelledby="note_composer_modal_title">
+            <div class="modal_header">
+                <button type="button" class="setting_btn close_btn note_composer_close_btn" id="close_note_composer_btn" aria-label="Close note editor">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                    </svg>
+                </button>
+                <h3 id="note_composer_modal_title">Create note</h3>
+            </div>
+            <div class="note_composer_modal_body">
+                <div class="note_composer">
+                    <input class="tf_input note_title_input" id="note_title_input" type="text" maxlength="80"
+                        aria-label="Note title" aria-describedby="note_title_hint" placeholder="Note title (needed for hidden notes)" autocomplete="off">
+                    <small class="note_title_help" id="note_title_hint">Hidden notes keep their title visible while the note text stays encrypted.</small>
+                    <div class="note_editor_toolbar" role="group" aria-label="Note formatting">
+                        <button type="button" class="note_format_btn" data-command="bold" aria-label="Bold" aria-pressed="false" title="Bold"><strong>B</strong></button>
+                        <button type="button" class="note_format_btn" data-command="italic" aria-label="Italic" aria-pressed="false" title="Italic"><em>I</em></button>
+                        <button type="button" class="note_format_btn" data-command="underline" aria-label="Underline" aria-pressed="false" title="Underline"><u>U</u></button>
+                        <span class="note_toolbar_divider" aria-hidden="true"></span>
+                        <button type="button" class="note_format_btn" data-command="insertUnorderedList" aria-label="Bulleted list" aria-pressed="false" title="Bulleted list">• ≡</button>
+                        <button type="button" class="note_format_btn" data-command="insertOrderedList" aria-label="Numbered list" aria-pressed="false" title="Numbered list">1 ≡</button>
+                        <button type="button" class="note_format_btn" data-command="formatBlock" data-value="h3" aria-label="Heading" title="Heading">H</button>
+                    </div>
+                    <div class="tf_input note_editor_input" id="add_note_textarea" contenteditable="true" role="textbox"
+                        aria-label="Note text" aria-placeholder="Write a note..." aria-multiline="true" data-placeholder="Write a note..." spellcheck="true"></div>
+                </div>
+                <div class="note_form_actions">
+                    <span class="note_editor_status" id="note_editor_status" aria-live="polite"></span>
+                    <div class="note_form_buttons">
+                        <button type="button" class="tf_btn main_btn" id="cancel_note_edit_btn" hidden>Cancel</button>
+                        <button type="button" class="tf_btn main_btn" id="add_note_btn">Save note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="engage_app_container">
 
         <!-- new navigation sidebar -->
@@ -510,15 +549,42 @@
             <h1 class="eng_tab_heading">Notes</h1>
             <div class="tf_control_group bottom_input_group">
                 <div class="note_upper_form">
-                    <div class="note_container">
+                    <div class="note_container" role="region" aria-label="Saved notes" tabindex="0">
 
                     </div>
-                    <div class="tf_control_group bottom_input_group">
-                        <textarea class="tf_input textarea_cont" name="input" cols="30" rows="5" id="add_note_textarea"
-                            placeholder='Add Note Text...'></textarea>
+                    <div class="note_form_actions">
+                        <span class="note_editor_status" id="note_list_status" aria-live="polite"></span>
+                        <button type="button" class="tf_btn main_btn" id="open_note_composer_btn">Create note</button>
                     </div>
-                    <button type="button" class="tf_btn main_btn" id="add_note_btn">Add note</button>
-
+                    <div class="note_vault_modal" id="note_vault_setup_modal" hidden>
+                        <form class="note_vault_dialog" id="note_vault_setup_form" role="dialog" aria-modal="true" aria-labelledby="note_vault_setup_title">
+                            <h2 id="note_vault_setup_title">Set a master password</h2>
+                            <p>Hidden note text is encrypted on this device. Titles and dates stay visible so you can identify notes. If you forget this password, the content cannot be recovered.</p>
+                            <label class="note_vault_field" for="note_vault_new_password">Master password</label>
+                            <input class="tf_input note_vault_password" id="note_vault_new_password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required>
+                            <small class="note_vault_help">Use at least 12 characters.</small>
+                            <label class="note_vault_field" for="note_vault_confirm_password">Confirm password</label>
+                            <input class="tf_input note_vault_password" id="note_vault_confirm_password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required>
+                            <p class="note_vault_message" id="note_vault_setup_message" aria-live="polite"></p>
+                            <div class="note_vault_dialog_actions">
+                                <button type="button" class="tf_btn main_btn" id="cancel_note_vault_setup_btn">Cancel</button>
+                                <button type="submit" class="tf_btn main_btn" id="create_note_vault_btn">Set password &amp; hide note</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="note_vault_modal" id="note_vault_unlock_modal" hidden>
+                        <form class="note_vault_dialog" id="note_vault_unlock_form" role="dialog" aria-modal="true" aria-labelledby="note_vault_unlock_title">
+                            <h2 id="note_vault_unlock_title">Show hidden note</h2>
+                            <p id="note_vault_unlock_description">Enter your master password to reveal this note. Other notes stay masked. You can reveal one note at a time for 1 minute; switching tabs or closing the popup locks them.</p>
+                            <label class="note_vault_field" for="note_vault_password">Master password</label>
+                            <input class="tf_input note_vault_password" id="note_vault_password" type="password" autocomplete="current-password" maxlength="256" required>
+                            <p class="note_vault_message" id="note_vault_message" aria-live="polite"></p>
+                            <div class="note_vault_dialog_actions">
+                                <button type="button" class="tf_btn main_btn" id="cancel_note_vault_unlock_btn">Cancel</button>
+                                <button type="submit" class="tf_btn main_btn" id="unlock_note_vault_btn">Show note</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 

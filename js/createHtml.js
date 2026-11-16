@@ -162,21 +162,217 @@ const createTodo = (todoInfo) => {
     
     `
 }
+const escapeNoteAttribute = (value) => String(value || '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[character]));
+
+const NOTE_ALLOWED_ELEMENTS = new Set(['A', 'B', 'BR', 'DIV', 'EM', 'H3', 'I', 'LI', 'OL', 'P', 'S', 'STRONG', 'U', 'UL']);
+const NOTE_DANGEROUS_ELEMENTS = new Set(['IFRAME', 'OBJECT', 'SCRIPT', 'STYLE', 'SVG', 'TEMPLATE']);
+
+const sanitizeNoteMarkup = (markup) => {
+    const template = document.createElement('template');
+    template.innerHTML = String(markup || '');
+
+    const cleanChildren = (parent) => {
+        Array.from(parent.childNodes).forEach((node) => {
+            if (node.nodeType === Node.COMMENT_NODE) {
+                node.remove();
+                return;
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+            if (!NOTE_ALLOWED_ELEMENTS.has(node.tagName)) {
+                if (NOTE_DANGEROUS_ELEMENTS.has(node.tagName)) {
+                    node.remove();
+                } else {
+                    cleanChildren(node);
+                    node.replaceWith(...Array.from(node.childNodes));
+                }
+                return;
+            }
+
+            Array.from(node.attributes).forEach((attribute) => {
+                if (node.tagName !== 'A' || attribute.name !== 'href') {
+                    node.removeAttribute(attribute.name);
+                }
+            });
+
+            if (node.tagName === 'A') {
+                const rawHref = node.getAttribute('href');
+                try {
+                    const url = new URL(rawHref, window.location.href);
+                    if (rawHref && ['http:', 'https:'].includes(url.protocol)) {
+                        node.setAttribute('href', url.href);
+                        node.className = 'note_text_link';
+                        node.setAttribute('target', '_blank');
+                        node.setAttribute('rel', 'noopener noreferrer');
+                    } else {
+                        cleanChildren(node);
+                        node.replaceWith(...Array.from(node.childNodes));
+                        return;
+                    }
+                } catch (error) {
+                    cleanChildren(node);
+                    node.replaceWith(...Array.from(node.childNodes));
+                    return;
+                }
+            }
+
+            cleanChildren(node);
+        });
+    };
+
+    cleanChildren(template.content);
+    return template.innerHTML;
+};
+
+const appendNoteText = (container, text) => {
+    const value = String(text || '');
+    const urlPattern = /https?:\/\/[^\s<>"']+/gi;
+    let cursor = 0;
+    let match;
+
+    const appendPlainText = (plainText) => {
+        plainText.split(/(\r?\n)/).forEach((part) => {
+            if (part === '\n' || part === '\r\n') {
+                container.appendChild(document.createElement('br'));
+            } else if (part) {
+                container.appendChild(document.createTextNode(part));
+            }
+        });
+    };
+
+    while ((match = urlPattern.exec(value)) !== null) {
+        let candidate = match[0];
+        let trailing = '';
+        while (/[),.!?;:]$/.test(candidate)) {
+            trailing = candidate.slice(-1) + trailing;
+            candidate = candidate.slice(0, -1);
+        }
+        appendPlainText(value.slice(cursor, match.index));
+
+        try {
+            const url = new URL(candidate);
+            if (['http:', 'https:'].includes(url.protocol)) {
+                const link = document.createElement('a');
+                link.className = 'note_text_link';
+                link.href = url.href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = url.hostname;
+                container.appendChild(link);
+            } else {
+                appendPlainText(candidate);
+            }
+        } catch (error) {
+            appendPlainText(candidate);
+        }
+
+        appendPlainText(trailing);
+        cursor = match.index + match[0].length;
+    }
+
+    appendPlainText(value.slice(cursor));
+};
+
+const linkifyNoteFragment = (fragment) => {
+    const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) {
+        const parent = walker.currentNode.parentElement;
+        if (!parent || !parent.closest('a')) textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach((textNode) => {
+        const wrapper = document.createElement('span');
+        appendNoteText(wrapper, textNode.nodeValue);
+        textNode.replaceWith(...Array.from(wrapper.childNodes));
+    });
+};
+
+const noteContentToMarkup = (noteData) => {
+    if (noteData.contentFormat === 'html') {
+        const template = document.createElement('template');
+        template.innerHTML = sanitizeNoteMarkup(noteData.note);
+        linkifyNoteFragment(template.content);
+        return template.innerHTML;
+    }
+
+    const plainContent = document.createElement('div');
+    appendNoteText(plainContent, noteData.note);
+    return plainContent.innerHTML;
+};
+
+const noteContentForEditor = (noteData) => {
+    if (noteData.contentFormat === 'html') return sanitizeNoteMarkup(noteData.note);
+
+    const content = document.createElement('div');
+    String(noteData.note || '').split(/(\r?\n)/).forEach((part) => {
+        if (part === '\n' || part === '\r\n') {
+            content.appendChild(document.createElement('br'));
+        } else if (part) {
+            content.appendChild(document.createTextNode(part));
+        }
+    });
+    return content.innerHTML;
+};
+
 // create note HTML
+const getNoteDisplayTitle = (noteData) => {
+    const savedTitle = String(noteData.title || '').trim();
+    if (savedTitle) return savedTitle;
+
+    let contentText = String(noteData.note || '');
+    if (noteData.contentFormat === 'html') {
+        const template = document.createElement('template');
+        template.innerHTML = sanitizeNoteMarkup(contentText);
+        contentText = template.content.textContent;
+    }
+    return contentText.replace(/\s+/g, ' ').trim().slice(0, 64) || 'Untitled note';
+};
+
 const createNote = (noteData) => {
-    const noteWithLinks = findAndReplaceLinks(noteData.note);
+    const noteId = escapeNoteAttribute(noteData.id);
+    const isMasked = noteData.isEncrypted === true && noteData.isRevealed !== true;
+    const isHiddenNote = noteData.isHidden === true || noteData.isEncrypted === true;
+    const title = escapeNoteAttribute(getNoteDisplayTitle(noteData));
+    const noteMarkup = isMasked
+        ? '<span class="note_masked_text" aria-label="Hidden note content">***</span>'
+        : noteContentToMarkup(noteData);
+    const noteDate = noteData.dateCreated
+        ? escapeNoteAttribute(formatDateAndTime(noteData.dateCreated))
+        : '';
+    const editedDate = noteData.dateUpdated
+        ? escapeNoteAttribute(formatDateAndTime(noteData.dateUpdated))
+        : '';
+    let noteActions;
+
+    if (isMasked) {
+        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn reveal_note_btn" aria-label="Show hidden note">Show</button>
+            <button data-noteid="${noteId}" type="button" class="note_action_btn delete_hidden_note_btn" aria-label="Delete hidden note">Delete</button>`;
+    } else if (noteData.isHidden) {
+        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn mask_note_btn" aria-label="Mask note">Mask</button>
+            <button data-noteid="${noteId}" type="button" class="note_action_btn unhide_note_btn" aria-label="Unhide note">Unhide</button>
+            <button data-noteid="${noteId}" type="button" class="note_action_btn delete_hidden_note_btn" aria-label="Delete hidden note">Delete</button>`;
+    } else {
+        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn edit_note_btn" aria-label="Edit note">Edit</button>
+            <button data-noteid="${noteId}" type="button" class="note_action_btn hide_note_btn" aria-label="Hide note">Hide</button>
+            <button data-noteid="${noteId}" type="button" class="setting_btn close_btn delete_btn" aria-label="Delete note">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.213 12" width="10.213" height="12" aria-hidden="true"><path d="M.511 10.851A1.293 1.293 0 0 0 1.889 12h6.434A1.293 1.293 0 0 0 9.7 10.851V4.34H.511ZM1.021 2.043A1.021 1.021 0 0 0 0 3.064V3.83h10.213v-.766a1.021 1.021 0 0 0-1.022-1.021H7.66V.919A.918.918 0 0 0 6.74 0H3.472a.918.918 0 0 0-.919.919v1.124Z" fill-rule="evenodd"/></svg>
+            </button>`;
+    }
 
     return `
-    <div class="user_note">
-        <button data-noteid=${noteData.id} type="button" class="setting_btn close_btn delete_btn">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10.213" height="12" viewBox="0 0 10.213 12"><defs><clipPath id="a"><rect width="10.213" height="12"/></clipPath></defs><g clip-path="url(#a)"><path d="M.511,10.851A1.293,1.293,0,0,0,1.889,12H8.323A1.293,1.293,0,0,0,9.7,10.851V4.34H.511ZM2.247,5.617H2.86a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H2.247a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H4.8a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H7.353a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46M1.021,2.043A1.021,1.021,0,0,0,0,3.064V3.83H10.213V3.064A1.021,1.021,0,0,0,9.191,2.043H7.66V.919A.918.918,0,0,0,6.74,0H3.472a.918.918,0,0,0-.919.919V2.043Zm5.617,0H3.574V1.481a.461.461,0,0,1,.46-.46H6.179a.461.461,0,0,1,.46.46Z" fill-rule="evenodd"/></g></svg>
-        </button>
-       <p class="note_text">${noteWithLinks}</p>
-       <p class="note_date">Noted: ${formatDateAndTime(noteData.dateCreated)}</p>
-    </div>
+        <article class="user_note ${isHiddenNote ? 'hidden_note' : ''}" data-noteid="${noteId}">
+            <div class="note_actions">${noteActions}</div>
+            <h2 class="note_title">${title}</h2>
+            <div class="note_text">${noteMarkup}</div>
+            ${noteDate || editedDate
+                ? `<p class="note_date">Noted: ${noteDate}${editedDate ? `<span class="note_edited_at"> · Edited at: ${editedDate}</span>` : ''}</p>`
+                : `<p class="note_date">${isMasked ? 'Hidden note' : 'Noted'}</p>`}
+        </article>
     `;
-}
-
+};
 
 const createColorPalletItem = (colorData, index, colorArrLength, limit) => {
 
