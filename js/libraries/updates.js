@@ -82,5 +82,45 @@ const app_updates = [
         id:"U-1.2.0",
         date_issued:"04/04/24",
     },
+    {
+        acknowledged: false,
+        content: `
+        <div>
+            <p>🎉 <strong>What's New in Stay Engaged?</strong></p>
+            <p>Version 1.3.0</p>
+            <p>This release brings a new notes editor, formatted todos, and more reliable password generation.</p>
+
+            <p><strong>Notes</strong></p>
+            <ul>
+                <li><strong>A dedicated editor:</strong> Add titles and edit your notes with bold, italic, underline, headings, and lists.</li>
+                <li><strong>Hidden notes:</strong> Protect note text with a master password. Titles stay visible, and you can reveal one hidden note at a time. Revealed text hides again after one minute or when you leave the popup.</li>
+                <li><strong>Clearer card controls:</strong> Use the eye button to show or hide note text and the trash-can button to delete a note.</li>
+            </ul>
+
+            <p><strong>Todos</strong></p>
+            <ul>
+                <li><strong>Formatting tools:</strong> Create and edit todos with the same formatting options as notes. Drafts stay with their list while you switch lists in the open popup.</li>
+                <li><strong>Reliable organization:</strong> Fixed completion progress, list switching, deleting lists, and saving or clearing due dates.</li>
+                <li><strong>Keep your order:</strong> Manual ordering now survives reopening the app, including when completed tasks are hidden. Drag the handles or use Alt + Up/Down to reorder.</li>
+                <li><strong>Import and export fixes:</strong> Invalid list files show a helpful message, and exported lists preserve todo formatting.</li>
+            </ul>
+
+            <p><strong>Password Generator</strong></p>
+            <ul>
+                <li><strong>Consistent results:</strong> Improved random generation, exact password lengths, and reliable inclusion of the character types you select.</li>
+                <li><strong>Readable passwords:</strong> Whole words stay intact while respecting your selected length and options.</li>
+                <li><strong>Length controls:</strong> Choose 5–256 characters. New installations start with a 16-character default.</li>
+            </ul>
+
+            <p><strong>Interface improvements</strong></p>
+            <p>Password-length help now sits below the input, and full-width inputs and textareas stay within their containers.</p>
+            <p><strong>Tip:</strong> In the notes and todo editors, press Ctrl + Enter on Windows/Linux or Cmd + Enter on Mac to save. Enter adds a paragraph or list item.</p>
+            <p class="sign_off">- Tom</p>
+        </div>
+        `,
+        version: "1.3.0",
+        id: "U-1.3.0",
+        date_issued: "11/16/26",
+    },
 
 ]

@@ -163,7 +163,7 @@ const loadPasswordGenerator = () => {
 };
 
 $(() => {
-    // The extension also injects scripts on localhost pages without these controls.
+    // Initialize only when the password generator controls are present.
     if (!passwordLength.length) return;
     loadPasswordGenerator();
 
