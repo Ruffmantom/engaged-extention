@@ -202,8 +202,8 @@
             <div class="note_composer_modal_body">
                 <div class="note_composer">
                     <input class="tf_input note_title_input" id="note_title_input" type="text" maxlength="80"
-                        aria-label="Note title" aria-describedby="note_title_hint" placeholder="Note title (needed for hidden notes)" autocomplete="off">
-                    <small class="note_title_help" id="note_title_hint">Hidden notes keep their title visible while the note text stays encrypted.</small>
+                        aria-label="Note title" aria-describedby="note_title_hint" placeholder="Title" autocomplete="off">
+                    <small class="note_title_help" id="note_title_hint">Hidden notes will keep their title visible.</small>
                     <div class="note_editor_toolbar" role="group" aria-label="Note formatting">
                         <button type="button" class="note_format_btn" data-command="bold" aria-label="Bold" aria-pressed="false" title="Bold"><strong>B</strong></button>
                         <button type="button" class="note_format_btn" data-command="italic" aria-label="Italic" aria-pressed="false" title="Italic"><em>I</em></button>
@@ -594,9 +594,11 @@
         <!-- password generator -->
         <div class="tab tf_control_group" data-tab="three">
             <h1 class="eng_tab_heading">Password Generator</h1>
-            <p>Password Length</p>
+            <p><label for="pass_char_num">Password Length</label></p>
             <div class="tf_control_group bottom_input_group">
-                <input class="tf_input" name="input" type="number" id="pass_char_num" placeholder='Password Length...'>
+                <input class="tf_input" name="input" type="number" id="pass_char_num" min="5" max="256" step="1"
+                    required aria-describedby="password_length_hint" placeholder='Password Length...'>
+                <small id="password_length_hint">5–256 characters. Readable mode keeps whole words together.</small>
             </div>
 
             <div class="setting_form_row">
@@ -605,12 +607,12 @@
                     <div class="input_block">
                         <input type="checkbox" name="singlequotes" class="checkbox_input"
                             id="pass_gen_setting_readable">
-                        <p>Make It Readable</p>
+                        <p><label for="pass_gen_setting_readable">Make It Readable</label></p>
                     </div>
                     <div class="input_block">
                         <input type="checkbox" name="doublequotes" class="checkbox_input" checked
                             id="pass_gen_setting_specials">
-                        <p>Special Characters</p>
+                        <p><label for="pass_gen_setting_specials">Special Characters</label></p>
                     </div>
 
                 </div>
@@ -619,12 +621,12 @@
                     <div class="input_block">
                         <input type="checkbox" name="singlequotes" class="checkbox_input" checked
                             id="pass_gen_setting_upper">
-                        <p>Include Uppercase</p>
+                        <p><label for="pass_gen_setting_upper">Include Uppercase</label></p>
                     </div>
                     <div class="input_block">
                         <input type="checkbox" name="singlequotes" class="checkbox_input" checked
                             id="pass_gen_setting_nums">
-                        <p>Include Numbers</p>
+                        <p><label for="pass_gen_setting_nums">Include Numbers</label></p>
                     </div>
 
                 </div>
@@ -632,7 +634,7 @@
 
             <div id="password_output_cont" class="textarea_cont tf_control_group bottom_input_group">
                 <textarea class="tf_input textarea_cont e_cursor_p" readonly name="input" cols="30" rows="3"
-                    id="password_output" placeholder='Password Output...'></textarea>
+                    id="password_output" aria-label="Generated password" spellcheck="false" placeholder='Password Output...'></textarea>
                 <div class="helper">Click To Copy</div>
             </div>
 

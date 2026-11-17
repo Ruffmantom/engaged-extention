@@ -6,7 +6,7 @@ let global_app_default_data = {
     engage_theme: "false",
     engage_user_id: "",
     e_tab: 'one',
-    e_pass_length: 5,
+    e_pass_length: 16,
     e_password: "",
     e_pass_settings: {
         inc_readable: false,

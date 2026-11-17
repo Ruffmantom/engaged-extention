@@ -944,6 +944,15 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 14px;
     font-weight: 600;
 }
+.note_title_input:focus{
+    outline: none;
+    border: none;
+}
+.note_title_input{
+    outline: none;
+    border: none;
+}
+
 
 .text_formatter .note_title_help {
     display: block;
