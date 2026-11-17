@@ -54,7 +54,11 @@ svg {
 
 input,
 textarea,
-select {
+select,
+.tf_input {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
     background-color: var(--eng-input-bkg);
 }
 
@@ -258,6 +262,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .tf_control_group {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
     text-align: left;
     display: flex;
     justify-content: space-between;
@@ -410,6 +417,17 @@ input[type=number]::-webkit-outer-spin-button {
 
 .bottom_input_group {
     align-items: center;
+}
+
+.password_length_group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+#password_length_hint {
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 #clear_output {

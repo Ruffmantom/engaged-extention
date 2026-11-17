@@ -1,7 +1,7 @@
 // *************** APP VARIABLES **************************
 // Define global variable
 let global_app_data = null
-
+const versionNumber = globalThis.chrome?.runtime?.getManifest?.()?.version ?? 'Development'
 let global_app_default_data = {
     engage_theme: "false",
     engage_user_id: "",
@@ -38,6 +38,7 @@ var idChars = "3QKXV0F8IYCA7S5T4ZGJDWB9L1N26UHOMRPVE";
 // *************** NAVIGATION VARIABLES **************************
 const tabElm = $(".tab")
 const tabNavBtnElm = $(".tab_nav_button")
+const appVersionElm = $("#app_version")
 // *************** MENU AND SETTINGS VARIABLES **************************
 // default settings always on
 // settings checkbox's

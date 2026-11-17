@@ -183,8 +183,7 @@
 
                 </div>
                 <div class="setting_form_row ">
-                    <p class="version_text">Version 1.2.0</p>
-
+                    <p class="version_text">Version <span id="app_version"></span></p>
                 </div>
             </div>
         </div>
@@ -596,10 +595,10 @@
         <div class="tab tf_control_group" data-tab="three">
             <h1 class="eng_tab_heading">Password Generator</h1>
             <p><label for="pass_char_num">Password Length</label></p>
-            <div class="tf_control_group bottom_input_group">
+            <div class="tf_control_group bottom_input_group password_length_group">
                 <input class="tf_input" name="input" type="number" id="pass_char_num" min="5" max="256" step="1"
                     required aria-describedby="password_length_hint" placeholder='Password Length...'>
-                <small id="password_length_hint block">5–256 characters. Readable mode keeps whole words together.</small>
+                <small id="password_length_hint" class="block">5–256 characters. Readable mode keeps whole words together.</small>
             </div>
 
             <div class="setting_form_row">

@@ -12,9 +12,10 @@ const initApp = () => {
     }
 };
 
-// Ensure global_app_data and global_app_default_data are defined outside this function
+// Initialize app data and display metadata once the DOM is ready.
 const startApp = () => {
-    initApp()
+    initApp();
+    appVersionElm.text(versionNumber);
 }
 
 $(function () {
