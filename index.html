@@ -27,22 +27,24 @@
     </div>
     <!-- todo due date modal -->
     <div id="add_due_date_modal_cont" class="main_modal_container">
-        <div class="modal_cont">
-            <div class="setting_btn close_btn" id="close_due_date_btn">
+        <div class="modal_cont" role="dialog" aria-modal="true" aria-labelledby="todo_due_date_title">
+            <button type="button" class="setting_btn close_btn" id="close_due_date_btn" aria-label="Close due date editor">
                 <svg xmlns="http://www.w3.org/2000/svg" height="1em"
                     viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                     <path
                         d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
                 </svg>
 
-            </div>
+            </button>
 
-            <h4>Set Due Date</h4>
+            <h4 id="todo_due_date_title">Set Due Date</h4>
             <div class="due_date_form">
-                <p class="chosen_due_date"></p>
+                <p class="chosen_due_date" aria-live="polite"></p>
+                <label for="todo_due_date_input">Due date</label>
                 <input type="date" name="due" id="todo_due_date_input">
                 <button type="button" class="tf_btn main_btn" id="save_due_date_btn"
                     style="display: inline-block;">Save</button>
+                <button type="button" class="tf_btn main_btn" id="clear_due_date_btn">Clear due date</button>
             </div>
         </div>
     </div>
@@ -409,7 +411,7 @@
             <div class="tf_todo_tab_cont">
                 <!-- this is the start when a user has no list -->
                 <div class="todo_start_cont">
-                    <input class="tf_input" name="input" id="add_first_list_input" placeholder='Add First List...'>
+                    <input class="tf_input" name="input" id="add_first_list_input" maxlength="120" aria-label="First list name" placeholder='Add First List...'>
                     <button type="button" class="tf_btn main_btn" id="add_first_list_btn">Create</button>
                 </div>
 
@@ -439,12 +441,10 @@
                                 </svg>
 
                                 <p class="hover_helper">My Lists</p>
-                                <div class="todo_list_nav_button">
-
-                                </div>
+                                <button type="button" class="todo_list_nav_button" aria-label="My todo lists" aria-controls="todo_list_menu" aria-expanded="false"></button>
                             </div>
 
-                            <div class="todo_list_menu ">
+                            <div class="todo_list_menu" id="todo_list_menu" hidden>
                                 <p class="todo_menu_title">My Lists</p>
                                 <div class="todo_list_item_cont">
                                     <!-- list items go here -->
@@ -453,7 +453,7 @@
                                 </div>
                                 <div class="todo_list_menu_add_cont">
                                     <div class="create_new_todo_list_form">
-                                        <input class="tf_input" name="input" id="add_new_list"
+                                        <input class="tf_input" name="input" id="add_new_list" maxlength="120" aria-label="New list name"
                                             placeholder='List Name...'>
                                         <div class="form_btn_group">
 
@@ -483,7 +483,7 @@
                                             id="show_add_todo_list_btn">Add</button>
                                         <button type="button" class="tf_btn main_btn" id="import_todo_list_btn">Import
                                             List</button>
-                                        <input type="file" id="todo_list_import">
+                                        <input type="file" id="todo_list_import" accept=".json,application/json" aria-label="Import todo list JSON">
                                     </div>
                                 </div>
                             </div>
@@ -493,16 +493,16 @@
                             <!-- this side holds the todo's -->
                             <div class="todo_side_list_info">
                                 <div class="todo_side_list_info_top">
-                                    <p id="todo_list_title" data-listid="" class="todo_menu_title"></p>
+                                    <p id="todo_list_title" class="todo_menu_title" role="button" tabindex="0" aria-label="Rename current list" title="Rename list"></p>
                                     <input type="text" name="listname" hidden id="change_list_name_input" value=""
-                                        class="tf_input">
+                                        class="tf_input" maxlength="120" aria-label="List name">
                                     <button type="button" class="tf_btn main_btn" id="hide_complete_todos">Hide
                                         Completed</button>
                                     <button type="button" class="tf_btn main_btn" id="show_complete_todos">Show
                                         Completed</button>
                                 </div>
                                 <div class="todo_completion_cont">
-                                    <div class="todo_progress_bar_cont">
+                                    <div class="todo_progress_bar_cont" role="progressbar" aria-label="Todo completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                                         <div class="todo_progress_bar"></div>
                                     </div>
                                     <div class="list_info_lower">
@@ -516,24 +516,25 @@
                                 <!-- todo's will go here -->
 
                             </div>
-                            <div class="add_new_todo_cont">
-                                <button type="button" class="main_icon_button" id="add_new_todo_btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        width="12" height="12" viewBox="0 0 12 12">
-                                        <defs>
-                                            <clipPath id="a">
-                                                <rect width="12" height="12" />
-                                            </clipPath>
-                                        </defs>
-                                        <g clip-path="url(#a)">
-                                            <path
-                                                d="M7.5,10.95V7.5h3.45A1.051,1.051,0,0,0,12,6.45v-.9A1.051,1.051,0,0,0,10.95,4.5H7.5V1.05A1.051,1.051,0,0,0,6.45,0h-.9A1.051,1.051,0,0,0,4.5,1.05V4.5H1.05A1.051,1.051,0,0,0,0,5.55v.9A1.051,1.051,0,0,0,1.05,7.5H4.5v3.45A1.051,1.051,0,0,0,5.55,12h.9A1.051,1.051,0,0,0,7.5,10.95"
-                                                fill-rule="evenodd" />
-                                        </g>
-                                    </svg>
-                                </button>
-                                <input class="tf_input" name="input" id="add_new_todo_item_input"
-                                    placeholder='Add Todo...'>
+                            <div class="add_new_todo_cont todo_composer">
+                                <div class="todo_editor_toolbar" role="group" aria-label="Todo formatting">
+                                    <button type="button" class="todo_format_btn" data-command="bold" aria-label="Bold" aria-pressed="false" title="Bold"><strong>B</strong></button>
+                                    <button type="button" class="todo_format_btn" data-command="italic" aria-label="Italic" aria-pressed="false" title="Italic"><em>I</em></button>
+                                    <button type="button" class="todo_format_btn" data-command="underline" aria-label="Underline" aria-pressed="false" title="Underline"><u>U</u></button>
+                                    <span class="todo_toolbar_divider" aria-hidden="true"></span>
+                                    <button type="button" class="todo_format_btn" data-command="insertUnorderedList" aria-label="Bulleted list" aria-pressed="false" title="Bulleted list">• ≡</button>
+                                    <button type="button" class="todo_format_btn" data-command="insertOrderedList" aria-label="Numbered list" aria-pressed="false" title="Numbered list">1 ≡</button>
+                                    <button type="button" class="todo_format_btn" data-command="formatBlock" data-value="h3" aria-label="Heading" title="Heading">H</button>
+                                </div>
+                                <div class="tf_input todo_editor_input" id="add_new_todo_item_input" contenteditable="true" role="textbox"
+                                    aria-label="Todo text" aria-placeholder="Add a todo..." aria-multiline="true" aria-describedby="todo_editor_status" data-placeholder="Add a todo..." spellcheck="true"></div>
+                            </div>
+                            <div class="todo_form_actions">
+                                <span class="todo_editor_status" id="todo_editor_status" aria-live="polite"></span>
+                                <div class="todo_form_buttons">
+                                    <button type="button" class="tf_btn main_btn" id="cancel_todo_edit_btn" hidden>Cancel</button>
+                                    <button type="button" class="tf_btn main_btn" id="add_new_todo_btn">Add todo</button>
+                                </div>
                             </div>
 
 
@@ -598,7 +599,7 @@
             <div class="tf_control_group bottom_input_group">
                 <input class="tf_input" name="input" type="number" id="pass_char_num" min="5" max="256" step="1"
                     required aria-describedby="password_length_hint" placeholder='Password Length...'>
-                <small id="password_length_hint">5–256 characters. Readable mode keeps whole words together.</small>
+                <small id="password_length_hint block">5–256 characters. Readable mode keeps whole words together.</small>
             </div>
 
             <div class="setting_form_row">
@@ -728,6 +729,7 @@
     <script type="text/javascript" src="./app.js"></script>
     <script type="text/javascript" src="./js/settings.js"></script>
     <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/todoModel.js"></script>
     <script type="text/javascript" src="./js/createHtml.js"></script>
     <script type="text/javascript" src="./js/update.js"></script>
     <script type="text/javascript" src="./js/notes.js"></script>

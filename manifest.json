@@ -30,6 +30,7 @@
         "./js/theme.js",
         "./js/settings.js",
         "./js/update.js",
+        "./js/todoModel.js",
         "./js/createHtml.js",
         "./js/menu.js",
         "./js/notes.js",

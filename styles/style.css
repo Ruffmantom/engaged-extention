@@ -94,12 +94,13 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .tf_input {
+    width: 100%;
     border-radius: 5px;
     padding: 10px;
     border: none;
     background-color: var(--eng-input-bkg);
-    outline: none;
-    border: 1px solid var(--eng-bg-color);
+    outline: 1px solid var(--eng-bg-color);
+    border: none;
     color: var(--eng-text-color);
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -115,7 +116,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .tf_input:focus {
-    border: 1px solid var(--eng-primary);
+    outline: 1px solid var(--eng-primary);
 }
 
 .text_formatter>h2 {
@@ -1061,6 +1062,27 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: var(--eng-hover-secondary-bg-color);
 }
 
+.text_formatter .note_visibility_btn,
+.text_formatter .note_delete_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+}
+
+.text_formatter .note_visibility_icon,
+.text_formatter .note_delete_icon {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .text_formatter .note_actions .close_btn {
     position: static;
     width: 26px;
@@ -1105,7 +1127,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
-.text_formatter .note_composer {
+.text_formatter .note_composer,
+.text_formatter .todo_composer {
     width: 100%;
     overflow: hidden;
     border: 1px solid var(--eng-bg-color);
@@ -1113,11 +1136,13 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: var(--eng-input-bkg);
 }
 
-.text_formatter .note_composer:focus-within {
+.text_formatter .note_composer:focus-within,
+.text_formatter .todo_composer:focus-within {
     border-color: var(--eng-primary);
 }
 
-.text_formatter .note_editor_toolbar {
+.text_formatter .note_editor_toolbar,
+.text_formatter .todo_editor_toolbar {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1125,7 +1150,8 @@ input[type=number]::-webkit-outer-spin-button {
     border-bottom: 1px solid var(--eng-bg-color);
 }
 
-.text_formatter .note_format_btn {
+.text_formatter .note_format_btn,
+.text_formatter .todo_format_btn {
     min-width: 28px;
     height: 28px;
     padding: 3px 6px;
@@ -1139,19 +1165,24 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .text_formatter .note_format_btn:hover,
-.text_formatter .note_format_btn.active {
+.text_formatter .note_format_btn.active,
+.text_formatter .todo_format_btn:hover,
+.text_formatter .todo_format_btn.active {
     color: white;
     background-color: var(--eng-primary);
 }
 
-.text_formatter .note_toolbar_divider {
+.text_formatter .note_toolbar_divider,
+.text_formatter .todo_toolbar_divider {
     width: 1px;
     height: 20px;
     margin: 0 3px;
     background-color: var(--eng-secondary-bg-color);
 }
 
-.text_formatter .note_editor_input {
+.text_formatter .note_editor_input,
+.text_formatter .todo_editor_input {
+    box-sizing: border-box;
     width: 100%;
     min-height: 105px;
     max-height: 190px;
@@ -1164,58 +1195,79 @@ input[type=number]::-webkit-outer-spin-button {
     white-space: pre-wrap;
 }
 
-.text_formatter .note_editor_input:empty::before {
+.text_formatter .note_editor_input:empty::before,
+.text_formatter .todo_editor_input:empty::before {
     content: attr(data-placeholder);
     color: var(--eng-text-color);
     opacity: 0.6;
     pointer-events: none;
 }
 
-.text_formatter .note_editor_input:focus {
+.text_formatter .note_editor_input:focus,
+.text_formatter .todo_editor_input:focus {
     outline: none;
     border: 0;
 }
 
 .text_formatter .note_editor_input p,
-.text_formatter .note_editor_input h3 {
+.text_formatter .note_editor_input h3,
+.text_formatter .todo_editor_input p,
+.text_formatter .todo_editor_input h3,
+.text_formatter .todo_item_text p,
+.text_formatter .todo_item_text h3 {
     margin: 0 0 6px;
 }
 
 .text_formatter .note_editor_input ul,
-.text_formatter .note_editor_input ol {
+.text_formatter .note_editor_input ol,
+.text_formatter .todo_editor_input ul,
+.text_formatter .todo_editor_input ol,
+.text_formatter .todo_item_text ul,
+.text_formatter .todo_item_text ol {
     margin: 4px 0 6px;
     padding-left: 22px;
 }
 
 .text_formatter .note_form_actions,
-.text_formatter .note_form_buttons {
+.text_formatter .note_form_buttons,
+.text_formatter .todo_form_actions,
+.text_formatter .todo_form_buttons {
     display: flex;
     align-items: center;
 }
 
-.text_formatter .note_form_actions {
+.text_formatter .note_form_actions,
+.text_formatter .todo_form_actions {
     justify-content: space-between;
     min-height: 36px;
     margin-top: 8px;
 }
 
-.text_formatter .note_form_buttons {
+.text_formatter .note_form_buttons,
+.text_formatter .todo_form_buttons {
     gap: 8px;
 }
 
-.text_formatter .note_editor_status {
+.text_formatter .note_editor_status,
+.text_formatter .todo_editor_status {
     font-size: 12px;
     color: var(--eng-primary-text);
 }
 
-.text_formatter .note_form_buttons [hidden] {
+.text_formatter .note_form_buttons [hidden],
+.text_formatter .todo_form_buttons [hidden] {
     display: none !important;
 }
 
 .text_formatter .note_format_btn:focus-visible,
 .text_formatter .note_action_btn:focus-visible,
 .text_formatter .note_form_buttons .main_btn:focus-visible,
-.text_formatter .note_composer_close_btn:focus-visible {
+.text_formatter .note_composer_close_btn:focus-visible,
+.text_formatter .todo_format_btn:focus-visible,
+.text_formatter .todo_form_buttons .main_btn:focus-visible,
+.text_formatter .todo_drag_handle:focus-visible,
+.text_formatter .tf_todo_tab_cont button:focus-visible,
+.text_formatter #todo_list_title:focus-visible {
     outline: 2px solid var(--eng-primary);
     outline-offset: 2px;
 }
@@ -1354,6 +1406,18 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
+.todo_list_menu[hidden] {
+    display: none;
+}
+
+.tf_todo_tab_cont .todo_list_nav_button,
+.todo_list_btn {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
 .todo_list_menu,
 .add_page_option_menu {
     opacity: 0;
@@ -1429,6 +1493,7 @@ input[type=number]::-webkit-outer-spin-button {
 .todo_list_info {
     width: 70%;
     padding-left: 5px;
+    overflow-wrap: anywhere;
 
 }
 
@@ -1574,7 +1639,7 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     align-items: start;
     justify-content: space-between;
-    cursor: pointer;
+    gap: 4px;
 }
 
 .todo_item_col {
@@ -1588,6 +1653,8 @@ input[type=number]::-webkit-outer-spin-button {
     margin-top: 3px;
     line-height: 1.5;
     font-size: 14px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
 
 .todo_set_due_date_btn,
@@ -1597,7 +1664,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .todo_item_left {
-    width: 78%;
+    flex: 1;
+    min-width: 0;
     margin: auto 0;
     display: flex;
     align-items: start;
@@ -1609,48 +1677,69 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .complete_todo {
-    width: 10%;
+    width: 20px;
+    flex-shrink: 0;
     margin-right: 0;
 }
 
 .todo_item_right {
-    width: 20%;
+    flex-shrink: 0;
+    gap: 3px;
 }
 
 .todo_item_right>button:not(:last-child) {
-    margin-right: 7px;
+    margin-right: 0;
 }
 
 .todo_checked {
     opacity: 0.7;
+}
+
+.todo_checked .todo_item_text {
     text-decoration: line-through;
 }
 
 .add_new_todo_cont {
-    background-color: var(--eng-input-bkg);
     margin-top: 10px;
-    padding: 5px;
-    border-radius: 7px;
-    display: flex;
 }
 
 #add_new_todo_btn {
-    background-color: var(--eng-primary);
-
+    width: max-content;
+    white-space: nowrap;
 }
 
-#add_new_todo_btn>svg {
-    fill: white;
+.text_formatter .todo_form_actions {
+    align-items: flex-start;
+    gap: 10px;
 }
 
-#add_new_todo_btn:hover {
-    background-color: var(--eng-secondary);
-
+.text_formatter .todo_editor_status {
+    font-size: 10px;
+    padding-top: 7px;
 }
 
-#add_new_todo_item_input {
-    border: none;
-    width: 90%;
+.todo_drag_handle {
+    flex-shrink: 0;
+    border: 0;
+    padding: 6px 0;
+    color: var(--eng-primary-text);
+    background: transparent;
+    cursor: grab;
+}
+
+.todo_drag_handle:active {
+    cursor: grabbing;
+}
+
+.todo_item_right > .setting_btn {
+    margin: 0;
+    padding: 5px;
+}
+
+.todo_empty_state {
+    margin: 6px 0 12px;
+    font-size: 12px;
+    color: var(--eng-primary-text);
 }
 
 .todo_due_date {
@@ -1697,7 +1786,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .todo_text_cont {
-    width: 90%;
+    flex: 1;
+    min-width: 0;
     position: relative;
 }
 
@@ -2288,4 +2378,7 @@ svg.dark {
 
 .css_output_label {
     margin-top: 0;
+}
+.block{
+    display: block;
 }

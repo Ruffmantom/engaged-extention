@@ -75,7 +75,7 @@ const todoListItemCompletionTextElm = $(".todo_list_item_completion")
 const todoListNumberTextElm = $(".todo_list_number")
 const dueDateInputElm = $('#todo_due_date_input')
 // btns
-const todoListMenuBtn = $(".todo_list_nav_button")
+const todoListMenuBtn = $(".tf_todo_tab_cont .todo_list_nav_button")
 const addNewTodoBtn = $("#add_new_todo_btn")
 const hideCompleteTodosBtn = $("#hide_complete_todos")
 const showCompleteTodosBtn = $("#show_complete_todos")

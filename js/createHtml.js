@@ -1,175 +1,60 @@
-// Create Todo List HTML
-const createTodoList = (listInfo) => {
-    return `
-    <div class="todo_list_item ${listInfo.active ? "active_todo_list" : ""}" data-listid=${listInfo.id}>
-    
-    <div class="todo_list_btn" data-listid=${listInfo.id}></div>
+// Todo cards share the same safe rich-text renderer as notes.
+const todoActionIcon = (path) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="${path}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
+
+const createTodoList = (list) => `
+    <div class="todo_list_item ${list.active ? 'active_todo_list' : ''}" data-listid="${escapeHtml(list.id)}">
+        <button type="button" class="todo_list_btn" data-listid="${escapeHtml(list.id)}" aria-label="Open ${escapeHtml(list.name)}" ${list.active ? 'aria-current="true"' : ''}></button>
         <div class="todo_list_info">
-            <p class="todo_list_item_name">${listInfo.name}</p>
-            <p class="todo_list_item_completion" data-listid=${listInfo.id}>${getCompletionPercentage(listInfo)} Complete</p>
+            <p class="todo_list_item_name">${escapeHtml(list.name)}</p>
+            <p class="todo_list_item_completion">${getCompletionPercentage(list)}</p>
         </div>
-        <button type="button" class="setting_btn">
-        <div data-listid=${listInfo.id} class="download_todo_list_btn btn_overlay"></div>
-        <svg id="download_icon" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32.74">
-        <g id="Layer_1-2" data-name="Layer 1">
-          <g>
-            <path class="cls-1" d="M30,21.33c-1.1,0-2,.9-2,2v5.41H4v-5.41c0-1.1-.9-2-2-2s-2,.9-2,2v7.41c0,1.1.9,2,2,2h28c1.1,0,2-.9,2-2v-7.41c0-1.1-.9-2-2-2Z"/>
-            <path class="cls-1" d="M14.53,24.69s.04.03.06.05c.02.02.04.04.06.06.04.03.08.06.12.09.04.04.09.07.13.1.07.05.14.08.21.12.04.02.09.05.13.06.09.04.17.06.26.08.04,0,.07.02.11.03.13.03.26.04.39.04,0,0,0,0,0,0s0,0,0,0c.13,0,.26-.01.38-.04.05,0,.09-.03.13-.04.07-.02.14-.03.21-.06,0,0,.01,0,.02-.01.16-.07.32-.16.46-.27.04-.03.07-.06.1-.09.05-.05.11-.09.16-.14l7.78-8.44c.75-.81.7-2.08-.12-2.83-.81-.75-2.08-.7-2.83.12l-4.31,4.68V2c0-1.1-.9-2-2-2s-2,.9-2,2v16.21l-4.31-4.68c-.75-.81-2.01-.86-2.83-.12-.81.75-.86,2.01-.12,2.83l7.78,8.44Z"/>
-          </g>
-        </g>
-      </svg>
+        <button type="button" class="setting_btn download_todo_list_btn" data-listid="${escapeHtml(list.id)}" aria-label="Export ${escapeHtml(list.name)}" title="Export list">
+            ${todoActionIcon('M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5')}
         </button>
-        <button data-listid=${listInfo.id} type="button" class="setting_btn delete_btn todo_list_delete_btn">
-            <svg data-listid=${listInfo.id} xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink" width="10.213" height="12"
-                viewBox="0 0 10.213 12">
-                <defs>
-                    <clipPath id="a">
-                        <rect width="10.213" height="12" />
-                    </clipPath>
-                </defs>
-                <g clip-path="url(#a)">
-                    <path
-                        d="M.511,10.851A1.293,1.293,0,0,0,1.889,12H8.323A1.293,1.293,0,0,0,9.7,10.851V4.34H.511ZM2.247,5.617H2.86a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H2.247a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H4.8a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H7.353a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46M1.021,2.043A1.021,1.021,0,0,0,0,3.064V3.83H10.213V3.064A1.021,1.021,0,0,0,9.191,2.043H7.66V.919A.918.918,0,0,0,6.74,0H3.472a.918.918,0,0,0-.919.919V2.043Zm5.617,0H3.574V1.481a.461.461,0,0,1,.46-.46H6.179a.461.461,0,0,1,.46.46Z"
-                        fill-rule="evenodd" />
-                </g>
-            </svg>
+        <button type="button" class="setting_btn delete_btn todo_list_delete_btn" data-listid="${escapeHtml(list.id)}" aria-label="Delete ${escapeHtml(list.name)}" title="Delete list">
+            ${todoActionIcon('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7')}
         </button>
-        
-    </div>
-    
-    `
-}
-// create Todo HTML
-const createTodo = (todoInfo) => {
-    const todoWithLinks = findAndReplaceLinks(todoInfo.todo);
+    </div>`;
 
-    const checkDueDateStatus = (dueDateString) => {
-        if (!dueDateString) {
-            // If there's no due date, consider it not applicable or handle as desired
-            return 'na';
-        }
-        // Parse the input due date string into a Date object
-        const dueDate = new Date(dueDateString + 'T00:00:00');
-
-        // Get the current date and reset time for accurate comparison
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); // Reset hours to midnight
-
-        // Convert both dates to their time value for comparison
-        const dueDateTime = dueDate.getTime();
-        const currentDateTime = currentDate.getTime();
-
-        // Compare the due date with the current date
-        if (dueDateTime === currentDateTime) {
-            // Due date is today
-            return 'today';
-        } else if (dueDateTime < currentDateTime) {
-            // Due date is in the past
-            return 'overdue';
-        } else {
-            // Due date is in the future
-            return 'fine';
-        }
-    };
-
-
+const createTodo = (todo) => {
+    const id = escapeHtml(todo.id);
+    const dateStatus = TodoModel.dueDateStatus(todo.dueDate);
+    const content = richTextToMarkup(todo.contentHtml ?? todo.todo, typeof todo.contentHtml === 'string' ? 'html' : 'text');
     return `
-            <div class="todo_item ${todoInfo.checked ? "todo_checked" : ""}" data-todoid=${todoInfo.id}>
-            <!-- add tag area -->
-            <button type="button" class="main_icon_button small_icon_btn" id="todo_add_tag_btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12" viewBox="0 0 12 12">
-                                        <defs>
-                                            <clipPath id="a">
-                                                <rect width="12" height="12"></rect>
-                                            </clipPath>
-                                        </defs>
-                                        <g clip-path="url(#a)">
-                                            <path d="M7.5,10.95V7.5h3.45A1.051,1.051,0,0,0,12,6.45v-.9A1.051,1.051,0,0,0,10.95,4.5H7.5V1.05A1.051,1.051,0,0,0,6.45,0h-.9A1.051,1.051,0,0,0,4.5,1.05V4.5H1.05A1.051,1.051,0,0,0,0,5.55v.9A1.051,1.051,0,0,0,1.05,7.5H4.5v3.45A1.051,1.051,0,0,0,5.55,12h.9A1.051,1.051,0,0,0,7.5,10.95" fill-rule="evenodd"></path>
-                                        </g>
-                                    </svg>
-                                    <p class="hover_helper">Add Tag</p>
-                                </button>
-                <!-- if there is a due date -->
-                ${todoInfo.dueDate ? `<p class="todo_due_date ${!todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'overdue' ? "overdue" : !todoInfo.checked && checkDueDateStatus(todoInfo.dueDate) === 'today' ? 'today' : ""} ${todoInfo.checked ? "complete" : ""}">Due: ${formatDate(todoInfo.dueDate)}</p>` : ''}
-
-                <div class="todo_item_cont">
-                    <div class="todo_item_col todo_item_left">
-                        <input type="checkbox" data-todoid=${todoInfo.id} name="doublequotes" class="checkbox_input complete_todo" ${todoInfo.checked ? "checked" : ''}>
-                        <div class="todo_text_cont">
-                            <p class="todo_item_text" data-todoid=${todoInfo.id}>${todoWithLinks}</p>
-                            <div class="change_todo_form" type="submit">
-                                <textarea type="text" name="todo" spellcheck="true" data-todoid=${todoInfo.id} class="todo_change_text_input">${todoInfo.todo}</textarea>
-                                <button type="button" class="cancel_change_todo_btn" data-todoid=${todoInfo.id}>
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        xmlns:xlink="http://www.w3.org/1999/xlink" width="12"
-                                        height="12" viewBox="0 0 12 12">
-                                        <defs>
-                                            <clipPath id="a">
-                                                <rect width="12" height="12" />
-                                            </clipPath>
-                                        </defs>
-                                        <g clip-path="url(#a)">
-                                            <path
-                                                d="M11.693,9.572,8.121,6l3.572-3.572a1.051,1.051,0,0,0,0-1.485L11.057.307a1.052,1.052,0,0,0-1.485,0L6,3.879,2.429.307a1.052,1.052,0,0,0-1.485,0L.307.943a1.051,1.051,0,0,0,0,1.485L3.879,6,.307,9.572a1.051,1.051,0,0,0,0,1.485l.636.636a1.051,1.051,0,0,0,1.485,0L6,8.121l3.572,3.571a1.051,1.051,0,0,0,1.485,0l.636-.636a1.051,1.051,0,0,0,0-1.485"
-                                                transform="translate(0 0)" fill-rule="evenodd" />
-                                        </g>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="todo_item_col todo_item_right">
-                        <button data-todoid=${todoInfo.id} type="button"
-                            class=" main_icon_button todo_set_due_date_btn">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" width="11.182"
-                                height="12" viewBox="0 0 11.182 12">
-                                <defs>
-                                    <clipPath id="a">
-                                        <rect width="11.182" height="12" />
-                                    </clipPath>
-                                </defs>
-                                <g clip-path="url(#a)">
-                                    <path
-                                        d="M1.909.265v.818h.818V.265A.266.266,0,0,0,2.463,0H2.174a.266.266,0,0,0-.265.265m4.364,0v.818h.818V.265A.266.266,0,0,0,6.826,0H6.537a.266.266,0,0,0-.265.265m2.182,0v.818h.818V.265A.266.266,0,0,0,9.008,0H8.719a.266.266,0,0,0-.265.265m-4.364.818.818.008V.265A.266.266,0,0,0,4.645,0H4.355a.266.266,0,0,0-.265.265Zm2.182.008H4.909V2.182a.244.244,0,0,1-.265.273H4.355a.244.244,0,0,1-.265-.273V1.091H2.727V2.182a.244.244,0,0,1-.265.273H2.174a.244.244,0,0,1-.265-.273V1.091H1.677A1.673,1.673,0,0,0,0,2.727v7.636A1.673,1.673,0,0,0,1.677,12H9.5a1.673,1.673,0,0,0,1.677-1.636V2.727A1.673,1.673,0,0,0,9.5,1.091H9.273V2.182a.244.244,0,0,1-.265.273H8.719a.244.244,0,0,1-.265-.273V1.091H7.091v1.1a.238.238,0,0,1-.265.265H6.537a.244.244,0,0,1-.265-.273ZM2.182,8.455H9a.26.26,0,0,1,.273.256v.562A.274.274,0,0,1,9,9.545H2.182a.274.274,0,0,1-.273-.273V8.711a.26.26,0,0,1,.273-.256m0-1.909H9a.252.252,0,0,1,.273.248v.57A.274.274,0,0,1,9,7.636H2.182a.274.274,0,0,1-.273-.273V6.81a.267.267,0,0,1,.273-.265m0-1.909H9a.252.252,0,0,1,.273.248v.57A.274.274,0,0,1,9,5.727H2.182a.274.274,0,0,1-.273-.273V4.892a.26.26,0,0,1,.273-.256"
-                                        transform="translate(0)" fill-rule="evenodd" />
-                                </g>
-                            </svg>
-                        </button>
-                        <button data-todoid=${todoInfo.id} type="button"
-                            class=" main_icon_button todo_delete_btn danger_btn">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" width="10.213"
-                                height="12" viewBox="0 0 10.213 12">
-                                <defs>
-                                    <clipPath id="a">
-                                        <rect width="10.213" height="12" />
-                                    </clipPath>
-                                </defs>
-                                <g clip-path="url(#a)">
-                                    <path
-                                        d="M.511,10.851A1.293,1.293,0,0,0,1.889,12H8.323A1.293,1.293,0,0,0,9.7,10.851V4.34H.511ZM2.247,5.617H2.86a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H2.247a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H4.8a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46m2.553,0h.613a.461.461,0,0,1,.46.46v4.187a.461.461,0,0,1-.46.46H7.353a.461.461,0,0,1-.46-.46V6.077a.461.461,0,0,1,.46-.46M1.021,2.043A1.021,1.021,0,0,0,0,3.064V3.83H10.213V3.064A1.021,1.021,0,0,0,9.191,2.043H7.66V.919A.918.918,0,0,0,6.74,0H3.472a.918.918,0,0,0-.919.919V2.043Zm5.617,0H3.574V1.481a.461.461,0,0,1,.46-.46H6.179a.461.461,0,0,1,.46.46Z"
-                                        fill-rule="evenodd" />
-                                </g>
-                            </svg>
-                        </button>
-                    </div>
-
+        <div class="todo_item ${todo.checked ? 'todo_checked' : ''}" data-todoid="${id}">
+            ${TodoModel.parseDueDate(todo.dueDate) ? `<p class="todo_due_date ${todo.checked ? 'complete' : dateStatus}">Due: <time datetime="${escapeHtml(todo.dueDate)}">${TodoModel.formatDueDate(todo.dueDate)}</time></p>` : ''}
+            <div class="todo_item_cont">
+                <button type="button" class="todo_drag_handle" aria-label="Reorder todo" title="Drag to reorder, or use Alt + Up/Down">
+                    ${todoActionIcon('M8 5h1m6 0h1M8 12h1m6 0h1M8 19h1m6 0h1')}
+                </button>
+                <div class="todo_item_col todo_item_left">
+                    <input type="checkbox" data-todoid="${id}" class="checkbox_input complete_todo" aria-label="Mark todo ${todo.checked ? 'incomplete' : 'complete'}" ${todo.checked ? 'checked' : ''}>
+                    <div class="todo_text_cont"><div class="todo_item_text" data-todoid="${id}">${content}</div></div>
+                </div>
+                <div class="todo_item_col todo_item_right">
+                    <button type="button" class="setting_btn todo_edit_btn" data-todoid="${id}" aria-label="Edit todo" title="Edit todo">
+                        ${todoActionIcon('m15 5 4 4M4 20l4-1L20 7l-4-4L4 15v5Z')}
+                    </button>
+                    <button type="button" class="setting_btn todo_set_due_date_btn" data-todoid="${id}" aria-label="Set due date" title="Set due date">
+                        ${todoActionIcon('M4 5h16v16H4V5ZM4 10h16M8 3v4m8-4v4')}
+                    </button>
+                    <button type="button" class="setting_btn danger_btn todo_delete_btn" data-todoid="${id}" aria-label="Delete todo" title="Delete todo">
+                        ${todoActionIcon('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7')}
+                    </button>
                 </div>
             </div>
-    
-    `
-}
-const escapeNoteAttribute = (value) => String(value || '').replace(/[&<>"']/g, (character) => ({
+        </div>`;
+};
+
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[character]));
+const escapeNoteAttribute = escapeHtml;
 
-const NOTE_ALLOWED_ELEMENTS = new Set(['A', 'B', 'BR', 'DIV', 'EM', 'H3', 'I', 'LI', 'OL', 'P', 'S', 'STRONG', 'U', 'UL']);
-const NOTE_DANGEROUS_ELEMENTS = new Set(['IFRAME', 'OBJECT', 'SCRIPT', 'STYLE', 'SVG', 'TEMPLATE']);
+const RICH_TEXT_ALLOWED_ELEMENTS = new Set(['A', 'B', 'BR', 'DIV', 'EM', 'H3', 'I', 'LI', 'OL', 'P', 'S', 'STRONG', 'U', 'UL']);
+const RICH_TEXT_DANGEROUS_ELEMENTS = new Set(['IFRAME', 'OBJECT', 'SCRIPT', 'STYLE', 'SVG', 'TEMPLATE']);
 
-const sanitizeNoteMarkup = (markup) => {
+const sanitizeRichTextMarkup = (markup) => {
     const template = document.createElement('template');
     template.innerHTML = String(markup || '');
 
@@ -181,8 +66,8 @@ const sanitizeNoteMarkup = (markup) => {
             }
             if (node.nodeType !== Node.ELEMENT_NODE) return;
 
-            if (!NOTE_ALLOWED_ELEMENTS.has(node.tagName)) {
-                if (NOTE_DANGEROUS_ELEMENTS.has(node.tagName)) {
+            if (!RICH_TEXT_ALLOWED_ELEMENTS.has(node.tagName)) {
+                if (RICH_TEXT_DANGEROUS_ELEMENTS.has(node.tagName)) {
                     node.remove();
                 } else {
                     cleanChildren(node);
@@ -225,8 +110,9 @@ const sanitizeNoteMarkup = (markup) => {
     cleanChildren(template.content);
     return template.innerHTML;
 };
+const sanitizeNoteMarkup = sanitizeRichTextMarkup;
 
-const appendNoteText = (container, text) => {
+const appendRichText = (container, text) => {
     const value = String(text || '');
     const urlPattern = /https?:\/\/[^\s<>"']+/gi;
     let cursor = 0;
@@ -275,7 +161,7 @@ const appendNoteText = (container, text) => {
     appendPlainText(value.slice(cursor));
 };
 
-const linkifyNoteFragment = (fragment) => {
+const linkifyRichTextFragment = (fragment) => {
     const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_TEXT);
     const textNodes = [];
     while (walker.nextNode()) {
@@ -285,37 +171,48 @@ const linkifyNoteFragment = (fragment) => {
 
     textNodes.forEach((textNode) => {
         const wrapper = document.createElement('span');
-        appendNoteText(wrapper, textNode.nodeValue);
+        appendRichText(wrapper, textNode.nodeValue);
         textNode.replaceWith(...Array.from(wrapper.childNodes));
     });
 };
 
-const noteContentToMarkup = (noteData) => {
-    if (noteData.contentFormat === 'html') {
+const richTextToMarkup = (content, format = 'text') => {
+    if (format === 'html') {
         const template = document.createElement('template');
-        template.innerHTML = sanitizeNoteMarkup(noteData.note);
-        linkifyNoteFragment(template.content);
+        template.innerHTML = sanitizeRichTextMarkup(content);
+        linkifyRichTextFragment(template.content);
         return template.innerHTML;
     }
 
     const plainContent = document.createElement('div');
-    appendNoteText(plainContent, noteData.note);
+    appendRichText(plainContent, content);
     return plainContent.innerHTML;
 };
 
-const noteContentForEditor = (noteData) => {
-    if (noteData.contentFormat === 'html') return sanitizeNoteMarkup(noteData.note);
+const richTextForEditor = (content, format = 'text') => {
+    if (format === 'html') return sanitizeRichTextMarkup(content);
 
-    const content = document.createElement('div');
-    String(noteData.note || '').split(/(\r?\n)/).forEach((part) => {
+    const container = document.createElement('div');
+    String(content || '').split(/(\r?\n)/).forEach((part) => {
         if (part === '\n' || part === '\r\n') {
-            content.appendChild(document.createElement('br'));
+            container.appendChild(document.createElement('br'));
         } else if (part) {
-            content.appendChild(document.createTextNode(part));
+            container.appendChild(document.createTextNode(part));
         }
     });
-    return content.innerHTML;
+    return container.innerHTML;
 };
+
+const plainTextFromRichText = (markup) => {
+    const template = document.createElement('template');
+    template.innerHTML = sanitizeRichTextMarkup(markup);
+    template.content.querySelectorAll('br').forEach((node) => node.replaceWith('\n'));
+    template.content.querySelectorAll('p, div, h3, li').forEach((node) => node.append('\n'));
+    return template.content.textContent.replace(/\u00a0/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+};
+
+const noteContentToMarkup = (note) => richTextToMarkup(note.note, note.contentFormat);
+const noteContentForEditor = (note) => richTextForEditor(note.note, note.contentFormat);
 
 // create note HTML
 const getNoteDisplayTitle = (noteData) => {
@@ -331,6 +228,18 @@ const getNoteDisplayTitle = (noteData) => {
     return contentText.replace(/\s+/g, ' ').trim().slice(0, 64) || 'Untitled note';
 };
 
+const noteVisibilityIcon = (show) => `
+    <svg class="note_visibility_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+        <circle cx="12" cy="12" r="3" />
+        ${show ? '' : '<path d="m3 3 18 18" />'}
+    </svg>`;
+
+const noteDeleteIcon = `
+    <svg class="note_delete_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" />
+    </svg>`;
+
 const createNote = (noteData) => {
     const noteId = escapeNoteAttribute(noteData.id);
     const isMasked = noteData.isEncrypted === true && noteData.isRevealed !== true;
@@ -345,21 +254,21 @@ const createNote = (noteData) => {
     const editedDate = noteData.dateUpdated
         ? escapeNoteAttribute(formatDateAndTime(noteData.dateUpdated))
         : '';
+    const deleteLabel = isMasked || noteData.isHidden ? 'Delete hidden note' : 'Delete note';
+    const deleteButton = `<button data-noteid="${noteId}" type="button" class="note_action_btn note_delete_btn ${isMasked || noteData.isHidden ? 'delete_hidden_note_btn' : 'delete_btn'}" aria-label="${deleteLabel}" title="${deleteLabel}">${noteDeleteIcon}</button>`;
     let noteActions;
 
     if (isMasked) {
-        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn reveal_note_btn" aria-label="Show hidden note">Show</button>
-            <button data-noteid="${noteId}" type="button" class="note_action_btn delete_hidden_note_btn" aria-label="Delete hidden note">Delete</button>`;
+        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn note_visibility_btn reveal_note_btn" aria-label="Show hidden note" title="Show hidden note">${noteVisibilityIcon(true)}</button>
+            ${deleteButton}`;
     } else if (noteData.isHidden) {
-        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn mask_note_btn" aria-label="Mask note">Mask</button>
-            <button data-noteid="${noteId}" type="button" class="note_action_btn unhide_note_btn" aria-label="Unhide note">Unhide</button>
-            <button data-noteid="${noteId}" type="button" class="note_action_btn delete_hidden_note_btn" aria-label="Delete hidden note">Delete</button>`;
+        noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn unhide_note_btn" aria-label="Unhide note">Unhide</button>
+            <button data-noteid="${noteId}" type="button" class="note_action_btn note_visibility_btn mask_note_btn" aria-label="Hide note again" title="Hide note again">${noteVisibilityIcon(false)}</button>
+            ${deleteButton}`;
     } else {
         noteActions = `<button data-noteid="${noteId}" type="button" class="note_action_btn edit_note_btn" aria-label="Edit note">Edit</button>
-            <button data-noteid="${noteId}" type="button" class="note_action_btn hide_note_btn" aria-label="Hide note">Hide</button>
-            <button data-noteid="${noteId}" type="button" class="setting_btn close_btn delete_btn" aria-label="Delete note">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.213 12" width="10.213" height="12" aria-hidden="true"><path d="M.511 10.851A1.293 1.293 0 0 0 1.889 12h6.434A1.293 1.293 0 0 0 9.7 10.851V4.34H.511ZM1.021 2.043A1.021 1.021 0 0 0 0 3.064V3.83h10.213v-.766a1.021 1.021 0 0 0-1.022-1.021H7.66V.919A.918.918 0 0 0 6.74 0H3.472a.918.918 0 0 0-.919.919v1.124Z" fill-rule="evenodd"/></svg>
-            </button>`;
+            <button data-noteid="${noteId}" type="button" class="note_action_btn note_visibility_btn hide_note_btn" aria-label="Hide note" title="Hide note">${noteVisibilityIcon(false)}</button>
+            ${deleteButton}`;
     }
 
     return `

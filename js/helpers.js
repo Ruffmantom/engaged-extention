@@ -189,3 +189,22 @@ function minifyCSS(css) {
     css = css.replace(/;}/g, '}');
     return css.trim();
   }
+// Shared by the notes and todo rich-text editors.
+const insertPlainTextAtSelection = (text) => {
+    if (document.queryCommandSupported && document.queryCommandSupported('insertText')) {
+        document.execCommand('insertText', false, text);
+        return;
+    }
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    const fragment = document.createDocumentFragment();
+    text.split(/\r?\n/).forEach((line, index) => {
+        if (index > 0) fragment.appendChild(document.createElement('br'));
+        fragment.appendChild(document.createTextNode(line));
+    });
+    range.insertNode(fragment);
+    selection.collapseToEnd();
+};

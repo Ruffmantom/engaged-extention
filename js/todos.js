@@ -1,889 +1,486 @@
-// close menu
+let editingTodoTarget = null;
+let todoDueDateTarget = null;
+const todoComposerDrafts = new Map();
+const makeTodoId = () => crypto.randomUUID();
+const returncurrList = () => TodoModel.activeList(global_app_data.e_todos);
+const findTodo = (list, id) => list?.todos.find((todo) => TodoModel.key(todo.id) === TodoModel.key(id)) || null;
+const getTodoEditor = () => addTodoInputElm[0];
+const setTodoStatus = (message) => $('#todo_editor_status').text(message);
+
+const getCompletionPercentage = (list) => {
+    const { total, remaining, percent } = TodoModel.progress(list);
+    return total ? `${percent}% finished, ${remaining} left out of ${total}` : 'No todos yet';
+};
+
 const closeTodoMenu = () => {
-    if (todoMenuIsOpen) {
-        $(".todo_list_menu").removeClass("todo_list_menu_active")
-        todoMenuIsOpen = false
-    }
-}
-
-// returns the current list helper
-const returncurrList = () => {
-    return global_app_data.e_todos.find(l => l.active === true)
-}
-
-// get the completion percentage
-const getCompletionPercentage = (currList) => {
-    if (currList.todos.length >= 1) {
-        let numberOfTodos = currList.todos.length;
-        let completeTodos = currList.todos.filter(t => t.checked);
-        // todos left
-        let todosLeft = currList.todos.filter(t => !t.checked);
-        let numberOfCompleteTodos = completeTodos.length;
-        // return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}% Finished, ${todosLeft.length} todo${todosLeft.length === 1?"":"s"} left out of ${numberOfTodos} todo${numberOfTodos === 1?"":"s"}`;
-        return `${Math.floor((numberOfCompleteTodos / numberOfTodos) * 100)}% Finished, ${todosLeft.length} left out of ${numberOfTodos}`;
-    } else {
-        return '0% out of 0 todos';
-    }
+    todoMenu.removeClass('todo_list_menu_active').prop('hidden', true);
+    todoListMenuBtn.attr('aria-expanded', 'false');
+    todoMenuIsOpen = false;
 };
 
-// update the global_app_data.e_todos global value
-const updateGlobalUsersTodos = (updatedList) => {
-    const index = global_app_data.e_todos.findIndex(item => item.id === updatedList.id);
-    // Update the corresponding item in global_app_data.e_todos
-    global_app_data.e_todos[index] = updatedList;
-
-    saveToLocalStorage()
-}
-// create a new todo list
-// create list
-const createTodoListAction = (first, listName) => {
-    let list = {}
-    list.id = createId()
-    list.name = listName
-    list.todos = []
-    list.active = false
-    list.hideComplete = false
-
-    if (first) {
-        list.active = true
-    }
-    // push new list into global_app_data.e_todos add to end of array
-    global_app_data.e_todos.push(list)
-    // add list to list menu
-    $(todoMenuListItemCont).append(createTodoList(list)) // adds to end of list
-    // clear first input
-    $(addFirstListInputElm).val("")
-    // Clear menu input
-    $(addNewListInputElm).val("")
-    // re render the UI
-    updateFullTodoUi()
-}
-
-// create a new todo
-const createTodoAction = (todoVal) => {
-    if (todoVal !== "") {
-        // create todo
-        let todo = {}
-        todo.todo = todoVal
-        todo.id = createId()
-        todo.createdDate = createDate()
-        todo.dueDate = ''
-        todo.checked = false
-        // save to global_app_data.e_todos
-        let updateList = returncurrList()
-        updateList.todos.push(todo) // add to end of array
-        // update global_app_data.e_todos
-        updateGlobalUsersTodos(updateList)
-        $(todoItemCont).append(createTodo(todo)) // add to end of list
-        // reset
-        $(addTodoInputElm).val("")
-        //update UI
-        updateFullTodoUi()
-        // scroll when new todo is added
-        $(todoItemCont).animate({
-            scrollTop: $(todoItemCont)[0].scrollHeight
-        }, 500);
-    } else {
-        sendNotification('fast', 3000, 'Please enter a todo')
-    }
-}
-
-// show or hide create list form
 const showOrHideAddNewTodoListForm = (show) => {
-    if (show) {
-        $(addNewTodoListForm).css("display", "flex")
-        $(".my_todo_lists_footer").hide()
-    } else {
-        $(addNewTodoListForm).css("display", "none")
-        $(".my_todo_lists_footer").show()
-    }
-}
+    addNewTodoListForm.css('display', show ? 'flex' : 'none');
+    $('.my_todo_lists_footer').toggle(!show);
+    if (show) addNewListInputElm.trigger('focus');
+};
 
+const renderTodoUi = () => {
+    const lists = global_app_data.e_todos;
+    const list = returncurrList();
+    const scrollTop = todoItemCont.scrollTop();
+    todoMenuListItemCont.html(lists.map(createTodoList).join(''));
+    startTodoListCont.toggle(!list);
+    todoAreaCont.toggle(Boolean(list));
+    todoListTitle.text(list?.name || '');
+    changeListTitleInput.attr('data-listid', list?.id || '');
+    const { percent, total } = TodoModel.progress(list);
+    progressBarElm.css('width', `${percent}%`).toggleClass('todo_progress_bar_complete', total > 0 && percent === 100);
+    $('.todo_progress_bar_cont').attr({ 'aria-valuenow': percent, 'aria-valuetext': getCompletionPercentage(list) });
+    todoListCompletionText.text(getCompletionPercentage(list));
+    hideCompleteTodosBtn.toggle(Boolean(list && !list.hideComplete));
+    showCompleteTodosBtn.toggle(Boolean(list?.hideComplete));
+    const visibleTodos = list ? list.todos.filter((todo) => !list.hideComplete || !todo.checked) : [];
+    todoItemCont.html(visibleTodos.length ? visibleTodos.map(createTodo).join('')
+        : '<p class="todo_empty_state">' + (list?.todos.length ? 'All todos are complete. Show completed to see them.' : 'No todos yet. Add your first todo below.') + '</p>');
+    todoItemCont.scrollTop(scrollTop);
+};
 
-const showTodoListArea = (show) => {
-    if (show) {
-        $(startTodoListCont).css('display', 'none');
-        // show todo area
-        $(todoAreaCont).css('display', "block");
-    } else {
-        $(startTodoListCont).css('display', 'flex');
-        // show todo area
-        $(todoAreaCont).css('display', "none");
-    }
-}
-
-// update the 
-const updateUsersTodos = (updatedList) => {
-    const index = global_app_data.e_todos.findIndex(item => item.id === updatedList.id);
-
-    let updatedUI = false;
-
-    if (index !== -1) {
-        // Update the corresponding item in global_app_data.e_todos
-        global_app_data.e_todos[index] = updatedList;
-        // update local storage with global_app_data.e_todos
+// Apply one state change and save once. Failed saves leave the existing UI and data intact.
+const commitTodoChange = (change, render = true) => {
+    const previous = { lists: global_app_data.e_todos, lastActiveId: global_app_data.e_todos_lal };
+    const next = structuredClone(previous);
+    if (change(next) === false) return false;
+    global_app_data.e_todos = next.lists;
+    global_app_data.e_todos_lal = next.lastActiveId;
+    try {
         saveToLocalStorage();
-        updatedUI = true
-    } else {
-        console.error(`Item with id ${updatedList.id} not found in global_app_data.e_todos.`);
-        updatedUI = false
+    } catch (error) {
+        global_app_data.e_todos = previous.lists;
+        global_app_data.e_todos_lal = previous.lastActiveId;
+        sendNotification('fast', 5000, 'Your change could not be saved. Please try again.');
+        return false;
     }
-}
+    if (render) renderTodoUi();
+    return true;
+};
 
-// handle checking the todo on the UI
-const updateTodoCheckedStateUI = (todoId, checked) => {
-    // console.log('about to update UI');
-    const todoItemArr = Array.from($(".todo_item")); // Re-query todo items
+const todoEditorContent = () => {
+    const contentHtml = sanitizeRichTextMarkup(getTodoEditor().innerHTML);
+    return { contentHtml, todo: plainTextFromRichText(contentHtml) };
+};
 
-    todoItemArr.forEach(t => {
-        // console.log('Inside foreach');
-        if ($(t).data("todoid") === todoId) {
-            if (checked) {
-                $(t).addClass('todo_checked');
-                $(t).children('.todo_due_date').addClass('complete')
-            } else {
-                $(t).removeClass('todo_checked');
-                $(t).children('.todo_due_date').removeClass('complete')
-            }
-        }
+const updateTodoComposerMode = () => {
+    const hasContent = Boolean(todoEditorContent().todo);
+    addNewTodoBtn.text(editingTodoTarget ? 'Save changes' : 'Add todo');
+    $('#cancel_todo_edit_btn').prop('hidden', !editingTodoTarget && !hasContent)
+        .text(editingTodoTarget ? 'Cancel' : 'Discard');
+    setTodoStatus(editingTodoTarget ? 'Editing todo · Ctrl/Cmd + Enter to save' : 'Ctrl/Cmd + Enter to add');
+};
+
+const rememberTodoComposer = () => {
+    const list = returncurrList();
+    if (list) todoComposerDrafts.set(list.id, { html: getTodoEditor().innerHTML, target: editingTodoTarget });
+};
+
+const restoreTodoComposer = () => {
+    const list = returncurrList();
+    const draft = list && todoComposerDrafts.get(list.id);
+    getTodoEditor().innerHTML = draft ? sanitizeRichTextMarkup(draft.html) : '';
+    editingTodoTarget = draft?.target && findTodo(list, draft.target.todoId) ? draft.target : null;
+    updateTodoComposerMode();
+};
+
+const resetTodoComposer = () => {
+    const list = returncurrList();
+    if (list) todoComposerDrafts.delete(list.id);
+    getTodoEditor().innerHTML = '';
+    editingTodoTarget = null;
+    updateTodoComposerMode();
+};
+
+const closeTodoDueDate = (restoreFocus = true) => {
+    $('#add_due_date_modal_cont').removeClass('modal_active');
+    todoDueDateTarget = null;
+    dueDateInputElm.val('');
+    dueDateInputElm[0].setCustomValidity('');
+    $('.chosen_due_date').text('');
+    if (restoreFocus) getTodoEditor().focus();
+};
+
+const finishTodoListChange = () => {
+    closeTodoDueDate(false);
+    todoListTitle.prop('hidden', false);
+    changeListTitleInput.prop('hidden', true);
+    restoreTodoComposer();
+};
+
+const createTodoListAction = (value) => {
+    let name;
+    try { name = TodoModel.validateListName(value); }
+    catch (error) { sendNotification('fast', 3000, error.message); return false; }
+    rememberTodoComposer();
+    const id = makeTodoId();
+    if (!commitTodoChange((state) => {
+        state.lastActiveId = TodoModel.activeList(state.lists)?.id || '';
+        state.lists.push({ id, name, todos: [], active: false, hideComplete: false });
+        TodoModel.activate(state.lists, id);
+    })) return false;
+    addFirstListInputElm.val('');
+    addNewListInputElm.val('');
+    showOrHideAddNewTodoListForm(false);
+    finishTodoListChange();
+    closeTodoMenu();
+    getTodoEditor().focus();
+    return true;
+};
+
+const saveTodoFromEditor = () => {
+    const list = returncurrList();
+    if (!list) return false;
+    const content = todoEditorContent();
+    try { TodoModel.validateTodoText(content.todo); }
+    catch (error) { setTodoStatus(error.message); getTodoEditor().focus(); return false; }
+    const target = editingTodoTarget;
+    if (target && (target.listId !== list.id || !findTodo(list, target.todoId))) {
+        setTodoStatus('This todo is no longer available. Cancel this edit to add a new todo.');
+        return false;
+    }
+    if (!commitTodoChange((state) => {
+        const updated = TodoModel.findList(state.lists, list.id);
+        if (target) Object.assign(findTodo(updated, target.todoId), content);
+        else updated.todos.push({ ...content, id: makeTodoId(), createdDate: new Date().toISOString(), dueDate: '', checked: false });
+    })) return false;
+    resetTodoComposer();
+    if (!target) todoItemCont.scrollTop(todoItemCont[0].scrollHeight);
+    getTodoEditor().focus();
+    return true;
+};
+
+const startEditingTodo = (todoId) => {
+    const list = returncurrList();
+    const todo = findTodo(list, todoId);
+    if (!todo) return;
+    if (editingTodoTarget?.todoId === todo.id) { getTodoEditor().focus(); return; }
+    if (editingTodoTarget || todoEditorContent().todo) {
+        setTodoStatus('Save or discard the current draft before editing another todo.');
+        getTodoEditor().focus();
+        return;
+    }
+    editingTodoTarget = { listId: list.id, todoId: todo.id };
+    getTodoEditor().innerHTML = richTextForEditor(todo.contentHtml ?? todo.todo, typeof todo.contentHtml === 'string' ? 'html' : 'text');
+    updateTodoComposerMode();
+    rememberTodoComposer();
+    getTodoEditor().focus();
+};
+
+const todoCheckHandler = (id) => {
+    const list = returncurrList();
+    if (!findTodo(list, id)) return false;
+    return commitTodoChange((state) => {
+        const todo = findTodo(TodoModel.findList(state.lists, list.id), id);
+        todo.checked = !todo.checked;
     });
 };
 
-// this is more for if the show button gets clicked, not a load
-// handle displaying the completed tasks
-const handleDisplayCompletedTasks = (showHideButtonClicked) => {
-    const todoItemArr = Array.from($(".todo_item"));
-    // hide completed tasks from dom
-    let currList = returncurrList()
-    // toggle the hideComplete
-    if (showHideButtonClicked) {
-        if (currList.hideComplete) {
-            currList.hideComplete = false;
-        } else {
-            currList.hideComplete = true;
-        }
-    }
-
-    if (currList.hideComplete) {
-        $("#show_complete_todos").show()
-        $("#hide_complete_todos").hide()
-        // render all todos that are complete
-        todoItemArr.forEach(t => {
-            if ($(t).hasClass("todo_checked")) {
-                $(t).hide()
-            }
-        })
-    } else {
-        $("#show_complete_todos").hide()
-        $("#hide_complete_todos").show()
-
-        todoItemArr.forEach(t => {
-            if ($(t).hasClass("todo_checked")) {
-                $(t).show()
-            }
-        })
-    }
-
-    updateUsersTodos(currList);
-}
-
-// update the list ui with every action
-const updateFullTodoUi = () => {
-    // check and hide todos if needed
-    handleDisplayCompletedTasks(false)
-    // update the list complete status
-    let currList = returncurrList()
-    let completePercentage = getCompletionPercentage(currList)
-    let listItemsArr = Array.from($(".todo_list_item_completion"))
-    // update the list percentage in menu
-    listItemsArr.forEach(l => {
-        if ($(l).data("listid") === currList.id) {
-            $(l).text(`${completePercentage}`)
-        }
-    })
-    // empty menu first
-    $(todoMenuListItemCont).empty()
-    // Render todo menu lists in the menu
-    global_app_data.e_todos.forEach(l => {
-        $(todoMenuListItemCont).append(createTodoList(l)); // add to bottom of list
-    });
-    // scroll list to bottom
-    $(".todo_list_item_cont").animate({
-        scrollTop: $(".todo_list_item_cont")[0].scrollHeight
-    }, 500);
-    // set UI
-    // set list title
-    $(todoListTitle).text(currList.name)
-    // add attribute
-    $(changeListTitleInput).attr('data-listid', currList.id);
-    // se the number of todos
-    $(todoListNumberTextElm).text(currList.todos.length + " Todo's")
-    // set width of progress bar
-    $(progressBarElm).css({
-        "width": completePercentage,
-        "transition": "width 150ms ease"
-    })
-    // update the completion text
-    $(todoListCompletionText).text(`${completePercentage}`)
-    // update the progress bar color if 100%
-    if (completePercentage === "100%") {
-
-        $(progressBarElm).addClass('todo_progress_bar_complete')
-    } else {
-        $(progressBarElm).removeClass('todo_progress_bar_complete')
-
-    }
-    // update local storage with global_app_data.e_todos
-    saveToLocalStorage()
-}
-
-// when a todo gets checked or unchecked
-const todoCheckHandler = (todoId) => {
-    let currList = returncurrList();
-    let todoToUpdate = currList.todos.find(t => t.id === todoId);
-
-    if (todoToUpdate) {
-        // Toggle the checked status
-        todoToUpdate.checked = !todoToUpdate.checked;
-
-        // Update UI
-        updateTodoCheckedStateUI(todoId, todoToUpdate.checked);
-        //update the list as well if the hide complete is active
-        updateFullTodoUi()
-        // Save updated current list to global_app_data.e_todos
-        updateUsersTodos(currList);
-    }
+const deleteTodo = (id) => {
+    const list = returncurrList();
+    if (!findTodo(list, id)) return false;
+    if (!commitTodoChange((state) => {
+        const updated = TodoModel.findList(state.lists, list.id);
+        updated.todos = updated.todos.filter((todo) => TodoModel.key(todo.id) !== TodoModel.key(id));
+    })) return false;
+    if (editingTodoTarget?.todoId === TodoModel.key(id)) resetTodoComposer();
+    return true;
 };
 
-// load in the global_app_data.e_todos
-const loadUsersTodos = () => {
-    if (global_app_data.e_todos.length >= 1) {
-        // hide the start of todo list if none
-        showTodoListArea(true)
-
-        // Load the current list todos and sort them
-        let currList = returncurrList();
-        let sortedList = currList.todos.sort((a, b) => {
-            // sort by checked state (unchecked first)
-            if (a.checked !== b.checked) {
-                return a.checked ? -1 : 1;
-            }
-        });
-
-        // empty the todo container before rendering them.
-        $(todoItemCont).empty()
-        // Render sorted todos
-        sortedList.forEach(todo => {
-            $(todoItemCont).append(createTodo(todo));
-        });
-        // check and hide todos if needed
-        handleDisplayCompletedTasks(false)
-    } else {
-        showTodoListArea(false)
-    }
+const setCompletedTodosHidden = (hidden) => {
+    const list = returncurrList();
+    if (!list || list.hideComplete === hidden) return false;
+    return commitTodoChange((state) => { TodoModel.findList(state.lists, list.id).hideComplete = hidden; });
 };
 
-const deleteTodo = (todoId) => {
-    // delete from global_app_data.e_todos
-    let currList = returncurrList();
-    let updatedList = currList.todos.filter(t => t.id !== todoId);
-
-    currList.todos = updatedList
-    // update data
-    updateUsersTodos(currList);
-    // console.log(updatedList)
-    // transition out from UI
-    const todoItemToDelete = $(`.todo_item[data-todoid="${todoId}"]`);
-
-    todoItemToDelete.addClass('deleted_todo');
-
-    // After the transition is complete, remove the todo item from the DOM
-    todoItemToDelete.on('transitionend', function () {
-        $(this).remove();
-    });
-    updateFullTodoUi()
+const changeList = (id) => {
+    const current = returncurrList();
+    if (!TodoModel.findList(global_app_data.e_todos, id) || current?.id === TodoModel.key(id)) return false;
+    rememberTodoComposer();
+    if (!commitTodoChange((state) => {
+        state.lastActiveId = current?.id || '';
+        TodoModel.activate(state.lists, id);
+    })) return false;
+    finishTodoListChange();
+    closeTodoMenu();
+    return true;
 };
 
-// update active list styles
-const setActiveStylesToList = () => {
-    let listItemArr = Array.from($('.todo_list_item'))
-    listItemArr.forEach(i => {
-        let c = returncurrList()
-        // console.log('List item id: ', $(i).data("listid"))
-        // console.log('Current List Item: ', c)
-        if (c.id !== $(i).data("listid")) {
-            // remove active class
-            $(i).removeClass('active_todo_list')
-        } else {
-            $(i).addClass('active_todo_list')
+const saveListName = (value, id) => {
+    let name;
+    try { name = TodoModel.validateListName(value); }
+    catch (error) { sendNotification('fast', 3000, error.message); return false; }
+    if (!TodoModel.findList(global_app_data.e_todos, id)) return false;
+    return commitTodoChange((state) => { TodoModel.findList(state.lists, id).name = name; });
+};
+
+const deleteTodoList = (id) => {
+    const list = TodoModel.findList(global_app_data.e_todos, id);
+    if (!list) return false;
+    const deletingCurrent = list.active;
+    if (!commitTodoChange((state) => {
+        state.lists = state.lists.filter((item) => item.id !== list.id);
+        if (deletingCurrent && state.lists.length) {
+            const fallback = TodoModel.findList(state.lists, state.lastActiveId) || state.lists[0];
+            TodoModel.activate(state.lists, fallback.id);
         }
-    })
-}
-// need to readjust this function
-const saveLastActiveList = () => {
-    let lastActiveList = ''
-    let currList = returncurrList()
-    lastActiveList = currList.id
-    // save that to local storage
-    global_app_data.e_todos_lal = lastActiveList
-    saveToLocalStorage()
-}
+        if (!TodoModel.findList(state.lists, state.lastActiveId)) state.lastActiveId = '';
+    })) return false;
+    todoComposerDrafts.delete(list.id);
+    if (deletingCurrent) finishTodoListChange();
+    return true;
+};
 
-const getLastActiveList = () => {
-    // get the saved id
-    return global_app_data.e_todos_lal
-}
+const openTodoDueDate = (todoId) => {
+    const list = returncurrList();
+    const todo = findTodo(list, todoId);
+    if (!todo) return;
+    todoDueDateTarget = { listId: list.id, todoId: todo.id };
+    dueDateInputElm.val(todo.dueDate || '');
+    dueDateInputElm[0].setCustomValidity('');
+    $('.chosen_due_date').text(todo.dueDate ? `Current due date: ${TodoModel.formatDueDate(todo.dueDate)}` : 'No due date set.');
+    $('#add_due_date_modal_cont').addClass('modal_active');
+    dueDateInputElm.trigger('focus');
+};
 
-// change active list
-const changeList = (listId) => {
-    // global_app_data.e_todos data change the current active list to false
-    saveLastActiveList()
-    // assign new todo list active to true
-    global_app_data.e_todos.forEach(l => {
-        if (l.id === listId) {
-            // set active
-            l.active = true
-        } else {
-            l.active = false
-        }
-    })
-    // save to local storage
-    saveToLocalStorage()
-    // global_app_data.e_todos.
-    setActiveStylesToList()
-    // update UI
-    updateFullTodoUi()
-    // load todos
-    loadUsersTodos()
-}
+const saveTodoDueDate = (value = dueDateInputElm.val()) => {
+    const target = todoDueDateTarget;
+    if (!target || !findTodo(TodoModel.findList(global_app_data.e_todos, target.listId), target.todoId)) return false;
+    if (value === '') dueDateInputElm.val('');
+    dueDateInputElm[0].setCustomValidity(value !== '' && !TodoModel.parseDueDate(value) ? 'Choose a valid due date.' : '');
+    if (!dueDateInputElm[0].reportValidity()) return false;
+    if (!commitTodoChange((state) => {
+        findTodo(TodoModel.findList(state.lists, target.listId), target.todoId).dueDate = value;
+    })) return false;
+    closeTodoDueDate();
+    return true;
+};
 
-// update list name
-const saveListName = (listName, listId) => {
-    // update global_app_data.e_todos
-    global_app_data.e_todos.forEach(l => {
-        if (l.id === listId) {
-            l.name = listName
-        }
-
-    })
-    // save to db
-    saveToLocalStorage()
-    // update UI
-    updateFullTodoUi()
-}
-
-// delete todo lists
-const deleteTodoList = (listId) => {
-    // remove list from global_app_data.e_todos
-    // set new active list if deleting current active one
-    let deletingActiveList = false;
-    global_app_data.e_todos.forEach(l => {
-        // console.log(l)
-        if (l.id === listId && l.active) {
-            l.active = false
-            deletingActiveList = true
-        }
-    })
-
-
-
-    let updatedUserTodos = global_app_data.e_todos.filter(l => l.id !== listId);
-    global_app_data.e_todos = updatedUserTodos
-
-    if (deletingActiveList) {
-        console.log('Deleting active list? ' + deletingActiveList)
-        let lastActiveList = getLastActiveList()
-        if (lastActiveList === "") {
-            // default to first list in array
-            if (global_app_data.e_todos.length >= 1) {
-                // set all to false if more than one list
-                // global_app_data.e_todos.forEach(l => {
-                //     l.active = false
-                // })
-                // set the first to true
-                console.log("about to set the first index to active!")
-                global_app_data.e_todos[0].active = true
-            }
-        } else {
-
-            global_app_data.e_todos.forEach(l => {
-                if (l.id === lastActiveList) {
-                    console.log("Yes found last active list")
-                    l.active = true
-                }
-            })
-        }
-    }
-
-    console.log("After delete: ", global_app_data.e_todos)
-    // save to local storage
-    saveToLocalStorage()
-
-    if (global_app_data.e_todos.length <= 0) {
-        // hide container and show start of new list
-        // hide the start of todo list if none
-        showTodoListArea(false)
-    } else {
-        // update UI
-        setActiveStylesToList()
-        // update UI
-        updateFullTodoUi()
-        // load todos
-        loadUsersTodos()
-    }
-}
-
-// create json export
-const createJsonExport = (listData) => {
-    console.log(listData)
-    // Convert JSON to a string
-    const jsonString = JSON.stringify(listData, null, 2);
-    // Create a Blob containing the JSON data
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    // Create a link element
-    const a = document.createElement('a');
-    // Create a URL for the Blob and set it as the link's href
-    a.href = URL.createObjectURL(blob);
-    // create name for file
-    let listName = listData.name.replace(/[^a-zA-Z0-9_]/g, '-');
-    // Set the filename for the downloadable file
-    a.download = `${listName}.json`;
-    // Append the link to the document
-    document.body.appendChild(a);
-    // simulate click
-    a.click();
-
-    // Remove the link from the document
-    document.body.removeChild(a);
-
-    sendNotification('fast', 3000, 'List has been downloaded')
-}
+const createJsonExport = (list) => {
+    if (!list) return false;
+    const url = URL.createObjectURL(new Blob([JSON.stringify(list, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = (list.name.replace(/[^a-zA-Z0-9_-]/g, '-') || 'todo-list') + '.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    return true;
+};
 
 const importJsonListData = (data) => {
-    // take file contents
-    // add json object to todolist array
-    console.log(data)
-    let foundList = global_app_data.e_todos.some(l => {
-        return l.id === data.id
-    })
-
-    console.log(foundList)
-    if (foundList) { // if found list === 0 then it is false
-        sendNotification('fast', 3000, 'This list has already been added')
-        return
-    } else {
-        data.active = false
-        global_app_data.e_todos.push(data)
-        // add scroll function to top of list
-        sendNotification('fast', 3000, `${data.name} list has been added!`)
+    let list;
+    try {
+        list = TodoModel.parseImportedList(data);
+        list.todos = list.todos.map((todo) => {
+            if (typeof todo.contentHtml !== 'string') return todo;
+            const contentHtml = sanitizeRichTextMarkup(todo.contentHtml);
+            return { ...todo, contentHtml, todo: TodoModel.validateTodoText(plainTextFromRichText(contentHtml)) };
+        });
+    } catch (error) { sendNotification('fast', 5000, error.message); return false; }
+    if (TodoModel.findList(global_app_data.e_todos, list.id)) {
+        sendNotification('fast', 3000, 'This list has already been added.');
+        return false;
     }
-    console.log(global_app_data.e_todos)
-    // save to local
-    saveToLocalStorage()
-    // rerender list
-    updateFullTodoUi()
+    rememberTodoComposer();
+    if (!commitTodoChange((state) => {
+        state.lastActiveId = TodoModel.activeList(state.lists)?.id || '';
+        state.lists.push(list);
+        TodoModel.activate(state.lists, list.id);
+    })) return false;
+    finishTodoListChange();
+    closeTodoMenu();
+    sendNotification('fast', 3000, `${list.name} list has been added.`);
+    return true;
+};
 
-    // clear file input
-    $("#todo_list_import").val('');
+const loadTodoData = () => {
+    const previous = JSON.stringify(global_app_data.e_todos);
+    global_app_data.e_todos = TodoModel.normalizeLists(global_app_data.e_todos, makeTodoId, global_app_data.e_todos_lal);
+    if (previous !== JSON.stringify(global_app_data.e_todos)) saveToLocalStorage();
+    renderTodoUi();
+    restoreTodoComposer();
+};
 
-}
-
-// -----------------------------------------------------------------------------------
-//  ******************************************************************************************
-// -----------------------------------------------------------------------------------
-// document on load
-$(function () {
-    // on load see if current list is hiding or showing completed
-    let currList = returncurrList()
-    if (currList) {
-        // load in the todos on load
-        loadUsersTodos()
-        updateFullTodoUi()
+const moveTodoWithKeyboard = (event, collection, attribute, items) => {
+    if (!event.altKey || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    event.preventDefault();
+    const item = event.target.closest(`[${attribute}]`);
+    const visibleIds = collection.children(items).map(function () { return this.getAttribute(attribute); }).get();
+    const index = visibleIds.indexOf(item.getAttribute(attribute));
+    const next = index + (event.key === 'ArrowUp' ? -1 : 1);
+    if (index < 0 || next < 0 || next >= visibleIds.length) return;
+    [visibleIds[index], visibleIds[next]] = [visibleIds[next], visibleIds[index]];
+    const list = returncurrList();
+    if (commitTodoChange((state) => {
+        if (attribute === 'data-todoid') {
+            const updated = TodoModel.findList(state.lists, list.id);
+            updated.todos = TodoModel.reorder(updated.todos, visibleIds);
+        } else state.lists = TodoModel.reorder(state.lists, visibleIds);
+    })) {
+        collection.children(items).filter(function () { return this.getAttribute(attribute) === item.getAttribute(attribute); })
+            .find(attribute === 'data-todoid' ? '.todo_drag_handle' : '.todo_list_btn').trigger('focus');
     }
-    // first time creating todo list
-    addFirstListBtn.on("click", (e) => {
-        e.preventDefault()
-        if ($(addFirstListInputElm).val() !== "") {
-            let listValue = $(addFirstListInputElm).val()
-            createTodoListAction(true, listValue)
-            // eventually add a load function that hides this if theres already a list item
-            showTodoListArea(true)
-            // save list data
-            saveToLocalStorage()
-        } else {
-            sendNotification('fast', 3000, 'Please enter a list name')
+};
+
+$(() => {
+    if (!$('.tf_todo_tab_cont').length) return;
+    loadTodoData();
+    closeTodoMenu();
+
+    addFirstListBtn.on('click', () => createTodoListAction(addFirstListInputElm.val()));
+    addNewTodoListBtn.on('click', () => createTodoListAction(addNewListInputElm.val()));
+    addFirstListInputElm.add(addNewListInputElm).on('keydown', function (event) {
+        if (event.key === 'Enter' && !event.isComposing && !event.originalEvent?.isComposing) {
+            event.preventDefault();
+            createTodoListAction($(this).val());
         }
-    })
-
-    // open the todo list menu
+    });
+    showAddNewTodoListFormBtn.on('click', () => showOrHideAddNewTodoListForm(true));
+    cancelAddNewTodoListBtn.on('click', () => showOrHideAddNewTodoListForm(false));
     todoListMenuBtn.on('click', () => {
-        if (todoMenuIsOpen) {
-            // close menu
-            closeTodoMenu()
-        } else {
-            // open menu
-            $(".todo_list_menu").addClass("todo_list_menu_active")
-            todoMenuIsOpen = true
+        if (todoMenuIsOpen) closeTodoMenu();
+        else {
+            todoMenu.prop('hidden', false).addClass('todo_list_menu_active');
+            todoListMenuBtn.attr('aria-expanded', 'true');
+            todoMenuIsOpen = true;
         }
+    });
+    $(document).on('click.todos', (event) => {
+        if (todoMenuIsOpen && !$(event.target).closest('.todo_list_menu, .tf_todo_tab_cont .todo_list_nav_button').length) closeTodoMenu();
+    });
 
-        // close todo list menu
-        $(document).on("click", function (event) {
-            // Check if the click event target is not within the menu
-            if (!todoMenu.is(event.target) && todoMenuIsOpen && !todoListMenuBtn.is(event.target) && todoMenu.has(event.target).length === 0) {
-                closeTodoMenu()
-            }
-        });
-    })
-
-    // add todo
-    addNewTodoBtn.on("click", (e) => {
-        e.preventDefault()
-        // create todo
-        let todoVal = $(addTodoInputElm).val()
-        createTodoAction(todoVal)
-    })
-
-    // if typing in todo input and press enter
-    let todoTextInput = $(`#add_new_todo_item_input`);
-    todoTextInput.keydown(function (event) {
-        var keycode = event.keyCode ? event.keyCode : event.which;
-
-        if (keycode == 13 && !event.shiftKey) {
-            // Prevent default behavior if Enter is pressed without Shift
+    addNewTodoBtn.on('click', saveTodoFromEditor);
+    $('#cancel_todo_edit_btn').on('click', () => { resetTodoComposer(); getTodoEditor().focus(); });
+    addTodoInputElm.on('input', () => { rememberTodoComposer(); updateTodoComposerMode(); });
+    addTodoInputElm.on('keydown', (event) => {
+        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !event.isComposing && !event.originalEvent?.isComposing) {
             event.preventDefault();
-            createTodoAction($(this).val())
-        }
-    });
-
-
-    // add new list
-    // show form for new todo list
-    $(showAddNewTodoListFormBtn).on("click", (e) => {
-        e.preventDefault()
-        showOrHideAddNewTodoListForm(true)
-    })
-    // hide from for new todo list
-    $(cancelAddNewTodoListBtn).on("click", () => {
-        showOrHideAddNewTodoListForm(false)
-    })
-
-    // create new list
-    $(addNewTodoListBtn).on("click", (e) => {
-        e.preventDefault()
-
-        let newListVal = $(addNewListInputElm).val()
-        if (newListVal !== "") {
-            // make new list and set current id
-            createTodoListAction(false, newListVal)
-            // reset
-            $(addNewListInputElm).val('')
-            showOrHideAddNewTodoListForm(false)
-            // setActiveStylesToList()
-            // console.log(global_app_data.e_todos)
-        } else {
-            sendNotification('fast', 3000, 'Please enter a list name')
-        }
-
-    })
-
-    // handle edit todo
-    // Use event delegation to handle clicks on dynamically created elements
-    $(".todo_cont").on("click", ".todo_item_text", function () {
-        // Find the parent container of the clicked element
-        var todoItem = $(this).closest(".todo_item");
-
-        // Get the value of the data-todoid attribute
-        clickedTodoTextId = todoItem.data("todoid");
-
-        let todoEditTextInput = $(`.todo_change_text_input[data-todoid="${clickedTodoTextId}"]`);
-
-        todoEditTextInput.keydown(function (event) {
-            var keycode = event.keyCode ? event.keyCode : event.which;
-
-            if (keycode == 13 && !event.shiftKey) {
-                // Prevent default behavior if Enter is pressed without Shift
-                event.preventDefault();
-                console.log($(this).val());
-
-                // Now save the value to the current todo
-                let currList = returncurrList();
-
-                currList.todos.forEach(t => {
-                    if (t.id === clickedTodoTextId) {
-                        t.todo = $(this).val();
-                    }
-                });
-
-                updateUsersTodos(currList);
-                loadUsersTodos()
-                // Perform any other action you need with the entered value
-
-                // Hide the input field and show the <p> tag
-                todoItem.find(".change_todo_form").hide();
-                todoItem.find(".todo_item_text").show();
-            }
-        });
-
-        // Hide the <p> tag and show the <textarea> input field
-        todoItem.find(".todo_item_text").hide();
-        todoItem.find(".change_todo_form").css("display", "block");
-        todoItem.find(".todo_change_text_input").focus();
-
-        $(document).on("click", function (event) {
-            // Check if the click event target is not within the menu
-            if (!todoItem.is(event.target) && todoItem.has(event.target).length === 0) {
-                todoItem.find(".change_todo_form").hide();
-                todoItem.find(".todo_item_text").show();
-            }
-        });
-    });
-
-
-    // handle todo due date click
-    const dueDateModalCont = $("#add_due_date_modal_cont")
-    // on load, set up the date picker to only have future dates
-    var currentDate = new Date().toISOString().split('T')[0];
-    let dueDateConfig = {
-        currentlySelectedTodo: '',
-        newDueDate: '',
-    }
-    const openDueDateModal = (open) => {
-
-        if (!open && $(dueDateModalCont).hasClass("modal_active")) {
-            $(dueDateModalCont).removeClass('modal_active')
-        } else {
-            $(dueDateModalCont).addClass('modal_active')
-        }
-    }
-    // Set the minimum date for the date input
-    $(dueDateInputElm).attr('min', currentDate);
-
-    $(".todo_cont").on("click", ".todo_set_due_date_btn", function () {
-        let todoId = $(this).data("todoid");
-        console.log("Need to set due date for: " + todoId)
-        openDueDateModal(true)
-        // set state
-        dueDateConfig.currentlySelectedTodo = todoId
-        // load in current date if has one
-        let currList = returncurrList()
-        let currentTodo = currList.todos.filter(t => t.id === todoId)
-        if (currentTodo[0].dueDate !== "") {
-            $('.chosen_due_date').text(`Current Due date: ${formatDate(currentTodo[0].dueDate)}`)
-            // set value of input
-            $(dueDateInputElm).val(currentTodo[0].dueDate)
-        }
-    });
-
-    // close dueDate modal button
-    $("#close_due_date_btn").on('click', () => {
-        openDueDateModal(false)
-    })
-
-    $(dueDateInputElm).on('change', e => {
-        let d = $(e.target).val()
-        $('.chosen_due_date').text(`Selected date: ${formatDate(d)}`)
-        // save to duedate state
-        dueDateConfig.newDueDate = ''
-        dueDateConfig.newDueDate = d
-    })
-    // save due date for todo
-
-    $(saveDueDateBtn).on("click", e => {
-        e.preventDefault()
-        let currList = returncurrList()
-        console.log(dueDateConfig)
-        currList.todos.forEach(t => {
-            if (t.id === dueDateConfig.currentlySelectedTodo) {
-                t.dueDate = dueDateConfig.newDueDate
-            }
-        })
-        // update the users todos
-        updateUsersTodos(currList);
-        // close modal
-        openDueDateModal(false)
-        // update UI
-        // update UI
-        updateFullTodoUi()
-        // load todos
-        loadUsersTodos()
-
-    })
-    // handle cancel changing the todo text
-    $(".todo_cont").on("click", ".cancel_change_todo_btn", function () {
-        var todoItem = $(this).closest(".todo_item");
-
-        todoItem.find(".change_todo_form").hide();
-        todoItem.find(".todo_item_text").show();
-    });
-
-    // handle check todo
-    $(".todo_cont").on('click', '.complete_todo', function () {
-        let todoId = $(this).data("todoid");
-        todoCheckHandler(todoId);
-    });
-
-    // handle delete todo
-    $(".todo_cont").on('click', '.todo_delete_btn', function () {
-        let todoId = $(this).data("todoid");
-        // console.log("Delete todo: " + todoId)
-        deleteTodo(todoId)
-    });
-
-
-    // handle hide completed tasks button
-    $(hideCompleteTodosBtn).on('click', (e) => {
-        // console.log('hide complete!')
-        let currList = returncurrList()
-        if (currList.todos.length === 0) {
-            sendNotification("fast", 3000, "There are no completed todo's")
-        } else {
-            let completedTodos = false
-            currList.todos.filter(t => {
-                if (t.checked) {
-                    completedTodos = true
-                }
-            })
-            if (!completedTodos) {
-                sendNotification("fast", 3000, "There are no completed todo's")
-            } else {
-                handleDisplayCompletedTasks(true)
-            }
-
-        }
-
-    })
-    // handle show the completed todos
-    $(showCompleteTodosBtn).on('click', (e) => {
-        // console.log('show complete!')
-        handleDisplayCompletedTasks(true)
-
-    })
-    // handle list click
-    $(".todo_list_item_cont").on('click', '.todo_list_btn ', function () {
-        let listId = $(this).data("listid");
-        changeList(listId)
-    });
-    // handle delete todo list
-    $(".todo_list_item_cont").on('click', '.todo_list_delete_btn ', function () {
-        let listId = $(this).data("listid");
-        console.log("delete list: " + listId)
-        deleteTodoList(listId)
-    });
-
-    // when list title gets clicked
-    $(todoListTitle).on('click', e => {
-        // set input value
-        let currList = returncurrList()
-        $(changeListTitleInput).val(currList.name)
-        // hide the title and show the input
-        $(todoListTitle).hide()
-        $(changeListTitleInput).show();
-        // focus on the input
-        $(changeListTitleInput).focus();
-    })
-
-
-    $(changeListTitleInput).keydown(function (event) {
-        var keycode = event.keyCode ? event.keyCode : event.which;
-
-        if (keycode == 13 && !event.shiftKey) {
-            // Prevent default behavior if Enter is pressed without Shift
+            saveTodoFromEditor();
+        } else if (event.key === 'Escape' && editingTodoTarget) {
             event.preventDefault();
-            saveListName($(this).val(), $(this).data("listid"))
-            // hide input and show title
-            $(todoListTitle).show()
-            $(changeListTitleInput).hide();
+            resetTodoComposer();
         }
     });
-
-
-    // export todo list
-    // todo_list_menu parent elm
-    // on click export btn
-
-    $(".todo_list_menu").on('click', '.download_todo_list_btn', function (e) {
-        let listId = $(e.target).data('listid');
-        let foundList = global_app_data.e_todos.find(l => l.id === listId);
-        createJsonExport(foundList);
+    addTodoInputElm.on('paste drop', (event) => {
+        event.preventDefault();
+        getTodoEditor().focus();
+        const source = event.originalEvent || event;
+        const text = (source.clipboardData || source.dataTransfer)?.getData('text/plain') || '';
+        if (text) insertPlainTextAtSelection(text);
+        rememberTodoComposer();
+        updateTodoComposerMode();
     });
-    // import functionality
-    $("#import_todo_list_btn").click(function () {
-        // Trigger a click on the hidden file input
-        $("#todo_list_import").click();
+    $('.todo_editor_toolbar').on('mousedown', '.todo_format_btn', (event) => event.preventDefault());
+    $('.todo_editor_toolbar').on('click', '.todo_format_btn', function () {
+        getTodoEditor().focus();
+        document.execCommand(this.dataset.command, false, this.dataset.value || null);
+        rememberTodoComposer();
+        updateTodoComposerMode();
+    });
+    $(document).on('selectionchange.todos', () => {
+        const selection = window.getSelection();
+        if (!selection?.anchorNode || !getTodoEditor().contains(selection.anchorNode)) return;
+        $('.todo_format_btn[aria-pressed]').each(function () {
+            const pressed = document.queryCommandState(this.dataset.command);
+            $(this).toggleClass('active', pressed).attr('aria-pressed', String(pressed));
+        });
+    });
+    todoItemCont.on('click', '.todo_item_text', function (event) {
+        if (!$(event.target).closest('a').length) startEditingTodo(this.getAttribute('data-todoid'));
+    });
+    todoItemCont.on('click', '.todo_edit_btn', function () { startEditingTodo(this.getAttribute('data-todoid')); });
+    todoItemCont.on('change', '.complete_todo', function () {
+        if (!todoCheckHandler(this.getAttribute('data-todoid'))) this.checked = !this.checked;
+    });
+    todoItemCont.on('click', '.todo_delete_btn', function () { deleteTodo(this.getAttribute('data-todoid')); });
+    todoItemCont.on('click', '.todo_set_due_date_btn', function () { openTodoDueDate(this.getAttribute('data-todoid')); });
+    hideCompleteTodosBtn.on('click', () => setCompletedTodosHidden(true));
+    showCompleteTodosBtn.on('click', () => setCompletedTodosHidden(false));
+    todoMenuListItemCont.on('click', '.todo_list_btn', function () { changeList(this.getAttribute('data-listid')); });
+    todoMenuListItemCont.on('click', '.todo_list_delete_btn', function () { deleteTodoList(this.getAttribute('data-listid')); });
+    todoMenuListItemCont.on('click', '.download_todo_list_btn', function () {
+        createJsonExport(TodoModel.findList(global_app_data.e_todos, this.getAttribute('data-listid')));
+    });
+    todoItemCont.on('keydown', '.todo_drag_handle', (event) => moveTodoWithKeyboard(event, todoItemCont, 'data-todoid', '.todo_item'));
+    todoMenuListItemCont.on('keydown', '.todo_list_btn', (event) => moveTodoWithKeyboard(event, todoMenuListItemCont, 'data-listid', '.todo_list_item'));
+
+    todoListTitle.on('click keydown', (event) => {
+        if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+        event.preventDefault();
+        const list = returncurrList();
+        if (!list) return;
+        changeListTitleInput.val(list.name).attr('data-listid', list.id).prop('hidden', false).trigger('focus');
+        todoListTitle.prop('hidden', true);
+    });
+    changeListTitleInput.on('keydown', function (event) {
+        if (event.isComposing || event.originalEvent?.isComposing) return;
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (!saveListName(this.value, this.getAttribute('data-listid'))) return;
+        } else if (event.key !== 'Escape') return;
+        changeListTitleInput.prop('hidden', true);
+        todoListTitle.prop('hidden', false).trigger('focus');
     });
 
-    // When a file is selected using the file input
-    $("#todo_list_import").change(function () {
-        // Handle the file import logic here
-        // console.log("File selected:", $(this).val());
-        const fileInput = event.target;
-        const file = fileInput.files[0];
-
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                try {
-                    // Parse the JSON data from the file
-                    const jsonData = JSON.parse(e.target.result);
-
-                    // Handle the JSON data as needed
-                    importJsonListData(jsonData)
-                } catch (error) {
-                    console.error("Error parsing JSON:", error);
-                }
-            };
-
-            // Read the file as text
-            reader.readAsText(file);
+    $('#close_due_date_btn').on('click', () => closeTodoDueDate());
+    dueDateInputElm.on('change input', () => {
+        dueDateInputElm[0].setCustomValidity('');
+        const date = dueDateInputElm.val();
+        $('.chosen_due_date').text(date ? `Selected date: ${TodoModel.formatDueDate(date)}` : 'No due date set.');
+    });
+    saveDueDateBtn.on('click', () => saveTodoDueDate());
+    $('#clear_due_date_btn').on('click', () => saveTodoDueDate(''));
+    $(document).on('keydown.todos', (event) => {
+        if (event.key === 'Escape') {
+            closeTodoMenu();
+            if (todoDueDateTarget) closeTodoDueDate();
+        }
+        if (event.key === 'Tab' && todoDueDateTarget) {
+            const controls = $('#add_due_date_modal_cont').find('button, input').filter(':visible');
+            const first = controls[0];
+            const last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
         }
     });
-
-    // sortable todo items
-    $(".todo_cont").sortable({
-        handle: ".todo_item_cont",
-        helper: "clone",
-        tolerance: "pointer",
-        axis: 'y',
-        containment: "parent",
-        cursor: "grabbing",
-        update: function (event, ui) {
-            let sortedIDs = $(this).sortable("toArray", { attribute: "data-todoid" });
-            let currList = returncurrList()
-            // sort todos based on what the user moved
-            let sortedTodos = sortedIDs.map(id =>
-                currList.todos.find(todo => todo.id.toString() === id)
-            );
-            // update currentTodo list
-            currList.todos = sortedTodos
-            // updateUsersTodos(currList)
-            updateGlobalUsersTodos(currList)
+    $('#import_todo_list_btn').on('click', () => $('#todo_list_import').trigger('click'));
+    $('#todo_list_import').on('change', async (event) => {
+        const input = event.currentTarget;
+        const file = input.files?.[0];
+        if (!file) return;
+        try {
+            if (file.size > TodoModel.MAX_IMPORT_BYTES) throw new Error('Choose a JSON file smaller than 1 MB.');
+            importJsonListData(JSON.parse(await file.text()));
+        } catch (error) {
+            sendNotification('fast', 5000, error instanceof SyntaxError ? 'This file is not valid JSON.' : error.message);
+        } finally { input.value = ''; }
+    });
+    todoItemCont.sortable({
+        items: '> .todo_item', handle: '.todo_drag_handle', cancel: 'input, textarea, select, a, [contenteditable="true"], button:not(.todo_drag_handle)',
+        tolerance: 'pointer', axis: 'y', containment: 'parent', cursor: 'grabbing',
+        update() {
+            const ids = $(this).sortable('toArray', { attribute: 'data-todoid' });
+            const id = returncurrList()?.id;
+            if (!id || !commitTodoChange((state) => {
+                const list = TodoModel.findList(state.lists, id);
+                list.todos = TodoModel.reorder(list.todos, ids);
+            }, false)) $(this).sortable('cancel');
         },
     });
-    // sortable lists in menu
-    $(".todo_list_item_cont").sortable({
-        handle: ".todo_list_btn",
-        // helper: "clone",
-        tolerance: "pointer",
-        axis: 'y',
-        containment: "parent",
-        cursor: "grabbing",
-        update: function (event, ui) {
-            let sortedIDs = $(this).sortable("toArray", { attribute: "data-listid" });
-            // sort lists based on sortedIds
-            let sortedLists = sortedIDs.map(id =>
-                global_app_data.e_todos.find(list => list.id === id)
-            )
-
-            global_app_data.e_todos = sortedLists
-            // save to local
-            saveToLocalStorage()
+    todoMenuListItemCont.sortable({
+        items: '> .todo_list_item', handle: '.todo_list_btn', cancel: 'button:not(.todo_list_btn)',
+        tolerance: 'pointer', axis: 'y', containment: 'parent', cursor: 'grabbing',
+        update() {
+            const ids = $(this).sortable('toArray', { attribute: 'data-listid' });
+            if (!commitTodoChange((state) => { state.lists = TodoModel.reorder(state.lists, ids); }, false)) $(this).sortable('cancel');
         },
     });
-
-
-
-
-
-    // end of doc ready
-})
+});
